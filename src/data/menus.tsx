@@ -5,64 +5,50 @@ import {
 } from 'react-icons/io5'
 
 import {
-  StartAdminView,
-  TablesAdminView,
-  AnalyticsAdminView,
-  MyAccountAdminView,
-  SettingsAdminView
+  CompanyInfosAdminView,
+  MenuAdminView,
+  ReportsAdminView,
+  AccountAdminView,
+  DisclosureAdminView
 } from '@/pages/Admin/Views'
 
 const menusData = [
   {
     menuId: 'menu_home',
-    menuLabel: 'Pedidos',
+    menuLabel: 'Estabelecimento',
     menuIcon: <IoAppsOutline />,
-    menuRender: <StartAdminView />,
+    menuRender: <CompanyInfosAdminView />,
     menuHidden: false
   },
   {
     menuId: 'menu_tables',
-    menuLabel: 'Mesas',
+    menuLabel: 'Cardápio',
     menuIcon: <IoAppsOutline />,
-    menuRender: <TablesAdminView />,
+    menuRender: <MenuAdminView />,
     menuHidden: false
+  },
+  {
+    menuId: 'menu_settings',
+    menuLabel: 'Divulgação',
+    menuIcon: <IoAppsOutline />,
+    menuRender: <DisclosureAdminView />,
+    menuHidden: true
   },
   {
     menuId: 'menu_analytics',
     menuLabel: 'Relatórios',
     menuIcon: <IoAppsOutline />,
-    menuRender: <AnalyticsAdminView />,
+    menuRender: <ReportsAdminView />,
     menuHidden: false
-  },
-  {
-    menuId: 'menu_settings',
-    menuLabel: 'Configurações',
-    menuIcon: <IoSettingsOutline />,
-    menuRender: <SettingsAdminView />,
-    menuHidden: true
-  },
-  {
-    menuId: 'menu_account',
-    menuLabel: 'Minha conta',
-    menuIcon: <IoAppsOutline />,
-    menuRender: <MyAccountAdminView />,
-    menuHidden: true
   }
 ]
 
 const privateMenusData = [
   {
-    menuId: 'menu_settings',
-    menuLabel: 'Configurações',
-    menuIcon: <IoSettingsOutline />,
-    menuRender: <SettingsAdminView />,
-    menuHidden: false
-  },
-  {
     menuId: 'menu_account',
     menuLabel: 'Minha conta',
     menuIcon: <IoPersonOutline />,
-    menuRender: <MyAccountAdminView />,
+    menuRender: <AccountAdminView />,
     menuHidden: false
   }
 ]
