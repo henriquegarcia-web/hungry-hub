@@ -1,11 +1,18 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
-// import { } from './pages'
+import {
+  AdminPage,
+  AdminSigninPage,
+  AdminSignupPage,
+  CompanyMenuPage,
+  LandingPage,
+  NotFoundPage
+} from './pages'
 
-// import { useAdminAuth } from './contexts/AdminAuthContext'
+import { useAdminAuth } from './contexts/AdminAuthContext'
 
 const AppRoutes = () => {
-  // const { isAdminLogged } = useAdminAuth()
+  const { isAdminLogged } = useAdminAuth()
 
   return (
     <BrowserRouter>
@@ -14,17 +21,17 @@ const AppRoutes = () => {
 
         <Route path="/" element={<></>} />
 
-        {/* <Route path="/" element={<LandingPage />} />
-        <Route path="/*" element={<Navigate to="/" />} /> */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/*" element={<Navigate to="/" />} />
 
         {/* =============================================================== */}
 
-        {/* <Route path="/:companyId" element={<CompanyAppPage />} />
-        <Route path="/:companyId/not-found" element={<NotFoundPage />} /> */}
+        <Route path="/:companyId" element={<CompanyMenuPage />} />
+        <Route path="/:companyId/not-found" element={<NotFoundPage />} />
 
         {/* =============================================================== */}
 
-        {/* <Route
+        <Route
           path="/admin/entrar"
           element={
             <PublicRoute isAuthenticated={isAdminLogged}>
@@ -47,7 +54,7 @@ const AppRoutes = () => {
               <AdminPage />
             </PrivateAdminRoute>
           }
-        /> */}
+        />
 
         {/* =============================================================== */}
 
@@ -74,23 +81,23 @@ export default AppRoutes
 
 // =========================================== ROUTES
 
-// interface RouteProps {
-//   isAuthenticated: boolean
-//   children: React.ReactNode
-// }
+interface RouteProps {
+  isAuthenticated: boolean
+  children: React.ReactNode
+}
 
-// const PrivateAdminRoute = ({ isAuthenticated, children }: RouteProps) => {
-//   if (!isAuthenticated) {
-//     return <Navigate to="/admin/entrar" replace />
-//   }
+const PrivateAdminRoute = ({ isAuthenticated, children }: RouteProps) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/admin/entrar" replace />
+  }
 
-//   return children
-// }
+  return children
+}
 
-// const PublicRoute = ({ isAuthenticated, children }: RouteProps) => {
-//   if (isAuthenticated) {
-//     return <Navigate to="/admin" replace />
-//   }
+const PublicRoute = ({ isAuthenticated, children }: RouteProps) => {
+  if (isAuthenticated) {
+    return <Navigate to="/admin" replace />
+  }
 
-//   return children
-// }
+  return children
+}
