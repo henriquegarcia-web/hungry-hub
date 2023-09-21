@@ -13,8 +13,6 @@ export const AdminContent = styled.section`
   width: 100%;
   height: calc(100% - ${adminHeaderHeight});
   padding: 20px;
-
-  /* border: 1px solid red; */
 `
 
 // ========================================== ADMIN MENU
@@ -28,7 +26,6 @@ export const AdminHeader = styled.header`
   height: ${adminHeaderHeight};
   padding: 0 20px;
 
-  /* border: 1px solid blue; */
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 `
 
@@ -36,14 +33,11 @@ export const AdminHeaderLogo = styled.div`
   display: flex;
   width: fit-content;
   height: 100%;
-
-  /* border: 1px solid orange; */
 `
 
 export const AdminHeaderNavigation = styled.nav`
   display: flex;
   flex: 1;
-  /* border: 1px solid orange; */
 `
 
 export const AdminHeaderMenu = styled.div`
@@ -86,8 +80,6 @@ export const AdminHeaderUserMenu = styled.div`
   display: flex;
   width: fit-content;
   height: 100%;
-
-  /* border: 1px solid orange; */
 `
 
 export const UserMenu = styled.div`

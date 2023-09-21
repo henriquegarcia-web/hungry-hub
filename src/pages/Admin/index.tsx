@@ -46,6 +46,8 @@ const Admin = () => {
 
   // ------------------------------------------------------------------
 
+  const viewToRender = getComponentByMenuId(activeMenu)
+
   return (
     <S.Admin>
       <AdminHeader
@@ -55,12 +57,24 @@ const Admin = () => {
         handleSelectPrivateMenu={handleSelectPrivateMenu}
         handleChangeTheme={handleChangeTheme}
       />
-      <S.AdminContent></S.AdminContent>
+      <S.AdminContent>{viewToRender}</S.AdminContent>
     </S.Admin>
   )
 }
 
 export default Admin
+
+// ========================================== ADMIN VIEWS
+
+const getComponentByMenuId = (menuId: string) => {
+  for (const menuItem of menusData) {
+    if (menuItem.menuId === menuId) {
+      return menuItem.menuRender
+    }
+  }
+
+  return <div>View not found</div>
+}
 
 // ========================================== ADMIN MENU
 
