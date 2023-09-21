@@ -46,11 +46,46 @@ export const AdminHeaderNavigation = styled.nav`
   /* border: 1px solid orange; */
 `
 
+export const AdminHeaderMenu = styled.div`
+  display: flex;
+  column-gap: 10px;
+  width: fit-content;
+  height: 100%;
+  padding: 0 15px;
+  margin-left: auto;
+`
+
+export const SwitchTheme = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  width: fit-content;
+  height: 100%;
+`
+
+export const SwitchThemeLabel = styled.p`
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  width: fit-content;
+
+  font-size: 14px;
+
+  svg {
+    &:nth-of-type(1) {
+      font-size: 16px;
+    }
+
+    &:nth-of-type(2) {
+      font-size: 14px;
+    }
+  }
+`
+
 export const AdminHeaderUserMenu = styled.div`
   display: flex;
   width: fit-content;
   height: 100%;
-  margin-left: auto;
 
   /* border: 1px solid orange; */
 `

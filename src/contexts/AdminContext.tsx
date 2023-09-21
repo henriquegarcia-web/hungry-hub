@@ -1,9 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { createContext, useContext, useMemo, useState } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  useCallback
+} from 'react'
+
+export type ThemeProps = 'default' | 'dark'
 
 interface AdminContextData {
+  adminTheme: ThemeProps
   isLoading: boolean
+  toogleThemeDark: (activeThemeDark: boolean) => void
 }
 
 // ===================================================================
@@ -15,15 +25,33 @@ export const AdminContext = createContext<AdminContextData>(
 const AdminProvider = ({ children }: { children: React.ReactNode }) => {
   // =================================================================
 
+  const [adminTheme, setAdminTheme] = useState<ThemeProps>('default')
+
   const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  // =================================================================
+
+  // ------------------------------------------------------------------
+
+  const toogleThemeDark = (activeThemeDark: boolean) => {
+    if (activeThemeDark) {
+      setAdminTheme('dark')
+    } else {
+      setAdminTheme('default')
+    }
+  }
+
+  // ------------------------------------------------------------------
 
   // =================================================================
 
   const AdminContextValues = useMemo(() => {
     return {
-      isLoading
+      adminTheme,
+      isLoading,
+      toogleThemeDark
     }
-  }, [isLoading])
+  }, [adminTheme, isLoading])
 
   return (
     <AdminContext.Provider value={AdminContextValues}>
