@@ -1,7 +1,10 @@
 import {
-  IoAppsOutline,
-  IoSettingsOutline,
-  IoPersonOutline
+  IoStorefrontOutline,
+  IoRestaurantOutline,
+  IoMegaphoneOutline,
+  IoPieChartOutline,
+  IoPersonOutline,
+  IoExitOutline
 } from 'react-icons/io5'
 
 import {
@@ -14,32 +17,44 @@ import {
 
 const menusData = [
   {
-    menuId: 'menu_home',
+    menuId: 'menu_company_infos',
     menuLabel: 'Estabelecimento',
-    menuIcon: <IoAppsOutline />,
+    menuIcon: <IoStorefrontOutline />,
     menuRender: <CompanyInfosAdminView />,
+    menuDisabled: false,
     menuHidden: false
   },
   {
-    menuId: 'menu_tables',
+    menuId: 'menu_menu',
     menuLabel: 'Cardápio',
-    menuIcon: <IoAppsOutline />,
+    menuIcon: <IoRestaurantOutline />,
     menuRender: <MenuAdminView />,
+    menuDisabled: false,
     menuHidden: false
   },
   {
-    menuId: 'menu_settings',
+    menuId: 'menu_disclosure',
     menuLabel: 'Divulgação',
-    menuIcon: <IoAppsOutline />,
+    menuIcon: <IoMegaphoneOutline />,
     menuRender: <DisclosureAdminView />,
-    menuHidden: true
+    menuDisabled: false,
+    menuHidden: false
   },
   {
     menuId: 'menu_analytics',
     menuLabel: 'Relatórios',
-    menuIcon: <IoAppsOutline />,
+    menuIcon: <IoPieChartOutline />,
     menuRender: <ReportsAdminView />,
+    menuDisabled: false,
     menuHidden: false
+  },
+  {
+    menuId: 'menu_account',
+    menuLabel: 'Minha conta',
+    menuIcon: <IoPersonOutline />,
+    menuRender: <AccountAdminView />,
+    menuDisabled: false,
+    menuHidden: true
   }
 ]
 
@@ -48,8 +63,15 @@ const privateMenusData = [
     menuId: 'menu_account',
     menuLabel: 'Minha conta',
     menuIcon: <IoPersonOutline />,
-    menuRender: <AccountAdminView />,
-    menuHidden: false
+    menuDisabled: false,
+    menuDanger: false
+  },
+  {
+    menuId: 'menu_exit',
+    menuLabel: 'Sair',
+    menuIcon: <IoExitOutline />,
+    menuDisabled: false,
+    menuDanger: true
   }
 ]
 
@@ -58,7 +80,16 @@ export interface IMenu {
   menuLabel: string
   menuIcon: any
   menuRender: React.ReactNode
+  menuDisabled: boolean
   menuHidden: boolean
+}
+
+export interface IMenuPrivate {
+  menuId: string
+  menuLabel: string
+  menuIcon: any
+  menuDisabled: boolean
+  menuDanger: boolean
 }
 
 export { menusData, privateMenusData }

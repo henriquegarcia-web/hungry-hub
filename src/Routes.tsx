@@ -19,8 +19,6 @@ const AppRoutes = () => {
       <Routes>
         {/* =============================================================== */}
 
-        <Route path="/" element={<></>} />
-
         <Route path="/" element={<LandingPage />} />
         <Route path="/*" element={<Navigate to="/" />} />
 

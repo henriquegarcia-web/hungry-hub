@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import React, { createContext, useContext, useMemo, useState } from 'react'
+import React, { createContext, useContext, useMemo } from 'react'
 
 interface AdminAuthContextData {
   isAdminLogged: boolean
+  handleLogout: () => void
 }
 
 // ===================================================================
@@ -21,11 +22,16 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     return true
   }, [])
 
+  const handleLogout = () => {
+    console.log('LOGOUT')
+  }
+
   // =================================================================
 
   const AdminAuthContextValues = useMemo(() => {
     return {
-      isAdminLogged
+      isAdminLogged,
+      handleLogout
     }
   }, [isAdminLogged])
 
