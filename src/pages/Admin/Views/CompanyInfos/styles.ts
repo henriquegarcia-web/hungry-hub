@@ -1,5 +1,218 @@
 import styled from 'styled-components'
+import { View } from '@/utils/styles/globals'
+import { Form } from 'antd'
 
-export const CompanyInfos = styled.main`
+export const CompanyInfos = styled(View)`
   display: flex;
+  justify-content: center;
+  padding: 20px;
 `
+
+export const CompanyInfosWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  width: 100%;
+  max-width: 680px;
+  height: fit-content;
+
+  /* border: 1px solid red; */
+`
+
+// ========================================== INFO CONTAINER
+
+export const InfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+
+  border-radius: 10px;
+
+  border: 1px solid lightgray;
+`
+
+export const InfoContainerHeader = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  padding: 15px;
+
+  border-bottom: 1px solid lightgrey;
+`
+
+export const InfoContainerHeaderIcon = styled.div`
+  display: flex;
+
+  svg {
+    font-size: 18px;
+  }
+`
+
+export const InfoContainerHeaderLabel = styled.h2`
+  display: flex;
+  flex: 1;
+
+  font-size: 17px;
+  line-height: 17px;
+  font-weight: 500;
+`
+
+export const InfoContainerContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+`
+
+export const FormFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 10px;
+`
+
+// ========================================== MAIN INFOS CONTAINER
+
+export const MainInfosForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+  width: 100%;
+
+  .ant-form-item {
+    margin-bottom: 0px;
+  }
+`
+
+export const MainInfosImagesContainer = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 10px;
+
+  .ant-upload {
+    overflow: hidden;
+  }
+
+  .ant-upload-wrapper {
+    width: fit-content;
+  }
+
+  .company_banner {
+    display: flex;
+    flex: 1;
+
+    & .ant-upload {
+      width: 100% !important;
+    }
+  }
+
+  /* border: 1px solid red; */
+`
+
+export const MainInfosFormFooter = styled(FormFooter)``
+
+// ========================================== LOCATION CONTAINER
+
+export const LocationForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+  width: 100%;
+
+  .ant-form-item {
+    margin-bottom: 0px;
+  }
+`
+
+export const LocationFormFooter = styled(FormFooter)``
+
+// ========================================== CONTACT CONTAINER
+
+export const ContactForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+  width: 100%;
+
+  .ant-form-item {
+    margin-bottom: 0px;
+  }
+
+  .icon_large {
+    font-size: 20px;
+    margin-right: 5px;
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  .label {
+    margin-left: 5px;
+    color: rgba(0, 0, 0, 0.4);
+  }
+`
+
+export const ContactFormFooter = styled(FormFooter)``
+
+// ========================================== SCHEDULES CONTAINER
+
+export const ScheduleForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  row-gap: 15px;
+  width: 100%;
+
+  .ant-form-item {
+    margin-bottom: 0px;
+  }
+
+  .ant-select-selector {
+    border-radius: 6px !important;
+  }
+`
+
+export const SchedulesSelected = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+  width: 100%;
+`
+
+export const SchedulesSelectedHeader = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 4px;
+`
+
+export const SchedulesSelectedEmpty = styled.p`
+  color: rgba(0, 0, 0, 0.6);
+`
+
+export const ScheduleSelectedItem = styled.div`
+  display: flex;
+  width: 100%;
+  border-radius: 6px;
+  padding: 6px 10px;
+
+  background-color: rgba(0, 0, 0, 0.04);
+`
+
+export const ScheduleSelectedItemLabel = styled.div`
+  display: flex;
+  flex: 1;
+
+  p {
+    font-size: 12px;
+
+    b {
+      font-weight: 500;
+    }
+  }
+`
+
+export const ScheduleSelectedItemExclude = styled.p`
+  display: flex;
+  cursor: pointer;
+
+  color: #ff7a00;
+`
+
+export const ScheduleFormFooter = styled(FormFooter)``

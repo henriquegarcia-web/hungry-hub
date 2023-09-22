@@ -12,7 +12,22 @@ export const AdminContent = styled.section`
   display: flex;
   width: 100%;
   height: calc(100% - ${adminHeaderHeight});
-  padding: 20px;
+
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    z-index: 1000;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ff7a00;
+    border-radius: 10px;
+  }
 `
 
 // ========================================== ADMIN MENU

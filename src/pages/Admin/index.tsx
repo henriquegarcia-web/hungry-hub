@@ -154,7 +154,11 @@ const AdminHeader = ({
             /
             <IoMoonOutline />
           </S.SwitchThemeLabel>
-          <Switch size="small" onChange={handleChangeTheme} />
+          <Switch
+            size="small"
+            checked={adminTheme === 'dark'}
+            onChange={handleChangeTheme}
+          />
         </S.SwitchTheme>
       </S.AdminHeaderMenu>
       <S.AdminHeaderUserMenu

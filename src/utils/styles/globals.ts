@@ -53,6 +53,24 @@ const GlobalStyle = createGlobalStyle`
     background: ${Colors.elementPrimary};
     border-radius: 10px;
   }
+
+  .ant-picker-time-panel-column {
+
+    &::-webkit-scrollbar {
+      width: 3px;
+      z-index: 1000;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #ff7a00;
+      border-radius: 10px;
+    }
+  }
 `
 
 export default GlobalStyle
@@ -61,4 +79,10 @@ export const Window = styled.main`
   display: flex;
   width: 100%;
   height: 100vh;
+`
+
+export const View = styled.section`
+  display: flex;
+  width: 100%;
+  height: fit-content;
 `
