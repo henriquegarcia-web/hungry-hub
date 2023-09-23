@@ -57,7 +57,7 @@ const GlobalStyle = createGlobalStyle`
     border-radius: 10px;
   }
 
-  .ant-picker-time-panel-column {
+  .ant-picker-time-panel-column, .ant-input {
 
     &::-webkit-scrollbar {
       width: 3px;

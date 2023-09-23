@@ -23,13 +23,13 @@ export const MenuWrapper = styled.div`
 export const CreateCategoryContainer = styled.div`
   display: flex;
   width: ${adminMenuWidth};
+  /* position: sticky;
+  top: 40px; */
 `
 
 export const CategoriesListContainer = styled.div`
   display: flex;
   width: calc(100% - ${adminMenuWidth});
-
-  /* border: 1px solid orange; */
 `
 
 // ========================================== CREATE CATEGORY
@@ -139,6 +139,7 @@ export const CategoryCounter = styled.div`
 export const CategoryWrapperContent = styled.div`
   display: flex;
   flex-direction: column;
+  row-gap: 8px;
 
   padding: 12px;
 `
@@ -194,4 +195,86 @@ export const CreateProductModalFormFooter = styled.div`
 
 export const CategoryProduct = styled.div`
   display: flex;
+  column-gap: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  transition: 0.3s;
+
+  background-color: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+`
+
+export const ProductImage = styled.div`
+  display: flex;
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+
+  background-color: white;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`
+
+export const ProductDetails = styled.div`
+  display: flex;
+  column-gap: 15px;
+  flex: 1;
+`
+
+export const ProductDetailsMainInfos = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  row-gap: 5px;
+`
+
+export const ProductDetailsTitle = styled.div`
+  font-size: 15px;
+  line-height: 15px;
+  font-weight: 500;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  line-height: 15px;
+  max-height: 15px;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+
+  color: rgba(0, 0, 0, 0.8);
+`
+
+export const ProductDetailsDescription = styled.div`
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 400;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  line-height: 16px;
+  max-height: 32px;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  color: rgba(0, 0, 0, 0.8);
+`
+
+export const ProductDetailsPrice = styled.div`
+  display: flex;
+`
+
+export const ProductOptions = styled.div`
+  display: flex;
+  column-gap: 5px;
 `

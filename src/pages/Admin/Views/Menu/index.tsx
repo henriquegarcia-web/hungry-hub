@@ -31,6 +31,7 @@ import {
 } from '@/utils/functions/imageUpload'
 
 import { Controller, useForm } from 'react-hook-form'
+import { formatToCurrency } from '@/utils/functions/formatCurrency'
 
 interface IProduct {
   productId: string
@@ -48,6 +49,9 @@ interface ICategory {
 
 const Menu = () => {
   const [categories, setCategories] = useState<ICategory[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
+    null
+  )
 
   return (
     <S.Menu>
@@ -59,9 +63,27 @@ const Menu = () => {
           />
         </S.CreateCategoryContainer>
         <S.CategoriesListContainer>
-          <CategoriesList categories={categories} />
+          <CategoriesList
+            categories={categories}
+            setSelectedCategory={setSelectedCategory}
+          />
         </S.CategoriesListContainer>
       </S.MenuWrapper>
+
+      <Modal
+        title="Criar produto"
+        open={selectedCategory !== null}
+        onOk={() => setSelectedCategory(null)}
+        onCancel={() => setSelectedCategory(null)}
+        footer={null}
+      >
+        <CreateProductModal
+          categories={categories}
+          setCategories={setCategories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+      </Modal>
     </S.Menu>
   )
 }
@@ -245,65 +267,53 @@ const CreateCategory = ({ categories, setCategories }: ICreateCategory) => {
 
 interface ICategoriesList {
   categories: ICategory[]
+  setSelectedCategory: any
 }
 
-const CategoriesList = ({ categories }: ICategoriesList) => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const showModal = () => {
-    setIsModalOpen(true)
-  }
-
-  const handleOk = () => {
-    setIsModalOpen(false)
-  }
-
-  const handleCancel = () => {
-    setIsModalOpen(false)
+const CategoriesList = ({
+  categories,
+  setSelectedCategory
+}: ICategoriesList) => {
+  const handleAddProductClick = (category: ICategory) => {
+    setSelectedCategory(category)
   }
 
   return (
-    <>
-      <S.CategoriesList>
-        {categories.map((category: ICategory) => (
-          <S.CategoryWrapper key={category.id}>
-            <S.CategoryWrapperHeader>
-              <S.CategoryTitle>{category.name}</S.CategoryTitle>
-              <S.CategoryCounter>
-                {category.products.length} produtos
-              </S.CategoryCounter>
-            </S.CategoryWrapperHeader>
-            <S.CategoryWrapperContent>
-              {category.products?.map((product: IProduct) => (
-                <CategoriesProduct key={product.productId} product={product} />
-              ))}
-            </S.CategoryWrapperContent>
-            <S.CategoryWrapperFooter>
-              <Button type="primary" onClick={showModal}>
-                Adicionar produto
-              </Button>
-            </S.CategoryWrapperFooter>
-          </S.CategoryWrapper>
-        ))}
-      </S.CategoriesList>
-
-      <Modal
-        title="Criar produto"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <CreateProductModal handleCancel={handleCancel} />
-      </Modal>
-    </>
+    <S.CategoriesList>
+      {categories.map((category: ICategory) => (
+        <S.CategoryWrapper key={category.id}>
+          <S.CategoryWrapperHeader>
+            <S.CategoryTitle>{category.name}</S.CategoryTitle>
+            <S.CategoryCounter>
+              {category.products.length} produtos
+            </S.CategoryCounter>
+          </S.CategoryWrapperHeader>
+          <S.CategoryWrapperContent>
+            {category.products?.map((product: IProduct) => (
+              <CategoriesProduct key={product.productId} product={product} />
+            ))}
+          </S.CategoryWrapperContent>
+          <S.CategoryWrapperFooter>
+            <Button
+              type="primary"
+              onClick={() => handleAddProductClick(category)}
+            >
+              Adicionar produto
+            </Button>
+          </S.CategoryWrapperFooter>
+        </S.CategoryWrapper>
+      ))}
+    </S.CategoriesList>
   )
 }
 
 // ========================================== CREATE PRODUCT MODAL
 
 interface ICreateProductModal {
-  handleCancel: () => void
+  categories: ICategory[]
+  setCategories: any
+  selectedCategory: ICategory | null
+  setSelectedCategory: any
 }
 
 interface ICreateProductForm {
@@ -313,17 +323,50 @@ interface ICreateProductForm {
   productDescription: string
 }
 
-const CreateProductModal = ({ handleCancel }: ICreateProductModal) => {
+const CreateProductModal = ({
+  categories,
+  setCategories,
+  selectedCategory,
+  setSelectedCategory
+}: ICreateProductModal) => {
   const { control, handleSubmit, setValue, reset, formState } =
     useForm<ICreateProductForm>()
 
   const { isValid } = formState
 
-  const handleCreateProduct = (data: ICreateProductForm) => {
-    console.log(data)
-  }
+  const [companyImage, setCompanyImage] = useState<string>('')
 
-  const [companyImage, setCompanyImage] = useState<string>()
+  const handleCreateProduct = (data: ICreateProductForm) => {
+    if (selectedCategory) {
+      const productId = data.productName
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+
+      const newProduct: IProduct = {
+        productId: productId,
+        productImage: data.productImage,
+        productName: data.productName,
+        productPrice: data.productPrice,
+        productDescription: data.productDescription
+      }
+
+      const updatedCategory = {
+        ...selectedCategory,
+        products: [...selectedCategory.products, newProduct]
+      }
+
+      const updatedCategories = categories.map((category) =>
+        category.id === selectedCategory.id ? updatedCategory : category
+      )
+
+      setCategories(updatedCategories)
+      setSelectedCategory(null)
+      reset()
+      setCompanyImage('')
+    }
+  }
 
   const handleChangeCompanyImage: UploadProps['onChange'] = (
     info: UploadChangeParam<UploadFile>
@@ -332,6 +375,14 @@ const CreateProductModal = ({ handleCancel }: ICreateProductModal) => {
       setCompanyImage(url)
     })
   }
+
+  const handleCancel = () => {
+    setSelectedCategory(null)
+    reset()
+    setCompanyImage('')
+  }
+
+  const formIsValid = isValid
 
   return (
     <S.CreateProductModal
@@ -368,7 +419,7 @@ const CreateProductModal = ({ handleCancel }: ICreateProductModal) => {
         <S.CreateProductModalMainForm>
           <Form.Item>
             <Space.Compact style={{ width: '100%', columnGap: '10px' }}>
-              <Form.Item label="Nome do produto" style={{ width: '70%' }}>
+              <Form.Item label="Nome do produto" style={{ width: '65%' }}>
                 <Controller
                   name="productName"
                   control={control}
@@ -382,7 +433,7 @@ const CreateProductModal = ({ handleCancel }: ICreateProductModal) => {
                   )}
                 />
               </Form.Item>
-              <Form.Item label="Valor" style={{ width: '30%' }}>
+              <Form.Item label="Valor" style={{ width: '35%' }}>
                 <Controller
                   name="productPrice"
                   control={control}
@@ -392,6 +443,11 @@ const CreateProductModal = ({ handleCancel }: ICreateProductModal) => {
                       {...field}
                       placeholder="0,00"
                       addonBefore="R$"
+                      onChange={(e) => {
+                        const { value } = e.target
+                        const formattedValue = formatToCurrency(value)
+                        field.onChange(formattedValue)
+                      }}
                       style={{ borderRadius: '6px' }}
                     />
                   )}
@@ -424,7 +480,7 @@ const CreateProductModal = ({ handleCancel }: ICreateProductModal) => {
           key="submit"
           type="primary"
           htmlType="submit"
-          disabled={!isValid}
+          disabled={!formIsValid}
         >
           Criar
         </Button>
@@ -440,5 +496,50 @@ interface ICategoriesProduct {
 }
 
 const CategoriesProduct = ({ product }: ICategoriesProduct) => {
-  return <S.CategoryProduct>PRODUTO</S.CategoryProduct>
+  const handleProductEdit = (product: IProduct) => {
+    // setEditingCategory(category)
+    // setIsEditing(true)
+    // setValue('categoryName', category.name)
+  }
+
+  const handleProductDelete = (productId: string) => {
+    // const updatedCategories = categories.filter(
+    //   (category) => category.id !== categoryId
+    // )
+    // setCategories(updatedCategories)
+  }
+
+  return (
+    <S.CategoryProduct>
+      <S.ProductImage>
+        <img src={product.productImage} alt="" />
+      </S.ProductImage>
+      <S.ProductDetails>
+        <S.ProductDetailsMainInfos>
+          <S.ProductDetailsTitle>{product.productName}</S.ProductDetailsTitle>
+          <S.ProductDetailsDescription>
+            {product.productDescription}
+          </S.ProductDetailsDescription>
+        </S.ProductDetailsMainInfos>
+        <S.ProductDetailsPrice>{product.productPrice}</S.ProductDetailsPrice>
+      </S.ProductDetails>
+      <S.ProductOptions>
+        <Button
+          size="small"
+          icon={<EditOutlined />}
+          onClick={() => handleProductEdit(product)}
+        />
+        <Popconfirm
+          placement="right"
+          title={'Tem certeza de que deseja excluir esta categoria?'}
+          description={'Essa ação não pode ser desfeita.'}
+          onConfirm={() => handleProductDelete(product.productId)}
+          okText="Sim"
+          cancelText="Não"
+        >
+          <Button size="small" icon={<DeleteOutlined />} />
+        </Popconfirm>
+      </S.ProductOptions>
+    </S.CategoryProduct>
+  )
 }

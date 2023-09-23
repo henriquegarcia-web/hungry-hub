@@ -18,6 +18,19 @@ const formatStringToCurrency = (value: string) => {
   return formatCurrency(formattedNumber)
 }
 
+const formatToCurrency = (value: string) => {
+  const numericValue = parseFloat(value.replace(/[^0-9]/g, ''))
+  const formattedNumber = numericValue / 100
+
+  if (isNaN(formattedNumber)) {
+    const formattedCurrency = formatCurrency(0)
+    return formattedCurrency.replace('R$', '').trim()
+  }
+
+  const formattedCurrency = formatCurrency(formattedNumber)
+  return formattedCurrency.replace('R$', '').trim()
+}
+
 const formatByCurrency = (value: string) => {
   const numericValue = parseFloat(
     value.replace(/[^\d,.-]/g, '').replace(',', '.')
@@ -26,4 +39,9 @@ const formatByCurrency = (value: string) => {
   return numericValue
 }
 
-export { formatCurrency, formatStringToCurrency, formatByCurrency }
+export {
+  formatCurrency,
+  formatToCurrency,
+  formatStringToCurrency,
+  formatByCurrency
+}
