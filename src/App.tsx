@@ -3,6 +3,7 @@ import AppRoutes from './Routes'
 
 import { AdminAuthProvider } from './contexts/AdminAuthContext'
 import { AdminProvider, useAdmin } from './contexts/AdminContext'
+import { MenuProvider } from './contexts/MenuContext'
 
 import { ConfigProvider, theme } from 'antd'
 
@@ -10,7 +11,9 @@ function App() {
   return (
     <AdminAuthProvider>
       <AdminProvider>
-        <AppThemed />
+        <MenuProvider>
+          <AppThemed />
+        </MenuProvider>
       </AdminProvider>
     </AdminAuthProvider>
   )

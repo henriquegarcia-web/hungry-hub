@@ -4,7 +4,6 @@ import {
   adminViewMenuWrapper,
   adminMenuWidth
 } from '@/utils/styles/globals'
-import { Form } from 'antd'
 
 export const Menu = styled(View)`
   display: flex;
@@ -152,45 +151,6 @@ export const CategoryWrapperFooter = styled.div`
   border-top: 1px solid lightgrey;
 `
 
-// ========================================== CREATE PRODUCT MODAL
-
-export const CreateProductModal = styled(Form)`
-  display: flex;
-  flex-direction: column;
-  row-gap: 15px;
-  padding-top: 10px;
-
-  .ant-form-item {
-    margin-bottom: 0px;
-  }
-
-  .ant-input-group-addon {
-    border-radius: 6px 0 0 6px !important;
-  }
-`
-
-export const CreateProductModalFormContent = styled.div`
-  display: flex;
-  column-gap: 15px;
-`
-
-export const CreateProductModalImageForm = styled.div`
-  display: flex;
-`
-
-export const CreateProductModalMainForm = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  row-gap: 15px;
-`
-
-export const CreateProductModalFormFooter = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  column-gap: 5px;
-`
-
 // ========================================== CATEGORY PRODUCT
 
 export const CategoryProduct = styled.div`
@@ -211,17 +171,23 @@ export const CategoryProduct = styled.div`
 
 export const ProductImage = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: 60px;
   height: 60px;
   border-radius: 6px;
   overflow: hidden;
 
   background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+
+    border: none !important;
+    outline: none !important;
   }
 `
 
@@ -272,6 +238,12 @@ export const ProductDetailsDescription = styled.div`
 
 export const ProductDetailsPrice = styled.div`
   display: flex;
+
+  font-size: 15px;
+  line-height: 15px;
+  font-weight: 500;
+
+  color: rgba(0, 0, 0, 0.8);
 `
 
 export const ProductOptions = styled.div`

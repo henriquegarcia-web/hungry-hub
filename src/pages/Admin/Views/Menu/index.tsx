@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-
 import * as S from './styles'
 import {
   PlusOutlined,
@@ -8,7 +6,7 @@ import {
   CloseOutlined
 } from '@ant-design/icons'
 
-import ImgCrop from 'antd-img-crop'
+import CreateProductModal from './Modals/CreateProductModal'
 import {
   Input,
   Button,
@@ -17,71 +15,48 @@ import {
   Popconfirm,
   message,
   Empty,
-  Modal,
-  Upload,
-  Form
+  Modal
 } from 'antd'
 
-import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
-import type { UploadChangeParam } from 'antd/es/upload'
-import {
-  beforeUpload,
-  getBase64,
-  onPreview
-} from '@/utils/functions/imageUpload'
-
 import { Controller, useForm } from 'react-hook-form'
-import { formatToCurrency } from '@/utils/functions/formatCurrency'
 
-interface IProduct {
-  productId: string
-  productImage: string
-  productName: string
-  productPrice: string
-  productDescription: string
-}
+import { formatCurrency } from '@/utils/functions/formatCurrency'
 
-interface ICategory {
-  id: string
-  name: string
-  products: IProduct[]
-}
+import { useMenu } from '@/contexts/MenuContext'
+
+import { ICategory, IProduct } from './@types'
 
 const Menu = () => {
-  const [categories, setCategories] = useState<ICategory[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<ICategory | null>(
-    null
-  )
+  const {
+    categories,
+    setCategories,
+    createProductCategory,
+    setCreateProductCategory
+  } = useMenu()
 
   return (
     <S.Menu>
       <S.MenuWrapper>
         <S.CreateCategoryContainer>
-          <CreateCategory
-            categories={categories}
-            setCategories={setCategories}
-          />
+          <CreateCategory />
         </S.CreateCategoryContainer>
         <S.CategoriesListContainer>
-          <CategoriesList
-            categories={categories}
-            setSelectedCategory={setSelectedCategory}
-          />
+          <CategoriesList />
         </S.CategoriesListContainer>
       </S.MenuWrapper>
 
       <Modal
         title="Criar produto"
-        open={selectedCategory !== null}
-        onOk={() => setSelectedCategory(null)}
-        onCancel={() => setSelectedCategory(null)}
+        open={createProductCategory !== null}
+        onOk={() => setCreateProductCategory(null)}
+        onCancel={() => setCreateProductCategory(null)}
         footer={null}
       >
         <CreateProductModal
           categories={categories}
           setCategories={setCategories}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
+          createProductCategory={createProductCategory}
+          setCreateProductCategory={setCreateProductCategory}
         />
       </Modal>
     </S.Menu>
@@ -92,89 +67,34 @@ export default Menu
 
 // ========================================== CREATE CATEGORY
 
-interface ICreateCategory {
-  categories: ICategory[]
-  setCategories: React.Dispatch<React.SetStateAction<ICategory[]>>
-}
+interface ICreateCategory {}
 
 interface ICreateCategoryForm {
   categoryName: string
 }
 
-const CreateCategory = ({ categories, setCategories }: ICreateCategory) => {
-  const [editingCategory, setEditingCategory] = useState<ICategory | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
+const CreateCategory = ({}: ICreateCategory) => {
+  const {
+    categories,
+    editingCategory,
+    isEditingCategory,
+    handleEditCategory,
+    handleCreateCategory,
+    handleCategoryEdit,
+    handleCategoryDelete,
+    handleCancelEdit
+  } = useMenu()
 
   const { control, handleSubmit, setValue, reset } =
     useForm<ICreateCategoryForm>()
 
-  const handleCategoryCreate = (data: { categoryName: string }) => {
-    if (isEditing) {
-      if (editingCategory) {
-        const updatedCategory: ICategory = {
-          ...editingCategory,
-          name: data.categoryName
-        }
-
-        const updatedCategories = categories.map((category) =>
-          category.id === updatedCategory.id ? updatedCategory : category
-        )
-
-        setCategories(updatedCategories)
-        setIsEditing(false)
-        setEditingCategory(null)
-      }
+  const handleSubmitCategoryForm = (data: ICreateCategoryForm) => {
+    if (isEditingCategory) {
+      handleEditCategory(data)
     } else {
-      if (data.categoryName.trim() === '') {
-        return
-      }
-
-      const isCategoryExists = categories.some(
-        (category) => category.name === data.categoryName
-      )
-
-      if (isCategoryExists) {
-        message.open({
-          type: 'warning',
-          content: 'Já existe uma categoria com esse nome!'
-        })
-        return
-      }
-
-      const id = data.categoryName
-        .toLowerCase()
-        .replace(/[^a-zA-Z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
-
-      const newCategory: ICategory = {
-        id,
-        name: data.categoryName,
-        products: []
-      }
-
-      setCategories([...categories, newCategory])
+      handleCreateCategory(data)
     }
 
-    reset()
-  }
-
-  const handleCategoryEdit = (category: ICategory) => {
-    setEditingCategory(category)
-    setIsEditing(true)
-    setValue('categoryName', category.name)
-  }
-
-  const handleCategoryDelete = (categoryId: string) => {
-    const updatedCategories = categories.filter(
-      (category) => category.id !== categoryId
-    )
-    setCategories(updatedCategories)
-  }
-
-  const handleCancelEdit = () => {
-    setIsEditing(false)
-    setEditingCategory(null)
     reset()
   }
 
@@ -200,7 +120,7 @@ const CreateCategory = ({ categories, setCategories }: ICreateCategory) => {
                   <Button
                     size="small"
                     icon={<EditOutlined />}
-                    onClick={() => handleCategoryEdit(category)}
+                    onClick={() => handleCategoryEdit({ category, setValue })}
                   />
                   <Popconfirm
                     placement="right"
@@ -220,8 +140,8 @@ const CreateCategory = ({ categories, setCategories }: ICreateCategory) => {
           )}
         />
       </S.CreateCategoryWrapper>
-      <S.CreateCategoryFooter onSubmit={handleSubmit(handleCategoryCreate)}>
-        {isEditing ? (
+      <S.CreateCategoryFooter onSubmit={handleSubmit(handleSubmitCategoryForm)}>
+        {isEditingCategory ? (
           <>
             <Controller
               name="categoryName"
@@ -239,7 +159,10 @@ const CreateCategory = ({ categories, setCategories }: ICreateCategory) => {
               )}
             />
             <Button type="primary" htmlType="submit" icon={<EditOutlined />} />
-            <Button icon={<CloseOutlined />} onClick={handleCancelEdit} />
+            <Button
+              icon={<CloseOutlined />}
+              onClick={() => handleCancelEdit({ reset })}
+            />
           </>
         ) : (
           <>
@@ -265,18 +188,10 @@ const CreateCategory = ({ categories, setCategories }: ICreateCategory) => {
 
 // ========================================== CATEGORY LIST
 
-interface ICategoriesList {
-  categories: ICategory[]
-  setSelectedCategory: any
-}
+interface ICategoriesList {}
 
-const CategoriesList = ({
-  categories,
-  setSelectedCategory
-}: ICategoriesList) => {
-  const handleAddProductClick = (category: ICategory) => {
-    setSelectedCategory(category)
-  }
+const CategoriesList = ({}: ICategoriesList) => {
+  const { categories, handleOpenCreateProductModal } = useMenu()
 
   return (
     <S.CategoriesList>
@@ -296,7 +211,7 @@ const CategoriesList = ({
           <S.CategoryWrapperFooter>
             <Button
               type="primary"
-              onClick={() => handleAddProductClick(category)}
+              onClick={() => handleOpenCreateProductModal(category)}
             >
               Adicionar produto
             </Button>
@@ -307,188 +222,6 @@ const CategoriesList = ({
   )
 }
 
-// ========================================== CREATE PRODUCT MODAL
-
-interface ICreateProductModal {
-  categories: ICategory[]
-  setCategories: any
-  selectedCategory: ICategory | null
-  setSelectedCategory: any
-}
-
-interface ICreateProductForm {
-  productImage: string
-  productName: string
-  productPrice: string
-  productDescription: string
-}
-
-const CreateProductModal = ({
-  categories,
-  setCategories,
-  selectedCategory,
-  setSelectedCategory
-}: ICreateProductModal) => {
-  const { control, handleSubmit, setValue, reset, formState } =
-    useForm<ICreateProductForm>()
-
-  const { isValid } = formState
-
-  const [companyImage, setCompanyImage] = useState<string>('')
-
-  const handleCreateProduct = (data: ICreateProductForm) => {
-    if (selectedCategory) {
-      const productId = data.productName
-        .toLowerCase()
-        .replace(/[^a-zA-Z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
-
-      const newProduct: IProduct = {
-        productId: productId,
-        productImage: data.productImage,
-        productName: data.productName,
-        productPrice: data.productPrice,
-        productDescription: data.productDescription
-      }
-
-      const updatedCategory = {
-        ...selectedCategory,
-        products: [...selectedCategory.products, newProduct]
-      }
-
-      const updatedCategories = categories.map((category) =>
-        category.id === selectedCategory.id ? updatedCategory : category
-      )
-
-      setCategories(updatedCategories)
-      setSelectedCategory(null)
-      reset()
-      setCompanyImage('')
-    }
-  }
-
-  const handleChangeCompanyImage: UploadProps['onChange'] = (
-    info: UploadChangeParam<UploadFile>
-  ) => {
-    getBase64(info.file.originFileObj as RcFile, (url) => {
-      setCompanyImage(url)
-    })
-  }
-
-  const handleCancel = () => {
-    setSelectedCategory(null)
-    reset()
-    setCompanyImage('')
-  }
-
-  const formIsValid = isValid
-
-  return (
-    <S.CreateProductModal
-      layout="vertical"
-      onFinish={handleSubmit(handleCreateProduct)}
-    >
-      <S.CreateProductModalFormContent>
-        <S.CreateProductModalImageForm>
-          <ImgCrop rotationSlider>
-            <Upload
-              name="company-image"
-              listType="picture-card"
-              showUploadList={false}
-              beforeUpload={beforeUpload}
-              onChange={handleChangeCompanyImage}
-              onPreview={onPreview}
-              className="company_image"
-            >
-              {companyImage ? (
-                <img
-                  src={companyImage}
-                  alt="avatar"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              )}
-            </Upload>
-          </ImgCrop>
-        </S.CreateProductModalImageForm>
-        <S.CreateProductModalMainForm>
-          <Form.Item>
-            <Space.Compact style={{ width: '100%', columnGap: '10px' }}>
-              <Form.Item label="Nome do produto" style={{ width: '65%' }}>
-                <Controller
-                  name="productName"
-                  control={control}
-                  rules={{ required: 'Este campo é obrigatório' }}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      placeholder="Ex. X-Veggie"
-                      style={{ borderRadius: '6px' }}
-                    />
-                  )}
-                />
-              </Form.Item>
-              <Form.Item label="Valor" style={{ width: '35%' }}>
-                <Controller
-                  name="productPrice"
-                  control={control}
-                  rules={{ required: 'Este campo é obrigatório' }}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      placeholder="0,00"
-                      addonBefore="R$"
-                      onChange={(e) => {
-                        const { value } = e.target
-                        const formattedValue = formatToCurrency(value)
-                        field.onChange(formattedValue)
-                      }}
-                      style={{ borderRadius: '6px' }}
-                    />
-                  )}
-                />
-              </Form.Item>
-            </Space.Compact>
-          </Form.Item>
-          <Form.Item label="Descrição do produto">
-            <Controller
-              name="productDescription"
-              control={control}
-              rules={{ required: 'Este campo é obrigatório' }}
-              render={({ field }) => (
-                <Input.TextArea
-                  {...field}
-                  placeholder="Ex. X para quem não come carne"
-                  rows={6}
-                  style={{ resize: 'none' }}
-                />
-              )}
-            />
-          </Form.Item>
-        </S.CreateProductModalMainForm>
-      </S.CreateProductModalFormContent>
-      <S.CreateProductModalFormFooter>
-        <Button key="back" onClick={handleCancel}>
-          Cancelar
-        </Button>
-        <Button
-          key="submit"
-          type="primary"
-          htmlType="submit"
-          disabled={!formIsValid}
-        >
-          Criar
-        </Button>
-      </S.CreateProductModalFormFooter>
-    </S.CreateProductModal>
-  )
-}
-
 // ========================================== CATEGORY PRODUCT
 
 interface ICategoriesProduct {
@@ -496,23 +229,25 @@ interface ICategoriesProduct {
 }
 
 const CategoriesProduct = ({ product }: ICategoriesProduct) => {
-  const handleProductEdit = (product: IProduct) => {
-    // setEditingCategory(category)
-    // setIsEditing(true)
-    // setValue('categoryName', category.name)
-  }
+  const {
+    editingProduct,
+    setEditingProduct,
+    isEditingProduct,
+    setIsEditingProduct
+  } = useMenu()
 
-  const handleProductDelete = (productId: string) => {
-    // const updatedCategories = categories.filter(
-    //   (category) => category.id !== categoryId
-    // )
-    // setCategories(updatedCategories)
-  }
+  const handleProductEdit = (product: IProduct) => {}
+
+  const handleProductDelete = (productId: string) => {}
 
   return (
     <S.CategoryProduct>
       <S.ProductImage>
-        <img src={product.productImage} alt="" />
+        {product.productImage ? (
+          <img src={product.productImage} alt="" />
+        ) : (
+          Empty.PRESENTED_IMAGE_SIMPLE
+        )}
       </S.ProductImage>
       <S.ProductDetails>
         <S.ProductDetailsMainInfos>
@@ -521,7 +256,9 @@ const CategoriesProduct = ({ product }: ICategoriesProduct) => {
             {product.productDescription}
           </S.ProductDetailsDescription>
         </S.ProductDetailsMainInfos>
-        <S.ProductDetailsPrice>{product.productPrice}</S.ProductDetailsPrice>
+        <S.ProductDetailsPrice>
+          {formatCurrency(product.productPrice)}
+        </S.ProductDetailsPrice>
       </S.ProductDetails>
       <S.ProductOptions>
         <Button
