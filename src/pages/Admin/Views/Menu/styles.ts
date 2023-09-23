@@ -4,6 +4,7 @@ import {
   adminViewMenuWrapper,
   adminMenuWidth
 } from '@/utils/styles/globals'
+import { Form } from 'antd'
 
 export const Menu = styled(View)`
   display: flex;
@@ -28,7 +29,7 @@ export const CategoriesListContainer = styled.div`
   display: flex;
   width: calc(100% - ${adminMenuWidth});
 
-  border: 1px solid orange;
+  /* border: 1px solid orange; */
 `
 
 // ========================================== CREATE CATEGORY
@@ -89,6 +90,92 @@ export const CreateCategoryFooter = styled.form`
 export const CategoriesList = styled.div`
   display: flex;
   flex-direction: column;
+  row-gap: 15px;
   width: 100%;
   height: fit-content;
+`
+
+export const CategoryWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+
+  border-radius: 10px;
+
+  border: 1px solid lightgray;
+`
+
+export const CategoryWrapperHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+
+  border-bottom: 1px solid lightgrey;
+`
+
+export const CategoryTitle = styled.div`
+  display: flex;
+  flex: 1;
+
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 500;
+`
+
+export const CategoryCounter = styled.div`
+  display: flex;
+  padding: 6px 10px;
+  border-radius: 6px;
+
+  font-size: 12px;
+  line-height: 12px;
+  font-weight: 300;
+
+  background-color: rgba(0, 0, 0, 0.06);
+`
+
+export const CategoryWrapperContent = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  padding: 12px;
+`
+
+export const CategoryWrapperFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px;
+
+  border-top: 1px solid lightgrey;
+`
+
+// ========================================== CREATE PRODUCT MODAL
+
+export const CreateProductModal = styled(Form)`
+  display: flex;
+  column-gap: 15px;
+  padding: 10px 0;
+
+  .ant-form-item {
+    margin-bottom: 0px;
+  }
+`
+
+export const CreateProductModalImageForm = styled.div`
+  display: flex;
+`
+
+export const CreateProductModalMainForm = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  row-gap: 15px;
+`
+
+// ========================================== CATEGORY PRODUCT
+
+export const CategoryProduct = styled.div`
+  display: flex;
 `

@@ -15,8 +15,6 @@ export const CompanyInfosWrapper = styled.div`
   width: 100%;
   max-width: ${adminViewInfosWrapper};
   height: fit-content;
-
-  /* border: 1px solid red; */
 `
 
 // ========================================== INFO CONTAINER
