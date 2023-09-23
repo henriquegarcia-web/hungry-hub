@@ -292,16 +292,9 @@ const CategoriesList = ({ categories }: ICategoriesList) => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            Cancelar
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
-            Criar
-          </Button>
-        ]}
+        footer={null}
       >
-        <CreateProductModal />
+        <CreateProductModal handleCancel={handleCancel} />
       </Modal>
     </>
   )
@@ -309,9 +302,27 @@ const CategoriesList = ({ categories }: ICategoriesList) => {
 
 // ========================================== CREATE PRODUCT MODAL
 
-interface ICreateProductModal {}
+interface ICreateProductModal {
+  handleCancel: () => void
+}
 
-const CreateProductModal = ({}: ICreateProductModal) => {
+interface ICreateProductForm {
+  productImage: string
+  productName: string
+  productPrice: string
+  productDescription: string
+}
+
+const CreateProductModal = ({ handleCancel }: ICreateProductModal) => {
+  const { control, handleSubmit, setValue, reset, formState } =
+    useForm<ICreateProductForm>()
+
+  const { isValid } = formState
+
+  const handleCreateProduct = (data: ICreateProductForm) => {
+    console.log(data)
+  }
+
   const [companyImage, setCompanyImage] = useState<string>()
 
   const handleChangeCompanyImage: UploadProps['onChange'] = (
@@ -323,55 +334,101 @@ const CreateProductModal = ({}: ICreateProductModal) => {
   }
 
   return (
-    <S.CreateProductModal layout="vertical">
-      <S.CreateProductModalImageForm>
-        <ImgCrop rotationSlider>
-          <Upload
-            name="company-image"
-            listType="picture-card"
-            showUploadList={false}
-            beforeUpload={beforeUpload}
-            onChange={handleChangeCompanyImage}
-            onPreview={onPreview}
-            className="company_image"
-          >
-            {companyImage ? (
-              <img
-                src={companyImage}
-                alt="avatar"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            ) : (
-              <div>
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
-            )}
-          </Upload>
-        </ImgCrop>
-      </S.CreateProductModalImageForm>
-      <S.CreateProductModalMainForm>
-        <Form.Item>
-          <Space.Compact style={{ width: '100%', columnGap: '10px' }}>
-            <Form.Item label="Nome do produto" style={{ width: '70%' }}>
-              <Input
-                placeholder="Ex. X-Veggie"
-                style={{ borderRadius: '6px' }}
-              />
-            </Form.Item>
-            <Form.Item label="Valor" style={{ width: '30%' }}>
-              <Input placeholder="0,00" style={{ borderRadius: '6px' }} />
-            </Form.Item>
-          </Space.Compact>
-        </Form.Item>
-        <Form.Item label="Descrição do produto">
-          <Input.TextArea
-            placeholder="Ex. X para quem não come carne"
-            rows={6}
-            style={{ resize: 'none' }}
-          />
-        </Form.Item>
-      </S.CreateProductModalMainForm>
+    <S.CreateProductModal
+      layout="vertical"
+      onFinish={handleSubmit(handleCreateProduct)}
+    >
+      <S.CreateProductModalFormContent>
+        <S.CreateProductModalImageForm>
+          <ImgCrop rotationSlider>
+            <Upload
+              name="company-image"
+              listType="picture-card"
+              showUploadList={false}
+              beforeUpload={beforeUpload}
+              onChange={handleChangeCompanyImage}
+              onPreview={onPreview}
+              className="company_image"
+            >
+              {companyImage ? (
+                <img
+                  src={companyImage}
+                  alt="avatar"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              )}
+            </Upload>
+          </ImgCrop>
+        </S.CreateProductModalImageForm>
+        <S.CreateProductModalMainForm>
+          <Form.Item>
+            <Space.Compact style={{ width: '100%', columnGap: '10px' }}>
+              <Form.Item label="Nome do produto" style={{ width: '70%' }}>
+                <Controller
+                  name="productName"
+                  control={control}
+                  rules={{ required: 'Este campo é obrigatório' }}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      placeholder="Ex. X-Veggie"
+                      style={{ borderRadius: '6px' }}
+                    />
+                  )}
+                />
+              </Form.Item>
+              <Form.Item label="Valor" style={{ width: '30%' }}>
+                <Controller
+                  name="productPrice"
+                  control={control}
+                  rules={{ required: 'Este campo é obrigatório' }}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      placeholder="0,00"
+                      addonBefore="R$"
+                      style={{ borderRadius: '6px' }}
+                    />
+                  )}
+                />
+              </Form.Item>
+            </Space.Compact>
+          </Form.Item>
+          <Form.Item label="Descrição do produto">
+            <Controller
+              name="productDescription"
+              control={control}
+              rules={{ required: 'Este campo é obrigatório' }}
+              render={({ field }) => (
+                <Input.TextArea
+                  {...field}
+                  placeholder="Ex. X para quem não come carne"
+                  rows={6}
+                  style={{ resize: 'none' }}
+                />
+              )}
+            />
+          </Form.Item>
+        </S.CreateProductModalMainForm>
+      </S.CreateProductModalFormContent>
+      <S.CreateProductModalFormFooter>
+        <Button key="back" onClick={handleCancel}>
+          Cancelar
+        </Button>
+        <Button
+          key="submit"
+          type="primary"
+          htmlType="submit"
+          disabled={!isValid}
+        >
+          Criar
+        </Button>
+      </S.CreateProductModalFormFooter>
     </S.CreateProductModal>
   )
 }

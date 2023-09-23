@@ -155,12 +155,22 @@ export const CategoryWrapperFooter = styled.div`
 
 export const CreateProductModal = styled(Form)`
   display: flex;
-  column-gap: 15px;
-  padding: 10px 0;
+  flex-direction: column;
+  row-gap: 15px;
+  padding-top: 10px;
 
   .ant-form-item {
     margin-bottom: 0px;
   }
+
+  .ant-input-group-addon {
+    border-radius: 6px 0 0 6px !important;
+  }
+`
+
+export const CreateProductModalFormContent = styled.div`
+  display: flex;
+  column-gap: 15px;
 `
 
 export const CreateProductModalImageForm = styled.div`
@@ -172,6 +182,12 @@ export const CreateProductModalMainForm = styled.div`
   flex-direction: column;
   flex: 1;
   row-gap: 15px;
+`
+
+export const CreateProductModalFormFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 5px;
 `
 
 // ========================================== CATEGORY PRODUCT
