@@ -8,25 +8,29 @@ import {
   CloseOutlined
 } from '@ant-design/icons'
 
-import {
-  Input,
-  Button,
-  List,
-  Space,
-  Modal,
-  Popconfirm,
-  message,
-  Empty
-} from 'antd'
+import { Input, Button, List, Space, Popconfirm, message, Empty } from 'antd'
 
 import { Controller, useForm } from 'react-hook-form'
 
+interface IProduct {}
+
+interface ICategory {
+  id: string
+  name: string
+  products: IProduct[]
+}
+
 const Menu = () => {
+  const [categories, setCategories] = useState<ICategory[]>([])
+
   return (
     <S.Menu>
       <S.MenuWrapper>
         <S.CreateCategoryContainer>
-          <CreateCategory />
+          <CreateCategory
+            categories={categories}
+            setCategories={setCategories}
+          />
         </S.CreateCategoryContainer>
         <S.CategoriesListContainer>
           <CategoriesList />
@@ -40,23 +44,23 @@ export default Menu
 
 // ========================================== CREATE CATEGORY
 
-interface ICategory {
-  id: string
-  name: string
-  products: any[]
+interface ICreateCategory {
+  categories: ICategory[]
+  setCategories: React.Dispatch<React.SetStateAction<ICategory[]>>
 }
 
-interface ICreateCategory {}
+interface ICreateCategoryForm {
+  categoryName: string
+}
 
-const CreateCategory = ({}: ICreateCategory) => {
-  const [categories, setCategories] = useState<ICategory[]>([])
-
+const CreateCategory = ({ categories, setCategories }: ICreateCategory) => {
   const [editingCategory, setEditingCategory] = useState<ICategory | null>(null)
   const [isEditing, setIsEditing] = useState(false)
 
-  const { control, handleSubmit, watch, setValue, reset } = useForm()
+  const { control, handleSubmit, setValue, reset } =
+    useForm<ICreateCategoryForm>()
 
-  const handleCategoryCreate = (data: any) => {
+  const handleCategoryCreate = (data: { categoryName: string }) => {
     if (isEditing) {
       if (editingCategory) {
         const updatedCategory: ICategory = {
