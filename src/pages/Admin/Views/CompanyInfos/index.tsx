@@ -27,8 +27,7 @@ import {
   Tag,
   TimePicker,
   Tooltip,
-  Upload,
-  message
+  Upload
 } from 'antd'
 import dayjs from 'dayjs'
 import moment from 'moment'
@@ -351,7 +350,6 @@ const ScheduleContainer = ({}: IScheduleContainer) => {
   const onSubmit = (data: any) => {
     if (selectedDay === 'todos') {
       setSchedule([data])
-      // setValue('day', 'todos')
     } else if (!schedule.some((item) => item.day === 'todos')) {
       if (!schedule.some((item) => item.day === data.day)) {
         setSchedule([...schedule, data])

@@ -7,9 +7,12 @@ export const responsiveDesktop = '1000px'
 export const responsiveTablet = '760px'
 export const responsiveMobile = '480px'
 
-export const adminMenuWidth = '220px'
+export const adminMenuWidth = '260px'
 export const adminHeaderHeight = '45px'
 export const adminViewHeader = '50px'
+
+export const adminViewInfosWrapper = '600px'
+export const adminViewMenuWrapper = '800px'
 
 const GlobalStyle = createGlobalStyle`
   :root {

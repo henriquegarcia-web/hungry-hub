@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { View } from '@/utils/styles/globals'
+import { View, adminViewInfosWrapper } from '@/utils/styles/globals'
 import { Form } from 'antd'
 
 export const CompanyInfos = styled(View)`
@@ -13,7 +13,7 @@ export const CompanyInfosWrapper = styled.div`
   flex-direction: column;
   row-gap: 20px;
   width: 100%;
-  max-width: 680px;
+  max-width: ${adminViewInfosWrapper};
   height: fit-content;
 
   /* border: 1px solid red; */
