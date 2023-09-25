@@ -59,7 +59,7 @@ const EditProductModal = ({
     if (editProductCategory) {
       const updatedProduct = {
         ...editingProduct,
-        productImage: data.productImage,
+        productImage: productImage,
         productName: data.productName,
         productPrice: formatByCurrency(data.productPrice),
         productDescription: data.productDescription

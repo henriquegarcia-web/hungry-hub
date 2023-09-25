@@ -115,7 +115,7 @@ const CreateCategory = ({}: ICreateCategory) => {
   const emptyDataComponent = (
     <S.CategoriesListEmptyData>
       {Empty.PRESENTED_IMAGE_SIMPLE}
-      Sem dados
+      Nenhuma categoria criada
     </S.CategoriesListEmptyData>
   )
 
@@ -207,35 +207,45 @@ interface ICategoriesList {}
 const CategoriesList = ({}: ICategoriesList) => {
   const { categories, handleOpenCreateProductModal } = useMenu()
 
+  const emptyDataComponent = (
+    <S.ProductsListEmptyData>
+      {Empty.PRESENTED_IMAGE_SIMPLE}
+      Nenhum produto criado
+    </S.ProductsListEmptyData>
+  )
+
   return (
     <S.CategoriesList>
-      {categories.map((category: ICategory) => (
-        <S.CategoryWrapper key={category.id}>
-          <S.CategoryWrapperHeader>
-            <S.CategoryTitle>{category.name}</S.CategoryTitle>
-            <S.CategoryCounter>
-              {category.products.length} produtos
-            </S.CategoryCounter>
-          </S.CategoryWrapperHeader>
-          <S.CategoryWrapperContent>
-            {category.products?.map((product: IProduct) => (
-              <CategoriesProduct
-                key={product.productId}
-                product={product}
-                category={category}
-              />
-            ))}
-          </S.CategoryWrapperContent>
-          <S.CategoryWrapperFooter>
-            <Button
-              type="primary"
-              onClick={() => handleOpenCreateProductModal(category)}
-            >
-              Adicionar produto
-            </Button>
-          </S.CategoryWrapperFooter>
-        </S.CategoryWrapper>
-      ))}
+      {categories.length !== 0
+        ? categories.map((category: ICategory) => (
+            <S.CategoryWrapper key={category.id}>
+              <S.CategoryWrapperHeader>
+                <S.CategoryTitle>{category.name}</S.CategoryTitle>
+                <S.CategoryCounter>
+                  {category.products.length}{' '}
+                  {category.products.length === 1 ? 'produto' : 'produtos'}
+                </S.CategoryCounter>
+              </S.CategoryWrapperHeader>
+              <S.CategoryWrapperContent>
+                {category.products?.map((product: IProduct) => (
+                  <CategoriesProduct
+                    key={product.productId}
+                    product={product}
+                    category={category}
+                  />
+                ))}
+              </S.CategoryWrapperContent>
+              <S.CategoryWrapperFooter>
+                <Button
+                  type="primary"
+                  onClick={() => handleOpenCreateProductModal(category)}
+                >
+                  Adicionar produto
+                </Button>
+              </S.CategoryWrapperFooter>
+            </S.CategoryWrapper>
+          ))
+        : emptyDataComponent}
     </S.CategoriesList>
   )
 }
@@ -253,10 +263,9 @@ const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
     setEditingProduct,
     isEditingProduct,
     setIsEditingProduct,
-    handleOpenEditProductModal
+    handleOpenEditProductModal,
+    handleProductDelete
   } = useMenu()
-
-  const handleProductDelete = (productId: string) => {}
 
   return (
     <S.CategoryProduct>
@@ -286,7 +295,7 @@ const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
         />
         <Popconfirm
           placement="right"
-          title={'Tem certeza de que deseja excluir esta categoria?'}
+          title={'Tem certeza de que deseja excluir este produto?'}
           description={'Essa ação não pode ser desfeita.'}
           onConfirm={() => handleProductDelete(product.productId)}
           okText="Sim"

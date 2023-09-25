@@ -22,8 +22,6 @@ export const MenuWrapper = styled.div`
 export const CreateCategoryContainer = styled.div`
   display: flex;
   width: ${adminMenuWidth};
-  /* position: sticky;
-  top: 40px; */
 `
 
 export const CategoriesListContainer = styled.div`
@@ -34,6 +32,8 @@ export const CategoriesListContainer = styled.div`
 // ========================================== CREATE CATEGORY
 
 export const CreateCategory = styled.div`
+  position: sticky;
+  top: 20px;
   display: flex;
   flex-direction: column;
   row-gap: 6px;
@@ -73,6 +73,7 @@ export const CategoriesListEmptyData = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  row-gap: 5px;
 
   text-align: center;
 `
@@ -92,6 +93,22 @@ export const CategoriesList = styled.div`
   row-gap: 15px;
   width: 100%;
   height: fit-content;
+`
+
+export const ProductsListEmptyData = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 8px;
+  border-radius: 10px;
+  padding: 20px;
+
+  font-size: 14px;
+  line-height: 14px;
+  text-align: center;
+
+  color: rgba(0, 0, 0, 0.25);
+  border: 1px solid lightgray;
 `
 
 export const CategoryWrapper = styled.div`

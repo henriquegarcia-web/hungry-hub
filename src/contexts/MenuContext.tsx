@@ -46,6 +46,7 @@ interface MenuContextData {
   handleCategoryDelete: (categoryId: string) => void
   handleCancelEdit: ({ reset }: { reset: any }) => void
 
+  handleProductDelete: (productId: string) => void
   handleOpenCreateProductModal: (category: ICategory) => void
   handleOpenEditProductModal: (product: IProduct, category: ICategory) => void
   handleCloseEditProductModal: () => void
@@ -180,6 +181,23 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     setEditProductCategory(null)
   }
 
+  const handleProductDelete = useCallback(
+    (productId: string) => {
+      const updatedCategories = categories.map((category) => {
+        const updatedProducts = category.products.filter(
+          (product) => product.productId !== productId
+        )
+        return {
+          ...category,
+          products: updatedProducts
+        }
+      })
+
+      setCategories(updatedCategories)
+    },
+    [categories]
+  )
+
   // =================================================================
 
   const MenuContextValues = useMemo(() => {
@@ -207,6 +225,7 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
       handleCategoryDelete,
       handleCancelEdit,
 
+      handleProductDelete,
       handleOpenCreateProductModal,
       handleOpenEditProductModal,
       handleCloseEditProductModal
@@ -220,6 +239,7 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     handleCategoryDelete,
     handleCreateCategory,
     handleEditCategory,
+    handleProductDelete,
     isEditingCategory,
     isEditingProduct
   ])

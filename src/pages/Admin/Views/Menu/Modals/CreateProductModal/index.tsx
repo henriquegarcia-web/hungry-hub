@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import * as S from './styles'
 import { PlusOutlined } from '@ant-design/icons'
 
-import { Input, Button, Space, Upload, Form } from 'antd'
+import { Input, Button, Space, Upload, Form, message } from 'antd'
+
 import ImgCrop from 'antd-img-crop'
 import {
   beforeUpload,
@@ -66,6 +67,18 @@ const CreateProductModal = ({
         productName: data.productName,
         productPrice: formatByCurrency(data.productPrice),
         productDescription: data.productDescription
+      }
+
+      const existingProduct = createProductCategory.products.find(
+        (product) => product.productId === newProduct.productId
+      )
+
+      if (existingProduct) {
+        message.open({
+          type: 'warning',
+          content: 'Já existe um produto com esse nome!'
+        })
+        return
       }
 
       const updatedCategory = {
