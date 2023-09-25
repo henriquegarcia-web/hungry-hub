@@ -59,7 +59,6 @@ const GlobalStyle = createGlobalStyle`
   }
 
   .ant-picker-time-panel-column, .ant-input {
-
     &::-webkit-scrollbar {
       width: 3px;
       z-index: 1000;
