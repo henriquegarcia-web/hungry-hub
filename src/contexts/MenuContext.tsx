@@ -21,6 +21,8 @@ interface MenuContextData {
   setCreateProductCategory: React.Dispatch<
     React.SetStateAction<ICategory | null>
   >
+  editProductCategory: ICategory | null
+  setEditProductCategory: React.Dispatch<React.SetStateAction<ICategory | null>>
 
   editingCategory: ICategory | null
   setEditingCategory: React.Dispatch<React.SetStateAction<ICategory | null>>
@@ -45,6 +47,8 @@ interface MenuContextData {
   handleCancelEdit: ({ reset }: { reset: any }) => void
 
   handleOpenCreateProductModal: (category: ICategory) => void
+  handleOpenEditProductModal: (product: IProduct, category: ICategory) => void
+  handleCloseEditProductModal: () => void
 }
 
 interface ICreateCategoryForm {
@@ -58,6 +62,8 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [categories, setCategories] = useState<ICategory[]>([])
   const [createProductCategory, setCreateProductCategory] =
+    useState<ICategory | null>(null)
+  const [editProductCategory, setEditProductCategory] =
     useState<ICategory | null>(null)
 
   const [editingCategory, setEditingCategory] = useState<ICategory | null>(null)
@@ -159,6 +165,21 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     setCreateProductCategory(category)
   }
 
+  const handleOpenEditProductModal = (
+    product: IProduct,
+    category: ICategory
+  ) => {
+    setIsEditingProduct(true)
+    setEditingProduct(product)
+    setEditProductCategory(category)
+  }
+
+  const handleCloseEditProductModal = () => {
+    setIsEditingProduct(false)
+    setEditingProduct(null)
+    setEditProductCategory(null)
+  }
+
   // =================================================================
 
   const MenuContextValues = useMemo(() => {
@@ -167,6 +188,8 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
       setCategories,
       createProductCategory,
       setCreateProductCategory,
+      editProductCategory,
+      setEditProductCategory,
 
       editingCategory,
       setEditingCategory,
@@ -184,11 +207,14 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
       handleCategoryDelete,
       handleCancelEdit,
 
-      handleOpenCreateProductModal
+      handleOpenCreateProductModal,
+      handleOpenEditProductModal,
+      handleCloseEditProductModal
     }
   }, [
     categories,
     createProductCategory,
+    editProductCategory,
     editingCategory,
     editingProduct,
     handleCategoryDelete,

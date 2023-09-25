@@ -18,6 +18,13 @@ const formatStringToCurrency = (value: string) => {
   return formatCurrency(formattedNumber)
 }
 
+const formatCurrencyToEdit = (value: number) => {
+  const stringValue = value.toString()
+  const formattedValue = stringValue.replace(/[^\d,.-]/g, '').replace('.', ',')
+
+  return formattedValue
+}
+
 const formatToCurrency = (value: string) => {
   const numericValue = parseFloat(value.replace(/[^0-9]/g, ''))
   const formattedNumber = numericValue / 100
@@ -43,5 +50,6 @@ export {
   formatCurrency,
   formatToCurrency,
   formatStringToCurrency,
-  formatByCurrency
+  formatByCurrency,
+  formatCurrencyToEdit
 }

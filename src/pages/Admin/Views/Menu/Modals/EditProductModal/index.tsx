@@ -14,9 +14,11 @@ import {
 import { Controller, useForm } from 'react-hook-form'
 
 import {
-  formatByCurrency,
+  formatCurrencyToEdit,
   formatCurrency,
-  formatToCurrency
+  formatToCurrency,
+  formatByCurrency,
+  formatStringToCurrency
 } from '@/utils/functions/formatCurrency'
 
 import { ICategory, IProduct } from '../../@types'
@@ -25,9 +27,11 @@ import type { UploadChangeParam } from 'antd/es/upload'
 
 interface IEditProductModal {
   categories: ICategory[]
-  setCategories: any
-  selectedCategory: ICategory | null
-  setSelectedCategory: any
+  setCategories: React.Dispatch<React.SetStateAction<ICategory[]>>
+  editProductCategory: ICategory | null
+  setEditProductCategory: React.Dispatch<React.SetStateAction<ICategory | null>>
+  editingProduct: IProduct | null
+  handleCloseModal: () => void
 }
 
 interface IEditProductForm {
@@ -40,8 +44,9 @@ interface IEditProductForm {
 const EditProductModal = ({
   categories,
   setCategories,
-  selectedCategory,
-  setSelectedCategory
+  editProductCategory,
+  editingProduct,
+  handleCloseModal
 }: IEditProductModal) => {
   const { control, handleSubmit, setValue, reset, formState } =
     useForm<IEditProductForm>()
@@ -51,35 +56,32 @@ const EditProductModal = ({
   const [productImage, setProductImage] = useState<string>('')
 
   const handleEditProduct = (data: IEditProductForm) => {
-    if (selectedCategory) {
-      const productId = data.productName
-        .toLowerCase()
-        .replace(/[^a-zA-Z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
-
-      const newProduct: IProduct = {
-        productId: productId,
-        productImage: productImage,
+    if (editProductCategory) {
+      const updatedProduct = {
+        ...editingProduct,
+        productImage: data.productImage,
         productName: data.productName,
         productPrice: formatByCurrency(data.productPrice),
         productDescription: data.productDescription
       }
 
       const updatedCategory = {
-        ...selectedCategory,
-        products: [...selectedCategory.products, newProduct]
+        ...editProductCategory,
+        products: editProductCategory.products.map((product: any) =>
+          product.productId === updatedProduct.productId
+            ? updatedProduct
+            : product
+        )
       }
 
-      const updatedCategories = categories.map((category) =>
-        category.id === selectedCategory.id ? updatedCategory : category
+      const updatedCategories = categories.map((category: ICategory) =>
+        category.id === editProductCategory.id ? updatedCategory : category
       )
 
       setCategories(updatedCategories)
-      setSelectedCategory(null)
-      reset()
-      setProductImage('')
     }
+
+    handleCloseModal()
   }
 
   const handleChangeCompanyImage: UploadProps['onChange'] = (
@@ -91,10 +93,23 @@ const EditProductModal = ({
   }
 
   const handleCancel = () => {
-    setSelectedCategory(null)
+    handleCloseModal()
     reset()
     setProductImage('')
   }
+
+  useEffect(() => {
+    if (editingProduct) {
+      setValue('productImage', editingProduct.productImage)
+      setValue('productName', editingProduct.productName)
+      setValue(
+        'productPrice',
+        formatCurrencyToEdit(editingProduct.productPrice)
+      )
+      setValue('productDescription', editingProduct.productDescription)
+      setProductImage(editingProduct.productImage)
+    }
+  }, [editingProduct, setValue])
 
   const formIsValid = isValid
 
@@ -196,7 +211,7 @@ const EditProductModal = ({
           htmlType="submit"
           disabled={!formIsValid}
         >
-          Criar
+          Editar
         </Button>
       </S.EditProductModalFormFooter>
     </S.EditProductModal>

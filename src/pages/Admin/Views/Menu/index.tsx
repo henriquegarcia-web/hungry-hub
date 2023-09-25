@@ -7,16 +7,8 @@ import {
 } from '@ant-design/icons'
 
 import CreateProductModal from './Modals/CreateProductModal'
-import {
-  Input,
-  Button,
-  List,
-  Space,
-  Popconfirm,
-  message,
-  Empty,
-  Modal
-} from 'antd'
+import EditProductModal from './Modals/EditProductModal'
+import { Input, Button, List, Space, Popconfirm, Empty, Modal } from 'antd'
 
 import { Controller, useForm } from 'react-hook-form'
 
@@ -31,7 +23,12 @@ const Menu = () => {
     categories,
     setCategories,
     createProductCategory,
-    setCreateProductCategory
+    setCreateProductCategory,
+    editProductCategory,
+    setEditProductCategory,
+    isEditingProduct,
+    editingProduct,
+    handleCloseEditProductModal
   } = useMenu()
 
   return (
@@ -57,6 +54,23 @@ const Menu = () => {
           setCategories={setCategories}
           createProductCategory={createProductCategory}
           setCreateProductCategory={setCreateProductCategory}
+        />
+      </Modal>
+
+      <Modal
+        title="Editar produto"
+        open={isEditingProduct && !!editingProduct}
+        onOk={handleCloseEditProductModal}
+        onCancel={handleCloseEditProductModal}
+        footer={null}
+      >
+        <EditProductModal
+          categories={categories}
+          setCategories={setCategories}
+          editProductCategory={editProductCategory}
+          setEditProductCategory={setEditProductCategory}
+          editingProduct={editingProduct}
+          handleCloseModal={handleCloseEditProductModal}
         />
       </Modal>
     </S.Menu>
@@ -205,7 +219,11 @@ const CategoriesList = ({}: ICategoriesList) => {
           </S.CategoryWrapperHeader>
           <S.CategoryWrapperContent>
             {category.products?.map((product: IProduct) => (
-              <CategoriesProduct key={product.productId} product={product} />
+              <CategoriesProduct
+                key={product.productId}
+                product={product}
+                category={category}
+              />
             ))}
           </S.CategoryWrapperContent>
           <S.CategoryWrapperFooter>
@@ -226,17 +244,17 @@ const CategoriesList = ({}: ICategoriesList) => {
 
 interface ICategoriesProduct {
   product: IProduct
+  category: ICategory
 }
 
-const CategoriesProduct = ({ product }: ICategoriesProduct) => {
+const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
   const {
     editingProduct,
     setEditingProduct,
     isEditingProduct,
-    setIsEditingProduct
+    setIsEditingProduct,
+    handleOpenEditProductModal
   } = useMenu()
-
-  const handleProductEdit = (product: IProduct) => {}
 
   const handleProductDelete = (productId: string) => {}
 
@@ -264,7 +282,7 @@ const CategoriesProduct = ({ product }: ICategoriesProduct) => {
         <Button
           size="small"
           icon={<EditOutlined />}
-          onClick={() => handleProductEdit(product)}
+          onClick={() => handleOpenEditProductModal(product, category)}
         />
         <Popconfirm
           placement="right"

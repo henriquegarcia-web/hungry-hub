@@ -25,9 +25,11 @@ import type { UploadChangeParam } from 'antd/es/upload'
 
 interface ICreateProductModal {
   categories: ICategory[]
-  setCategories: any
+  setCategories: React.Dispatch<React.SetStateAction<ICategory[]>>
   createProductCategory: ICategory | null
-  setCreateProductCategory: any
+  setCreateProductCategory: React.Dispatch<
+    React.SetStateAction<ICategory | null>
+  >
 }
 
 interface ICreateProductForm {
