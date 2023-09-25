@@ -38,8 +38,13 @@ const GlobalStyle = createGlobalStyle`
 
   scroll-behavior: smooth;
 
+  html {
+    overflow: hidden;
+  }
+
   body {
     /* background-color: blue; */
+    overflow: hidden;
   }
 
   // ------------------------- SCROLL BAR
@@ -82,6 +87,8 @@ export const Window = styled.main`
   display: flex;
   width: 100%;
   height: 100vh;
+
+  overflow: hidden;
 `
 
 export const View = styled.section`

@@ -1,10 +1,15 @@
 import { useState, useMemo, useEffect } from 'react'
 
 import * as S from './styles'
-import { IoSunnyOutline, IoMoonOutline } from 'react-icons/io5'
+import {
+  IoSunnyOutline,
+  IoMoonOutline,
+  IoMenuOutline,
+  IoCloseOutline
+} from 'react-icons/io5'
 
 import { Logo } from '@/components'
-import { Avatar, Dropdown, Menu, Switch, theme } from 'antd'
+import { Avatar, Button, Dropdown, Menu, Switch, theme } from 'antd'
 
 import type { MenuProps } from 'antd'
 
@@ -95,6 +100,10 @@ const AdminHeader = ({
 }: IAdminHeader) => {
   const { token } = useToken()
 
+  const [menuMobileIsOpen, setMenuMobileIsOpen] = useState<boolean>(false)
+
+  const toggleMenuMobile = () => setMenuMobileIsOpen(!menuMobileIsOpen)
+
   // ------------------------------------------------------------------
 
   useEffect(() => {
@@ -135,58 +144,94 @@ const AdminHeader = ({
 
   return (
     <S.AdminHeader style={{ backgroundColor: token.colorBgContainer }}>
-      <S.AdminHeaderLogo style={{ backgroundColor: token.colorBgContainer }}>
-        <Logo type={adminTheme === 'default' ? 'default' : 'dark'} />
-      </S.AdminHeaderLogo>
-      <S.AdminHeaderNavigation>
+      <S.AdminHeaderWrapper>
+        <S.AdminHeaderLogo style={{ backgroundColor: token.colorBgContainer }}>
+          <Logo type={adminTheme === 'default' ? 'default' : 'dark'} />
+        </S.AdminHeaderLogo>
+        <S.AdminHeaderNavigation>
+          <Menu
+            onClick={(e) => handleSelectMenu(e.key)}
+            selectedKeys={[activeMenu]}
+            mode="horizontal"
+            items={formattedMenus}
+            style={{ border: 'none', width: '100%', fontSize: 13 }}
+          />
+        </S.AdminHeaderNavigation>
+        <S.AdminHeaderMenu style={{ backgroundColor: token.colorBgContainer }}>
+          <S.SwitchTheme>
+            <S.SwitchThemeLabel style={{ color: token.colorText }}>
+              <IoSunnyOutline />
+              /
+              <IoMoonOutline />
+            </S.SwitchThemeLabel>
+            <Switch
+              size="small"
+              checked={adminTheme === 'dark'}
+              onChange={handleChangeTheme}
+            />
+          </S.SwitchTheme>
+        </S.AdminHeaderMenu>
+        <S.AdminHeaderUserMenu
+          style={{ backgroundColor: token.colorBgContainer }}
+        >
+          <Dropdown
+            menu={{
+              items: formattedPrivateMenus,
+              onClick: handleSelectPrivateMenu
+            }}
+          >
+            <S.UserMenu>
+              <S.UserMenuName style={{ color: token.colorText }}>
+                {mockedUsername}
+              </S.UserMenuName>
+              <Avatar
+                size={30}
+                style={{
+                  fontSize: 12,
+                  backgroundColor: '#fde3cf',
+                  color: '#f56a00'
+                }}
+              >
+                {formatUsername(mockedUsername)}
+              </Avatar>
+            </S.UserMenu>
+          </Dropdown>
+        </S.AdminHeaderUserMenu>
+
+        {/* ============================== HEADER MOBILE ============================== */}
+
+        <S.AdminHeaderMobileToggle onClick={toggleMenuMobile}>
+          {menuMobileIsOpen ? <IoCloseOutline /> : <IoMenuOutline />}
+        </S.AdminHeaderMobileToggle>
+      </S.AdminHeaderWrapper>
+      <S.AdminHeaderMobile open={menuMobileIsOpen ? 1 : 0}>
+        <S.UserMenuMobile>
+          <S.UserMenuName style={{ color: token.colorText }}>
+            {mockedUsername}
+          </S.UserMenuName>
+          <Avatar
+            size={30}
+            style={{
+              fontSize: 12,
+              backgroundColor: '#fde3cf',
+              color: '#f56a00'
+            }}
+          >
+            {formatUsername(mockedUsername)}
+          </Avatar>
+        </S.UserMenuMobile>
         <Menu
           onClick={(e) => handleSelectMenu(e.key)}
           selectedKeys={[activeMenu]}
-          mode="horizontal"
+          mode="vertical"
           items={formattedMenus}
           style={{ border: 'none', width: '100%', fontSize: 13 }}
         />
-      </S.AdminHeaderNavigation>
-      <S.AdminHeaderMenu style={{ backgroundColor: token.colorBgContainer }}>
-        <S.SwitchTheme>
-          <S.SwitchThemeLabel style={{ color: token.colorText }}>
-            <IoSunnyOutline />
-            /
-            <IoMoonOutline />
-          </S.SwitchThemeLabel>
-          <Switch
-            size="small"
-            checked={adminTheme === 'dark'}
-            onChange={handleChangeTheme}
-          />
-        </S.SwitchTheme>
-      </S.AdminHeaderMenu>
-      <S.AdminHeaderUserMenu
-        style={{ backgroundColor: token.colorBgContainer }}
-      >
-        <Dropdown
-          menu={{
-            items: formattedPrivateMenus,
-            onClick: handleSelectPrivateMenu
-          }}
-        >
-          <S.UserMenu>
-            <S.UserMenuName style={{ color: token.colorText }}>
-              {mockedUsername}
-            </S.UserMenuName>
-            <Avatar
-              size={30}
-              style={{
-                fontSize: 12,
-                backgroundColor: '#fde3cf',
-                color: '#f56a00'
-              }}
-            >
-              {formatUsername(mockedUsername)}
-            </Avatar>
-          </S.UserMenu>
-        </Dropdown>
-      </S.AdminHeaderUserMenu>
+        <S.AdminHeaderPrivateMenu>
+          <Button>Minha conta</Button>
+          <Button danger>Sair</Button>
+        </S.AdminHeaderPrivateMenu>
+      </S.AdminHeaderMobile>
     </S.AdminHeader>
   )
 }
