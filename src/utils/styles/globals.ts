@@ -11,6 +11,7 @@ export const adminMenuWidth = '260px'
 export const adminHeaderHeight = '45px'
 export const adminViewHeader = '50px'
 
+export const adminViewDisclosureWrapper = '600px'
 export const adminViewInfosWrapper = '600px'
 export const adminViewMenuWrapper = '800px'
 

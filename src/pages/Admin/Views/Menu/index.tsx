@@ -258,14 +258,7 @@ interface ICategoriesProduct {
 }
 
 const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
-  const {
-    editingProduct,
-    setEditingProduct,
-    isEditingProduct,
-    setIsEditingProduct,
-    handleOpenEditProductModal,
-    handleProductDelete
-  } = useMenu()
+  const { handleOpenEditProductModal, handleProductDelete } = useMenu()
 
   return (
     <S.CategoryProduct>
