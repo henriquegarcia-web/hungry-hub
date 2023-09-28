@@ -2,7 +2,8 @@ import styled from 'styled-components'
 import {
   View,
   adminViewMenuWrapper,
-  adminMenuWidth
+  adminMenuWidth,
+  responsiveTablet
 } from '@/utils/styles/globals'
 
 export const Menu = styled(View)`
@@ -17,16 +18,29 @@ export const MenuWrapper = styled.div`
   width: 100%;
   max-width: ${adminViewMenuWrapper};
   height: fit-content;
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    flex-direction: column;
+    row-gap: 20px;
+  }
 `
 
 export const CreateCategoryContainer = styled.div`
   display: flex;
   width: ${adminMenuWidth};
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    width: 100%;
+  }
 `
 
 export const CategoriesListContainer = styled.div`
   display: flex;
   width: calc(100% - ${adminMenuWidth});
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    width: 100%;
+  }
 `
 
 // ========================================== CREATE CATEGORY

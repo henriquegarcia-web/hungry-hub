@@ -6,6 +6,7 @@ const useClickOutside = (
   ref: React.RefObject<HTMLElement>,
   callback: CallbackFunction
 ) => {
+  console.log('aqui')
   const callbackRef = useRef<CallbackFunction>()
 
   useEffect(() => {

@@ -40,14 +40,14 @@ const menusData = [
     menuDisabled: false,
     menuHidden: false
   },
-  {
-    menuId: 'menu_analytics',
-    menuLabel: 'Relatórios',
-    menuIcon: <IoPieChartOutline />,
-    menuRender: <ReportsAdminView />,
-    menuDisabled: false,
-    menuHidden: false
-  },
+  // {
+  //   menuId: 'menu_analytics',
+  //   menuLabel: 'Relatórios',
+  //   menuIcon: <IoPieChartOutline />,
+  //   menuRender: <ReportsAdminView />,
+  //   menuDisabled: false,
+  //   menuHidden: false
+  // },
   {
     menuId: 'menu_account',
     menuLabel: 'Minha conta',

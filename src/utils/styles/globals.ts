@@ -34,6 +34,8 @@ const GlobalStyle = createGlobalStyle`
     /* font-family: 'Rubik', sans-serif; */
     text-decoration: none;
     user-select: none;
+
+    -webkit-tap-highlight-color: transparent !important;
   }
 
   scroll-behavior: smooth;
@@ -44,24 +46,10 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     /* background-color: blue; */
-    overflow: hidden;
+    /* overflow: hidden; */
   }
 
   // ------------------------- SCROLL BAR
-
-  ::-webkit-scrollbar {
-    width: 10px;
-    z-index: 1000;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: ${Colors.primary};
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: ${Colors.elementPrimary};
-    border-radius: 10px;
-  }
 
   .ant-picker-time-panel-column, .ant-input {
     &::-webkit-scrollbar {
@@ -88,7 +76,21 @@ export const Window = styled.main`
   width: 100%;
   height: 100vh;
 
-  overflow: hidden;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    z-index: 1000;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ff7a00;
+    border-radius: 10px;
+  }
 `
 
 export const View = styled.section`

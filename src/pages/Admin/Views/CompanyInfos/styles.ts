@@ -1,5 +1,9 @@
 import styled from 'styled-components'
-import { View, adminViewInfosWrapper } from '@/utils/styles/globals'
+import {
+  View,
+  adminViewInfosWrapper,
+  responsiveMobile
+} from '@/utils/styles/globals'
 import { Form } from 'antd'
 
 export const CompanyInfos = styled(View)`
@@ -104,7 +108,14 @@ export const MainInfosImagesContainer = styled.div`
     }
   }
 
-  /* border: 1px solid red; */
+  /* @media screen and (max-width: ${responsiveMobile}) {
+    flex-direction: column;
+    column-gap: 10px;
+
+    .company_banner {
+      width: 100%;
+    }
+  } */
 `
 
 export const MainInfosFormFooter = styled(FormFooter)``
@@ -167,6 +178,25 @@ export const ScheduleForm = styled(Form)`
   }
 `
 
+export const ScheduleFormDesktop = styled.div`
+  display: flex;
+  width: 100%;
+
+  @media screen and (max-width: ${responsiveMobile}) {
+    display: none;
+  }
+`
+
+export const ScheduleFormMobile = styled.div`
+  display: none;
+
+  @media screen and (max-width: ${responsiveMobile}) {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+  }
+`
+
 export const SchedulesSelected = styled.div`
   display: flex;
   flex-direction: column;
@@ -187,6 +217,7 @@ export const SchedulesSelectedEmpty = styled.p`
 export const ScheduleSelectedItem = styled.div`
   display: flex;
   width: 100%;
+  column-gap: 15px;
   border-radius: 6px;
   padding: 6px 10px;
 
@@ -195,6 +226,7 @@ export const ScheduleSelectedItem = styled.div`
 
 export const ScheduleSelectedItemLabel = styled.div`
   display: flex;
+  align-items: center;
   flex: 1;
 
   p {

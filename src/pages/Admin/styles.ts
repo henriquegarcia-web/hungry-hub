@@ -20,28 +20,15 @@ export const Admin = styled(Window)`
 export const AdminContent = styled.section`
   display: flex;
   width: 100%;
-  height: calc(100% - ${adminHeaderHeight});
-
-  overflow: auto;
-
-  &::-webkit-scrollbar {
-    width: 5px;
-    z-index: 1000;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.15);
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #ff7a00;
-    border-radius: 10px;
-  }
+  height: fit-content;
+  padding-top: ${adminHeaderHeight};
 `
 
 // ========================================== ADMIN MENU
 
 export const AdminHeader = styled.header`
+  z-index: 1001;
+  position: fixed;
   display: flex;
   width: 100%;
   height: ${adminHeaderHeight};
@@ -160,6 +147,10 @@ export const AdminHeaderMobileToggle = styled.div`
 
   @media screen and (max-width: ${responsiveDesktop}) {
     display: flex;
+  }
+
+  &:active {
+    background-color: white;
   }
 `
 

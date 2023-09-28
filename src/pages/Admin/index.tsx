@@ -143,8 +143,8 @@ const AdminHeader = ({
   }, [])
 
   return (
-    <S.AdminHeader style={{ backgroundColor: token.colorBgContainer }}>
-      <S.AdminHeaderWrapper>
+    <S.AdminHeader>
+      <S.AdminHeaderWrapper style={{ backgroundColor: token.colorBgContainer }}>
         <S.AdminHeaderLogo style={{ backgroundColor: token.colorBgContainer }}>
           <Logo type={adminTheme === 'default' ? 'default' : 'dark'} />
         </S.AdminHeaderLogo>
@@ -205,7 +205,12 @@ const AdminHeader = ({
         </S.AdminHeaderMobileToggle>
       </S.AdminHeaderWrapper>
       <S.AdminHeaderMobile open={menuMobileIsOpen ? 1 : 0}>
-        <S.UserMenuMobile>
+        <S.UserMenuMobile
+          onClick={() => {
+            handleSelectMenu('menu_account')
+            setMenuMobileIsOpen(false)
+          }}
+        >
           <S.UserMenuName style={{ color: token.colorText }}>
             {mockedUsername}
           </S.UserMenuName>
@@ -221,14 +226,24 @@ const AdminHeader = ({
           </Avatar>
         </S.UserMenuMobile>
         <Menu
-          onClick={(e) => handleSelectMenu(e.key)}
+          onClick={(e) => {
+            handleSelectMenu(e.key)
+            setMenuMobileIsOpen(false)
+          }}
           selectedKeys={[activeMenu]}
           mode="vertical"
           items={formattedMenus}
           style={{ border: 'none', width: '100%', fontSize: 13 }}
         />
         <S.AdminHeaderPrivateMenu>
-          <Button>Minha conta</Button>
+          <Button
+            onClick={() => {
+              handleSelectMenu('menu_account')
+              setMenuMobileIsOpen(false)
+            }}
+          >
+            Minha conta
+          </Button>
           <Button danger>Sair</Button>
         </S.AdminHeaderPrivateMenu>
       </S.AdminHeaderMobile>

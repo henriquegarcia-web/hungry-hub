@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import * as S from './styles'
 import { PlusOutlined } from '@ant-design/icons'
@@ -16,9 +16,9 @@ import { Controller, useForm } from 'react-hook-form'
 
 import {
   formatByCurrency,
-  formatCurrency,
   formatToCurrency
 } from '@/utils/functions/formatCurrency'
+import useScrollbar from '@/hooks/useScrollbar'
 
 import { ICategory, IProduct } from '../../@types'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
@@ -50,6 +50,8 @@ const CreateProductModal = ({
     useForm<ICreateProductForm>()
 
   const { isValid } = formState
+
+  const formContainerRef = useRef(null)
 
   const [productImage, setProductImage] = useState<string>('')
 
@@ -111,6 +113,8 @@ const CreateProductModal = ({
     setProductImage('')
   }
 
+  const [containerHasScrollbar] = useScrollbar(formContainerRef)
+
   const formIsValid = isValid
 
   return (
@@ -118,7 +122,10 @@ const CreateProductModal = ({
       layout="vertical"
       onFinish={handleSubmit(handleCreateProduct)}
     >
-      <S.CreateProductModalFormContent>
+      <S.CreateProductModalFormContent
+        ref={formContainerRef}
+        scrollbar={containerHasScrollbar ? 1 : 0}
+      >
         <S.CreateProductModalImageForm>
           <ImgCrop rotationSlider>
             <Upload
@@ -139,7 +146,11 @@ const CreateProductModal = ({
               ) : (
                 <div>
                   <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
+                  <div
+                    style={{ marginTop: 8, fontSize: 13, lineHeight: '14px' }}
+                  >
+                    Imagem do produto
+                  </div>
                 </div>
               )}
             </Upload>
@@ -147,8 +158,15 @@ const CreateProductModal = ({
         </S.CreateProductModalImageForm>
         <S.CreateProductModalMainForm>
           <Form.Item>
-            <Space.Compact style={{ width: '100%', columnGap: '10px' }}>
-              <Form.Item label="Nome do produto" style={{ width: '65%' }}>
+            <Space.Compact
+              style={{ width: '100%', columnGap: '10px' }}
+              className="input_container"
+            >
+              <Form.Item
+                label="Nome do produto"
+                style={{ width: '65%' }}
+                className="input_product_name"
+              >
                 <Controller
                   name="productName"
                   control={control}
@@ -162,7 +180,11 @@ const CreateProductModal = ({
                   )}
                 />
               </Form.Item>
-              <Form.Item label="Valor" style={{ width: '35%' }}>
+              <Form.Item
+                label="Valor"
+                style={{ width: '35%' }}
+                className="input_product_price"
+              >
                 <Controller
                   name="productPrice"
                   control={control}

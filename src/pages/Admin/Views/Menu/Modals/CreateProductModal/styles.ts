@@ -1,5 +1,10 @@
 import styled from 'styled-components'
 import { Form } from 'antd'
+import { responsiveMobile, responsiveTablet } from '@/utils/styles/globals'
+
+interface IFormContent {
+  scrollbar: number
+}
 
 export const CreateProductModal = styled(Form)`
   display: flex;
@@ -16,9 +21,32 @@ export const CreateProductModal = styled(Form)`
   }
 `
 
-export const CreateProductModalFormContent = styled.div`
+export const CreateProductModalFormContent = styled.div<IFormContent>`
   display: flex;
   column-gap: 15px;
+  max-height: 50vh;
+  overflow: auto;
+
+  padding-right: ${({ scrollbar }) => (scrollbar ? '10px' : '0')};
+
+  &::-webkit-scrollbar {
+    width: 3px;
+    z-index: 1000;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ff7a00;
+    border-radius: 10px;
+  }
+
+  @media screen and (max-width: ${responsiveMobile}) {
+    flex-direction: column;
+    row-gap: 10px;
+  }
 `
 
 export const CreateProductModalImageForm = styled.div`
@@ -30,6 +58,17 @@ export const CreateProductModalMainForm = styled.div`
   flex-direction: column;
   flex: 1;
   row-gap: 15px;
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    .input_container {
+      flex-direction: column;
+      row-gap: 15px;
+    }
+    .input_product_name,
+    .input_product_price {
+      width: 100% !important;
+    }
+  }
 `
 
 export const CreateProductModalFormFooter = styled.div`

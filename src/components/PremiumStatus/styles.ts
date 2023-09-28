@@ -3,23 +3,24 @@ import Colors from '@/utils/styles/colors'
 
 export const PremiumStatus = styled.div`
   display: flex;
+  align-items: center;
   column-gap: 10px;
   border-radius: 6px;
   padding: 10px;
 
-  border: 1px solid ${Colors.elementSecondary};
-  background-color: ${Colors.planActive};
+  border: 1px solid rgba(255, 122, 0, 0.8);
+  background-color: rgba(255, 122, 0, 0.1);
 `
 
 export const PlanActiveIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   border-radius: 100%;
 
-  background-color: ${Colors.elementSecondary};
+  background-color: rgba(255, 122, 0, 0.6);
 
   svg {
     font-size: 22px;
@@ -30,6 +31,7 @@ export const PlanActiveIcon = styled.div`
 export const PlanActiveInfos = styled.div`
   display: flex;
   flex: 1;
+  column-gap: 15px;
 `
 
 export const PlanActiveDetail = styled.div`
@@ -40,14 +42,14 @@ export const PlanActiveDetail = styled.div`
 
   b {
     font-size: 13px;
-    line-height: 13px;
+    line-height: 15px;
     font-weight: 500;
   }
 
   p {
     margin: 0;
     font-size: 12px;
-    line-height: 12px;
+    line-height: 14px;
     font-weight: 300;
   }
 `

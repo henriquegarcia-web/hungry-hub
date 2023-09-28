@@ -132,7 +132,7 @@ const MainInfosContainer = ({}: IMainInfosContainer) => {
               ) : (
                 <div>
                   <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
+                  <div style={{ marginTop: 8, fontSize: 13 }}>Ad. logo</div>
                 </div>
               )}
             </Upload>
@@ -156,7 +156,7 @@ const MainInfosContainer = ({}: IMainInfosContainer) => {
               ) : (
                 <div>
                   <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
+                  <div style={{ marginTop: 8, fontSize: 13 }}>Ad. banner</div>
                 </div>
               )}
             </Upload>
@@ -379,71 +379,15 @@ const ScheduleContainer = ({}: IScheduleContainer) => {
   return (
     <InfoContainer headerIcon={<IoCalendarOutline />} headerLabel="Horários">
       <S.ScheduleForm layout="vertical" onFinish={handleSubmit(onSubmit)}>
-        <Form.Item>
-          <Space.Compact style={{ width: '100%', columnGap: '10px' }}>
-            <Form.Item label="Dia" style={{ width: 'calc(50% - 32px)' }}>
-              <Controller
-                name="day"
-                control={control}
-                rules={{ required: 'Este campo é obrigatório' }}
-                defaultValue=""
-                render={({ field }) => (
-                  <Select {...field} placeholder="Selecione um período">
-                    <Option value="segunda_feira">Segunda-feira</Option>
-                    <Option value="terça_feira">Terça-feira</Option>
-                    <Option value="quarta_feira">Quarta-feira</Option>
-                    <Option value="quinta_feira">Quinta-feira</Option>
-                    <Option value="sexta_feira">Sexta-feira</Option>
-                    <Option value="sabado">Sábado</Option>
-                    <Option value="domingo">Domingo</Option>
-                    <Option value="todos">Todos os dias</Option>
-                  </Select>
-                )}
-              />
-            </Form.Item>
-            <Form.Item label="Abre às" style={{ width: '25%' }}>
-              <Controller
-                name="openTime"
-                control={control}
-                rules={{ required: 'Este campo é obrigatório' }}
-                render={({ field }) => (
-                  <TimePicker
-                    {...field}
-                    format={format}
-                    showNow={false}
-                    placeholder="Horário"
-                    style={{ width: '100%', borderRadius: '6px' }}
-                  />
-                )}
-              />
-            </Form.Item>
-            <Form.Item label="Fecha às" style={{ width: '25%' }}>
-              <Controller
-                name="closeTime"
-                control={control}
-                rules={{ required: 'Este campo é obrigatório' }}
-                render={({ field }) => (
-                  <TimePicker
-                    {...field}
-                    format={format}
-                    showNow={false}
-                    placeholder="Horário"
-                    style={{ width: '100%', borderRadius: '6px' }}
-                  />
-                )}
-              />
-            </Form.Item>
-            <Form.Item label=" ">
-              <Button
-                type="primary"
-                htmlType="submit"
-                icon={<PlusOutlined />}
-                style={{ borderRadius: '6px' }}
-                disabled={isAddButtonDisabled}
-              />
-            </Form.Item>
-          </Space.Compact>
-        </Form.Item>
+        <ScheduleFormDesktop
+          control={control}
+          isAddButtonDisabled={isAddButtonDisabled}
+        />
+        <ScheduleFormMobile
+          control={control}
+          isAddButtonDisabled={isAddButtonDisabled}
+        />
+
         <S.SchedulesSelected>
           <S.SchedulesSelectedHeader>
             Horários de atendimento
@@ -480,5 +424,167 @@ const ScheduleContainer = ({}: IScheduleContainer) => {
         </S.ScheduleFormFooter>
       </S.ScheduleForm>
     </InfoContainer>
+  )
+}
+
+// -----------------------------
+
+interface IScheduleFormDesktop {
+  control: any
+  isAddButtonDisabled: boolean
+}
+
+const ScheduleFormDesktop = ({
+  control,
+  isAddButtonDisabled
+}: IScheduleFormDesktop) => {
+  return (
+    <S.ScheduleFormDesktop>
+      <Form.Item style={{ width: '100%' }}>
+        <Space.Compact style={{ width: '100%', columnGap: '10px' }}>
+          <Form.Item label="Dia" style={{ width: 'calc(50% - 32px)' }}>
+            <Controller
+              name="day"
+              control={control}
+              rules={{ required: 'Este campo é obrigatório' }}
+              defaultValue=""
+              render={({ field }) => (
+                <Select {...field} placeholder="Selecione um período">
+                  <Option value="segunda_feira">Segunda-feira</Option>
+                  <Option value="terça_feira">Terça-feira</Option>
+                  <Option value="quarta_feira">Quarta-feira</Option>
+                  <Option value="quinta_feira">Quinta-feira</Option>
+                  <Option value="sexta_feira">Sexta-feira</Option>
+                  <Option value="sabado">Sábado</Option>
+                  <Option value="domingo">Domingo</Option>
+                  <Option value="todos">Todos os dias</Option>
+                </Select>
+              )}
+            />
+          </Form.Item>
+          <Form.Item label="Abre às" style={{ width: '25%' }}>
+            <Controller
+              name="openTime"
+              control={control}
+              rules={{ required: 'Este campo é obrigatório' }}
+              render={({ field }) => (
+                <TimePicker
+                  {...field}
+                  format={format}
+                  showNow={false}
+                  placeholder="Horário"
+                  style={{ width: '100%', borderRadius: '6px' }}
+                />
+              )}
+            />
+          </Form.Item>
+          <Form.Item label="Fecha às" style={{ width: '25%' }}>
+            <Controller
+              name="closeTime"
+              control={control}
+              rules={{ required: 'Este campo é obrigatório' }}
+              render={({ field }) => (
+                <TimePicker
+                  {...field}
+                  format={format}
+                  showNow={false}
+                  placeholder="Horário"
+                  style={{ width: '100%', borderRadius: '6px' }}
+                />
+              )}
+            />
+          </Form.Item>
+          <Form.Item label=" ">
+            <Button
+              type="primary"
+              htmlType="submit"
+              icon={<PlusOutlined />}
+              style={{ borderRadius: '6px' }}
+              disabled={isAddButtonDisabled}
+            />
+          </Form.Item>
+        </Space.Compact>
+      </Form.Item>
+    </S.ScheduleFormDesktop>
+  )
+}
+
+interface IScheduleFormMobile {
+  control: any
+  isAddButtonDisabled: boolean
+}
+
+const ScheduleFormMobile = ({
+  control,
+  isAddButtonDisabled
+}: IScheduleFormMobile) => {
+  return (
+    <S.ScheduleFormMobile>
+      <Form.Item label="Dia" style={{ width: '100%' }}>
+        <Controller
+          name="day"
+          control={control}
+          rules={{ required: 'Este campo é obrigatório' }}
+          defaultValue=""
+          render={({ field }) => (
+            <Select {...field} placeholder="Selecione um período">
+              <Option value="segunda_feira">Segunda-feira</Option>
+              <Option value="terça_feira">Terça-feira</Option>
+              <Option value="quarta_feira">Quarta-feira</Option>
+              <Option value="quinta_feira">Quinta-feira</Option>
+              <Option value="sexta_feira">Sexta-feira</Option>
+              <Option value="sabado">Sábado</Option>
+              <Option value="domingo">Domingo</Option>
+              <Option value="todos">Todos os dias</Option>
+            </Select>
+          )}
+        />
+      </Form.Item>
+      <Form.Item>
+        <Space.Compact style={{ width: '100%', columnGap: '10px' }}>
+          <Form.Item label="Abre às" style={{ width: 'calc(50% - 16px)' }}>
+            <Controller
+              name="openTime"
+              control={control}
+              rules={{ required: 'Este campo é obrigatório' }}
+              render={({ field }) => (
+                <TimePicker
+                  {...field}
+                  format={format}
+                  showNow={false}
+                  placeholder="Horário"
+                  style={{ width: '100%', borderRadius: '6px' }}
+                />
+              )}
+            />
+          </Form.Item>
+          <Form.Item label="Fecha às" style={{ width: 'calc(50% - 16px)' }}>
+            <Controller
+              name="closeTime"
+              control={control}
+              rules={{ required: 'Este campo é obrigatório' }}
+              render={({ field }) => (
+                <TimePicker
+                  {...field}
+                  format={format}
+                  showNow={false}
+                  placeholder="Horário"
+                  style={{ width: '100%', borderRadius: '6px' }}
+                />
+              )}
+            />
+          </Form.Item>
+          <Form.Item label=" ">
+            <Button
+              type="primary"
+              htmlType="submit"
+              icon={<PlusOutlined />}
+              style={{ borderRadius: '6px' }}
+              disabled={isAddButtonDisabled}
+            />
+          </Form.Item>
+        </Space.Compact>
+      </Form.Item>
+    </S.ScheduleFormMobile>
   )
 }
