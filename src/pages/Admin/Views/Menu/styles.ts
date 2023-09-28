@@ -53,6 +53,7 @@ export const CreateCategory = styled.div`
   row-gap: 6px;
   width: 100%;
   height: fit-content;
+  overflow: hidden;
 
   border-radius: 10px;
 
@@ -130,6 +131,7 @@ export const CategoryWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   height: fit-content;
+  overflow: hidden;
 
   border-radius: 10px;
 
@@ -184,6 +186,10 @@ export const CategoryWrapperFooter = styled.div`
 
 // ========================================== CATEGORY PRODUCT
 
+interface IProductImage {
+  empty: number
+}
+
 export const CategoryProduct = styled.div`
   display: flex;
   column-gap: 15px;
@@ -200,7 +206,7 @@ export const CategoryProduct = styled.div`
   }
 `
 
-export const ProductImage = styled.div`
+export const ProductImage = styled.div<IProductImage>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -209,7 +215,8 @@ export const ProductImage = styled.div`
   border-radius: 6px;
   overflow: hidden;
 
-  background-color: white;
+  padding: ${({ empty }) => (empty ? '10px' : '0px')};
+
   border: 1px solid rgba(0, 0, 0, 0.1);
 
   img {

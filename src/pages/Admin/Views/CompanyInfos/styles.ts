@@ -28,6 +28,7 @@ export const InfoContainer = styled.div`
   flex-direction: column;
   width: 100%;
   height: fit-content;
+  overflow: hidden;
 
   border-radius: 10px;
 
@@ -241,6 +242,8 @@ export const ScheduleSelectedItemLabel = styled.div`
 export const ScheduleSelectedItemExclude = styled.p`
   display: flex;
   cursor: pointer;
+
+  font-size: 13px;
 
   color: #ff7a00;
 `

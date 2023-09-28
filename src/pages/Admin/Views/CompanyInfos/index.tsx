@@ -26,12 +26,15 @@ import {
   Space,
   TimePicker,
   Tooltip,
-  Upload
+  Upload,
+  theme
 } from 'antd'
 import moment from 'moment'
 
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { UploadChangeParam } from 'antd/es/upload'
+
+const { useToken } = theme
 
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -71,11 +74,19 @@ const InfoContainer = ({
   headerLabel,
   children
 }: IInfoContainer) => {
+  const { token } = useToken()
+
   return (
     <S.InfoContainer>
-      <S.InfoContainerHeader>
-        <S.InfoContainerHeaderIcon>{headerIcon}</S.InfoContainerHeaderIcon>
-        <S.InfoContainerHeaderLabel>{headerLabel}</S.InfoContainerHeaderLabel>
+      <S.InfoContainerHeader
+        style={{ backgroundColor: token.colorBgContainer }}
+      >
+        <S.InfoContainerHeaderIcon style={{ color: token.colorTextHeading }}>
+          {headerIcon}
+        </S.InfoContainerHeaderIcon>
+        <S.InfoContainerHeaderLabel style={{ color: token.colorTextHeading }}>
+          {headerLabel}
+        </S.InfoContainerHeaderLabel>
       </S.InfoContainerHeader>
       <S.InfoContainerContent>{children}</S.InfoContainerContent>
     </S.InfoContainer>
@@ -234,6 +245,8 @@ const LocationContainer = ({}: ILocationContainer) => {
 interface IContactContainer {}
 
 const ContactContainer = ({}: IContactContainer) => {
+  const { token } = useToken()
+
   const notRequiredMessage = 'Essa campo não irá aparecer se estiver vazio'
 
   const customTootip = (
@@ -264,42 +277,72 @@ const ContactContainer = ({}: IContactContainer) => {
         <Form.Item label="Telefone">
           <Input
             placeholder="Telefone comercial"
-            prefix={<LiaPhoneAltSolid className="icon_large" />}
+            prefix={
+              <LiaPhoneAltSolid
+                className="icon_large"
+                style={{ color: token.colorTextPlaceholder }}
+              />
+            }
             suffix={customTootip}
           />
         </Form.Item>
         <Form.Item label="Whatsapp">
           <Input
             placeholder="Whatsapp comercial"
-            prefix={<LiaWhatsapp className="icon_large" />}
+            prefix={
+              <LiaWhatsapp
+                className="icon_large"
+                style={{ color: token.colorTextPlaceholder }}
+              />
+            }
             suffix={customTootip}
           />
         </Form.Item>
         <Form.Item label="E-mail">
           <Input
             placeholder="E-mail comercial"
-            prefix={<LiaEnvelope className="icon_large" />}
+            prefix={
+              <LiaEnvelope
+                className="icon_large"
+                style={{ color: token.colorTextPlaceholder }}
+              />
+            }
             suffix={customTootip}
           />
         </Form.Item>
         <Form.Item label="Facebook">
           <Input
             placeholder="Facebook comercial"
-            prefix={<LiaFacebook className="icon_large" />}
+            prefix={
+              <LiaFacebook
+                className="icon_large"
+                style={{ color: token.colorTextPlaceholder }}
+              />
+            }
             suffix={customTootip}
           />
         </Form.Item>
         <Form.Item label="Instagram">
           <Input
             placeholder="Instagram comercial"
-            prefix={<LiaInstagram className="icon_large" />}
+            prefix={
+              <LiaInstagram
+                className="icon_large"
+                style={{ color: token.colorTextPlaceholder }}
+              />
+            }
             suffix={customTootip}
           />
         </Form.Item>
         <Form.Item label="Website">
           <Input
             placeholder="Website comercial"
-            prefix={<LiaLaptopSolid className="icon_large" />}
+            prefix={
+              <LiaLaptopSolid
+                className="icon_large"
+                style={{ color: token.colorTextPlaceholder }}
+              />
+            }
             suffix={customTootip}
           />
         </Form.Item>
@@ -341,9 +384,13 @@ interface ScheduleItem {
 interface IScheduleContainer {}
 
 const ScheduleContainer = ({}: IScheduleContainer) => {
+  const { token } = useToken()
+
   const [schedule, setSchedule] = useState<ScheduleItem[]>([])
-  const { control, handleSubmit, watch, setValue, reset } = useForm()
+  const { control, handleSubmit, watch, setValue, reset, formState } = useForm()
   const selectedDay = watch('day')
+
+  const { isValid } = formState
 
   const onSubmit = (data: any) => {
     if (selectedDay === 'todos') {
@@ -372,9 +419,9 @@ const ScheduleContainer = ({}: IScheduleContainer) => {
     reset()
   }
 
-  const isAddButtonDisabled = schedule.some(
-    (item) => item.day === 'todos' || item.day === selectedDay
-  )
+  const isAddButtonDisabled =
+    schedule.some((item) => item.day === 'todos' || item.day === selectedDay) ||
+    !isValid
 
   return (
     <InfoContainer headerIcon={<IoCalendarOutline />} headerLabel="Horários">
@@ -395,7 +442,10 @@ const ScheduleContainer = ({}: IScheduleContainer) => {
           {schedule.length !== 0 ? (
             <>
               {schedule.map((item, index) => (
-                <S.ScheduleSelectedItem key={index}>
+                <S.ScheduleSelectedItem
+                  key={index}
+                  style={{ backgroundColor: token.colorBgContainer }}
+                >
                   <S.ScheduleSelectedItemLabel>
                     <p>
                       <b>{mapDayToLabel(item.day)}</b> - Abre às{' '}
@@ -412,7 +462,9 @@ const ScheduleContainer = ({}: IScheduleContainer) => {
               ))}
             </>
           ) : (
-            <S.SchedulesSelectedEmpty>
+            <S.SchedulesSelectedEmpty
+              style={{ color: token.colorTextPlaceholder }}
+            >
               Nenhum horário selecionado
             </S.SchedulesSelectedEmpty>
           )}

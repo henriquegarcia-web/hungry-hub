@@ -8,7 +8,18 @@ import {
 
 import CreateProductModal from './Modals/CreateProductModal'
 import EditProductModal from './Modals/EditProductModal'
-import { Input, Button, List, Space, Popconfirm, Empty, Modal } from 'antd'
+import {
+  Input,
+  Button,
+  List,
+  Space,
+  Popconfirm,
+  Empty,
+  Modal,
+  theme
+} from 'antd'
+
+const { useToken } = theme
 
 import { Controller, useForm } from 'react-hook-form'
 
@@ -88,6 +99,8 @@ interface ICreateCategoryForm {
 }
 
 const CreateCategory = ({}: ICreateCategory) => {
+  const { token } = useToken()
+
   const {
     categories,
     editingCategory,
@@ -121,7 +134,14 @@ const CreateCategory = ({}: ICreateCategory) => {
 
   return (
     <S.CreateCategory>
-      <S.CreateCategoryHeader>Categorias do cardápio</S.CreateCategoryHeader>
+      <S.CreateCategoryHeader
+        style={{
+          backgroundColor: token.colorBgContainer,
+          color: token.colorTextHeading
+        }}
+      >
+        Categorias do cardápio
+      </S.CreateCategoryHeader>
       <S.CreateCategoryWrapper>
         <List
           style={{ width: '100%' }}
@@ -205,6 +225,8 @@ const CreateCategory = ({}: ICreateCategory) => {
 interface ICategoriesList {}
 
 const CategoriesList = ({}: ICategoriesList) => {
+  const { token } = useToken()
+
   const { categories, handleOpenCreateProductModal } = useMenu()
 
   const emptyDataComponent = (
@@ -219,9 +241,23 @@ const CategoriesList = ({}: ICategoriesList) => {
       {categories.length !== 0
         ? categories.map((category: ICategory) => (
             <S.CategoryWrapper key={category.id}>
-              <S.CategoryWrapperHeader>
-                <S.CategoryTitle>{category.name}</S.CategoryTitle>
-                <S.CategoryCounter>
+              <S.CategoryWrapperHeader
+                style={{
+                  backgroundColor: token.colorBgContainer
+                }}
+              >
+                <S.CategoryTitle
+                  style={{
+                    color: token.colorTextHeading
+                  }}
+                >
+                  {category.name}
+                </S.CategoryTitle>
+                <S.CategoryCounter
+                  style={{
+                    color: token.colorTextHeading
+                  }}
+                >
                   {category.products.length}{' '}
                   {category.products.length === 1 ? 'produto' : 'produtos'}
                 </S.CategoryCounter>
@@ -258,11 +294,18 @@ interface ICategoriesProduct {
 }
 
 const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
+  const { token } = useToken()
+
   const { handleOpenEditProductModal, handleProductDelete } = useMenu()
 
   return (
     <S.CategoryProduct>
-      <S.ProductImage>
+      <S.ProductImage
+        empty={!product.productImage ? 1 : 0}
+        style={{
+          backgroundColor: token.colorBgContainer
+        }}
+      >
         {product.productImage ? (
           <img src={product.productImage} alt="" />
         ) : (
@@ -271,12 +314,26 @@ const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
       </S.ProductImage>
       <S.ProductDetails>
         <S.ProductDetailsMainInfos>
-          <S.ProductDetailsTitle>{product.productName}</S.ProductDetailsTitle>
-          <S.ProductDetailsDescription>
+          <S.ProductDetailsTitle
+            style={{
+              color: token.colorTextHeading
+            }}
+          >
+            {product.productName}
+          </S.ProductDetailsTitle>
+          <S.ProductDetailsDescription
+            style={{
+              color: token.colorTextHeading
+            }}
+          >
             {product.productDescription}
           </S.ProductDetailsDescription>
         </S.ProductDetailsMainInfos>
-        <S.ProductDetailsPrice>
+        <S.ProductDetailsPrice
+          style={{
+            color: token.colorTextHeading
+          }}
+        >
           {formatCurrency(product.productPrice)}
         </S.ProductDetailsPrice>
       </S.ProductDetails>

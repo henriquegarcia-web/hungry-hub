@@ -62,6 +62,7 @@ export const AccountContainer = styled.div`
   width: 100%;
   height: fit-content;
   border-radius: 10px;
+  overflow: hidden;
 
   border: 1px solid lightgray;
 `

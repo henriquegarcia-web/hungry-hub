@@ -2,19 +2,23 @@ import * as S from './styles'
 import { LiaEnvelope, LiaUserLockSolid } from 'react-icons/lia'
 
 import { PremiumStatus } from '@/components'
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, theme } from 'antd'
+
+const { useToken } = theme
 
 import { Controller, useForm } from 'react-hook-form'
 
 const Account = () => {
+  const { token } = useToken()
+
   return (
     <S.Account>
       <S.AccountWrapper>
         <S.AccountDetails>
-          <S.AccountDetailsTitle>
+          <S.AccountDetailsTitle style={{ color: token.colorTextHeading }}>
             Olá, <b>Henrique Pereira Garcia</b>!
           </S.AccountDetailsTitle>
-          <S.AccountDetailsPlan>
+          <S.AccountDetailsPlan style={{ color: token.colorTextHeading }}>
             Plano ativo:
             <PremiumStatus />
           </S.AccountDetailsPlan>
@@ -51,13 +55,19 @@ const AccountContainer = ({
   headerLabel,
   children
 }: IAccountContainer) => {
+  const { token } = useToken()
+
   return (
     <S.AccountContainer>
-      <S.AccountContainerHeader>
-        <S.AccountContainerHeaderIcon>
+      <S.AccountContainerHeader
+        style={{ backgroundColor: token.colorBgContainer }}
+      >
+        <S.AccountContainerHeaderIcon style={{ color: token.colorTextHeading }}>
           {headerIcon}
         </S.AccountContainerHeaderIcon>
-        <S.AccountContainerHeaderLabel>
+        <S.AccountContainerHeaderLabel
+          style={{ color: token.colorTextHeading }}
+        >
           {headerLabel}
         </S.AccountContainerHeaderLabel>
       </S.AccountContainerHeader>

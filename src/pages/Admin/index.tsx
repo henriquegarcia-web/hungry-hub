@@ -26,6 +26,7 @@ const mockedUsername = 'Henrique Pereira Garcia'
 // ========================================== ADMIN
 
 const Admin = () => {
+  const { token } = useToken()
   const { handleLogout } = useAdminAuth()
   const { adminTheme, toogleThemeDark } = useAdmin()
 
@@ -54,7 +55,7 @@ const Admin = () => {
   const viewToRender = getComponentByMenuId(activeMenu)
 
   return (
-    <S.Admin>
+    <S.Admin style={{ backgroundColor: token.colorBgElevated }}>
       <AdminHeader
         adminTheme={adminTheme}
         activeMenu={activeMenu}
@@ -201,11 +202,19 @@ const AdminHeader = ({
         {/* ============================== HEADER MOBILE ============================== */}
 
         <S.AdminHeaderMobileToggle onClick={toggleMenuMobile}>
-          {menuMobileIsOpen ? <IoCloseOutline /> : <IoMenuOutline />}
+          {menuMobileIsOpen ? (
+            <IoCloseOutline style={{ color: token.colorTextHeading }} />
+          ) : (
+            <IoMenuOutline style={{ color: token.colorTextHeading }} />
+          )}
         </S.AdminHeaderMobileToggle>
       </S.AdminHeaderWrapper>
-      <S.AdminHeaderMobile open={menuMobileIsOpen ? 1 : 0}>
+      <S.AdminHeaderMobile
+        open={menuMobileIsOpen ? 1 : 0}
+        style={{ backgroundColor: token.colorBgContainer }}
+      >
         <S.UserMenuMobile
+          style={{ borderColor: token.colorBgContainerDisabled }}
           onClick={() => {
             handleSelectMenu('menu_account')
             setMenuMobileIsOpen(false)

@@ -148,10 +148,6 @@ export const AdminHeaderMobileToggle = styled.div`
   @media screen and (max-width: ${responsiveDesktop}) {
     display: flex;
   }
-
-  &:active {
-    background-color: white;
-  }
 `
 
 export const AdminHeaderMobile = styled.div<IHeaderMobile>`
@@ -202,6 +198,6 @@ export const AdminHeaderPrivateMenu = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  row-gap: 5px;
+  row-gap: 10px;
   margin-top: auto;
 `
