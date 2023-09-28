@@ -24,6 +24,7 @@ import {
   Input,
   Select,
   Space,
+  Switch,
   TimePicker,
   Tooltip,
   Upload,
@@ -46,10 +47,42 @@ import {
   onPreview
 } from '@/utils/functions/imageUpload'
 
+import { useAdmin } from '@/contexts/AdminContext'
+
 const CompanyInfos = () => {
+  const { token } = useToken()
+
+  const {
+    isCompanyActive,
+    handleDesactiveCompany,
+    handleActiveCompany
+    // companyHasAllDataFilledIn
+  } = useAdmin()
+
+  const onChange = (checked: boolean) => {
+    if (checked) {
+      handleActiveCompany()
+    } else {
+      handleDesactiveCompany()
+    }
+  }
+
   return (
     <S.CompanyInfos>
       <S.CompanyInfosWrapper>
+        <S.CompanyInfosActiveCompany
+          style={{ backgroundColor: token.colorBgContainer }}
+        >
+          <p style={{ color: token.colorTextSecondary }}>
+            Ativar cardápio para ser exibido
+          </p>
+          <Switch
+            size="small"
+            checked={isCompanyActive}
+            onChange={onChange}
+            // disabled={!companyHasAllDataFilledIn}
+          />
+        </S.CompanyInfosActiveCompany>
         <MainInfosContainer />
         <LocationContainer />
         <ContactContainer />

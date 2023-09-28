@@ -21,6 +21,21 @@ export const CompanyInfosWrapper = styled.div`
   height: fit-content;
 `
 
+export const CompanyInfosActiveCompany = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-radius: 10px;
+
+  border: 1px solid lightgrey;
+
+  p {
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 500;
+  }
+`
+
 // ========================================== INFO CONTAINER
 
 export const InfoContainer = styled.div`

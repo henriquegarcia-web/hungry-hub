@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { message } from 'antd'
 import React, {
   createContext,
   useContext,
@@ -12,7 +13,10 @@ export type ThemeProps = 'default' | 'dark'
 
 interface AdminContextData {
   adminTheme: ThemeProps
-  isLoading: boolean
+  companyHasAllDataFilledIn: boolean
+  isCompanyActive: boolean
+  handleActiveCompany: () => void
+  handleDesactiveCompany: () => void
   toogleThemeDark: (activeThemeDark: boolean) => void
 }
 
@@ -27,9 +31,28 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [adminTheme, setAdminTheme] = useState<ThemeProps>('default')
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const companyHasAllDataFilledIn = useMemo(() => {
+    return false
+  }, [])
+
+  const [isCompanyActive, setIsCompanyActive] = useState<boolean>(false)
 
   // =================================================================
+
+  const handleDesactiveCompany = () => setIsCompanyActive(false)
+
+  const handleActiveCompany = useCallback(() => {
+    if (!companyHasAllDataFilledIn) {
+      message.open({
+        type: 'warning',
+        content:
+          'Não é possível ativar o cardápio até que todos dados sejam preenchidos!'
+      })
+      return
+    }
+
+    setIsCompanyActive(true)
+  }, [companyHasAllDataFilledIn])
 
   // ------------------------------------------------------------------
 
@@ -48,10 +71,18 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
   const AdminContextValues = useMemo(() => {
     return {
       adminTheme,
-      isLoading,
-      toogleThemeDark
+      toogleThemeDark,
+      companyHasAllDataFilledIn,
+      isCompanyActive,
+      handleActiveCompany,
+      handleDesactiveCompany
     }
-  }, [adminTheme, isLoading])
+  }, [
+    adminTheme,
+    companyHasAllDataFilledIn,
+    isCompanyActive,
+    handleActiveCompany
+  ])
 
   return (
     <AdminContext.Provider value={AdminContextValues}>
