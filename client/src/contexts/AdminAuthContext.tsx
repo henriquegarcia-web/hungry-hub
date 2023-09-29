@@ -54,8 +54,8 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const companyInfo = userData.adminCompanyInfo
 
-    const isLogoEmpty = !companyInfo.companyLogo
-    const isBannerEmpty = !companyInfo.companyBanner
+    // const isLogoEmpty = !companyInfo.companyLogo
+    // const isBannerEmpty = !companyInfo.companyBanner
     const isNameEmpty = !companyInfo.companyName
     const isIdEmpty = !companyInfo.companyId
     const isDescriptionEmpty = !companyInfo.companyDescription
@@ -65,8 +65,8 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     const hasLocation = companyInfo.companyLocation
 
     return (
-      !isLogoEmpty &&
-      !isBannerEmpty &&
+      // !isLogoEmpty &&
+      // !isBannerEmpty &&
       !isNameEmpty &&
       !isIdEmpty &&
       !isDescriptionEmpty &&
