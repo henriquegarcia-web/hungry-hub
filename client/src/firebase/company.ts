@@ -184,6 +184,10 @@ export interface IScheduleItem {
   closeTime: moment.Moment
 }
 
+const momentToString = (momentObj: moment.Moment): string => {
+  return momentObj.toISOString()
+}
+
 const handleUpdateCompanySchedules = async (
   schedules: IScheduleItem[]
 ): Promise<boolean> => {
@@ -193,11 +197,17 @@ const handleUpdateCompanySchedules = async (
 
     if (!user) return false
 
+    const schedulesToSave = schedules.map((schedule) => ({
+      ...schedule,
+      openTime: momentToString(schedule.openTime),
+      closeTime: momentToString(schedule.closeTime)
+    }))
+
     const userDataRef = firebase
       .database()
       .ref(`adminAccounts/${user.uid}/adminCompanyInfo/companySchedules`)
 
-    await userDataRef.set(schedules)
+    await userDataRef.set(schedulesToSave)
 
     message.open({
       type: 'success',

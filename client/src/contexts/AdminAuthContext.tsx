@@ -20,6 +20,7 @@ interface AdminAuthContextData {
   userId: string | null
   userData: IUserData | null
   isAdminLogged: boolean
+  companyHasAllDataFilledIn: boolean
   // isAdminPremium: boolean
 
   handleLogout: () => void
@@ -40,6 +41,34 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isAdminLogged = useMemo(() => {
     return !!userId
   }, [userId])
+
+  const companyHasAllDataFilledIn = useMemo(() => {
+    if (!userData || !userData.adminCompanyInfo) {
+      return false
+    }
+
+    const companyInfo = userData.adminCompanyInfo
+
+    const isLogoEmpty = !companyInfo.companyLogo
+    const isBannerEmpty = !companyInfo.companyBanner
+    const isNameEmpty = !companyInfo.companyName
+    const isIdEmpty = !companyInfo.companyId
+    const isDescriptionEmpty = !companyInfo.companyDescription
+
+    const hasSchedules =
+      companyInfo.companySchedules && companyInfo.companySchedules.length > 0
+    const hasLocation = companyInfo.companyLocation
+
+    return (
+      !isLogoEmpty &&
+      !isBannerEmpty &&
+      !isNameEmpty &&
+      !isIdEmpty &&
+      !isDescriptionEmpty &&
+      !!hasSchedules &&
+      !!hasLocation
+    )
+  }, [userData])
 
   // const isAdminPremium = useMemo(() => {
   //   return (
@@ -109,9 +138,10 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
       userId,
       userData,
       isAdminLogged,
+      companyHasAllDataFilledIn,
       handleLogout
     }
-  }, [userId, userData, isAdminLogged, handleLogout])
+  }, [userId, userData, isAdminLogged, companyHasAllDataFilledIn, handleLogout])
 
   return (
     <AdminAuthContext.Provider value={AdminAuthContextValues}>

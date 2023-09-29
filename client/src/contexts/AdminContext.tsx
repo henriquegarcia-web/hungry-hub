@@ -9,11 +9,12 @@ import React, {
   useCallback
 } from 'react'
 
+import { useAdminAuth } from './AdminAuthContext'
+
 export type ThemeProps = 'default' | 'dark'
 
 interface AdminContextData {
   adminTheme: ThemeProps
-  companyHasAllDataFilledIn: boolean
   isCompanyActive: boolean
   handleActiveCompany: () => void
   handleDesactiveCompany: () => void
@@ -27,13 +28,11 @@ export const AdminContext = createContext<AdminContextData>(
 )
 
 const AdminProvider = ({ children }: { children: React.ReactNode }) => {
+  const { companyHasAllDataFilledIn } = useAdminAuth()
+
   // =================================================================
 
   const [adminTheme, setAdminTheme] = useState<ThemeProps>('default')
-
-  const companyHasAllDataFilledIn = useMemo(() => {
-    return false
-  }, [])
 
   const [isCompanyActive, setIsCompanyActive] = useState<boolean>(false)
 
@@ -72,17 +71,11 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     return {
       adminTheme,
       toogleThemeDark,
-      companyHasAllDataFilledIn,
       isCompanyActive,
       handleActiveCompany,
       handleDesactiveCompany
     }
-  }, [
-    adminTheme,
-    companyHasAllDataFilledIn,
-    isCompanyActive,
-    handleActiveCompany
-  ])
+  }, [adminTheme, isCompanyActive, handleActiveCompany])
 
   return (
     <AdminContext.Provider value={AdminContextValues}>

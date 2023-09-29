@@ -636,6 +636,14 @@ const ContactContainer = ({ userData }: IContactContainer) => {
 const format = 'HH:mm'
 const { Option } = Select
 
+const momentToString = (momentObj: moment.Moment): string => {
+  return momentObj.toISOString()
+}
+
+const stringToMoment = (str: string): moment.Moment => {
+  return moment(str)
+}
+
 const mapDayToLabel = (day: string): string => {
   const dayMap: Record<string, string> = {
     segunda_feira: 'Segunda-feira',
@@ -698,6 +706,31 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
     }
   }
 
+  // const onSubmit = (data: any) => {
+  //   if (selectedDay === 'todos') {
+  //     setSchedule([
+  //       {
+  //         day: data.day,
+  //         openTime: momentToString(schedule.openTime),
+  //         closeTime: momentToString(schedule.closeTime)
+  //       }
+  //     ])
+  //   } else if (!schedule.some((item) => item.day === 'todos')) {
+  //     if (!schedule.some((item) => item.day === data.day)) {
+  //       setSchedule([
+  //         ...schedule,
+  //         {
+  //           day: data.day,
+  //           openTime: momentToString(schedule.openTime),
+  //           closeTime: momentToString(schedule.closeTime)
+  //         }
+  //       ])
+  //     } else {
+  //       console.log(`Dia ${data.day} já foi adicionado.`)
+  //     }
+  //   }
+  // }
+
   const handleUpdate = async () => {
     setUpdatingCompany(true)
     handleUpdateCompanySchedules(schedule)
@@ -708,7 +741,13 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
     if (userData?.adminCompanyInfo) {
       const companySchedules = userData.adminCompanyInfo.companySchedules
 
-      setSchedule(companySchedules || [])
+      const schedulesFromFirebase = companySchedules?.map((schedule) => ({
+        ...schedule,
+        openTime: stringToMoment(schedule.openTime.toString()),
+        closeTime: stringToMoment(schedule.closeTime.toString())
+      }))
+
+      setSchedule(schedulesFromFirebase || [])
     }
   }, [userData])
 
