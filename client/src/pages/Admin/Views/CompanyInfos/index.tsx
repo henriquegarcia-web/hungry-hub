@@ -24,6 +24,7 @@ import {
   Input,
   Select,
   Space,
+  Spin,
   Switch,
   TimePicker,
   Tooltip,
@@ -37,8 +38,6 @@ import type { UploadChangeParam } from 'antd/es/upload'
 
 const { useToken } = theme
 
-import * as Yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 
 import {
@@ -48,9 +47,22 @@ import {
 } from '@/utils/functions/imageUpload'
 
 import { useAdmin } from '@/contexts/AdminContext'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
+
+import {
+  ICompanyContactForm,
+  ICompanyLocationForm,
+  ICompanyMainInfosForm,
+  handleUpdateCompanyContact,
+  handleUpdateCompanyLocation,
+  handleUpdateCompanyMainInfos,
+  handleUpdateCompanySchedules
+} from '@/firebase/company'
+import { IUserData } from '@/@types/Auth'
 
 const CompanyInfos = () => {
   const { token } = useToken()
+  const { userData } = useAdminAuth()
 
   const {
     isCompanyActive,
@@ -83,10 +95,10 @@ const CompanyInfos = () => {
             // disabled={!companyHasAllDataFilledIn}
           />
         </S.CompanyInfosActiveCompany>
-        <MainInfosContainer />
-        <LocationContainer />
-        <ContactContainer />
-        <ScheduleContainer />
+        <MainInfosContainer userData={userData} />
+        <LocationContainer userData={userData} />
+        <ContactContainer userData={userData} />
+        <ScheduleContainer userData={userData} />
       </S.CompanyInfosWrapper>
     </S.CompanyInfos>
   )
@@ -99,12 +111,14 @@ export default CompanyInfos
 interface IInfoContainer {
   headerIcon: React.ReactNode
   headerLabel: string
+  loading: boolean
   children: React.ReactNode
 }
 
 const InfoContainer = ({
   headerIcon,
   headerLabel,
+  loading,
   children
 }: IInfoContainer) => {
   const { token } = useToken()
@@ -121,16 +135,27 @@ const InfoContainer = ({
           {headerLabel}
         </S.InfoContainerHeaderLabel>
       </S.InfoContainerHeader>
-      <S.InfoContainerContent>{children}</S.InfoContainerContent>
+      <S.InfoContainerContent>
+        {children}
+        {loading && (
+          <S.InfoContainerLoading>
+            <Spin />
+          </S.InfoContainerLoading>
+        )}
+      </S.InfoContainerContent>
     </S.InfoContainer>
   )
 }
 
 // ========================================== MAIN INFOS CONTAINER
 
-interface IMainInfosContainer {}
+interface IMainInfosContainer {
+  userData: IUserData | null
+}
 
-const MainInfosContainer = ({}: IMainInfosContainer) => {
+const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
+  const [updatingCompany, setUpdatingCompany] = useState(false)
+
   const [companyImage, setCompanyImage] = useState<string>()
   const [companyBanner, setCompanyBanner] = useState<string>()
 
@@ -150,12 +175,47 @@ const MainInfosContainer = ({}: IMainInfosContainer) => {
     })
   }
 
+  // ---------------------------------------------------------------
+
+  const { control, handleSubmit, reset, setValue, formState } =
+    useForm<ICompanyMainInfosForm>()
+
+  const { isValid } = formState
+
+  const handleUpdate = async (data: ICompanyMainInfosForm) => {
+    setUpdatingCompany(true)
+
+    await handleUpdateCompanyMainInfos({
+      companyLogo: companyImage || '',
+      companyBanner: companyBanner || '',
+      companyName: data.companyName,
+      companyId: data.companyId,
+      companyDescription: data.companyDescription
+    })
+
+    setUpdatingCompany(false)
+  }
+
+  useEffect(() => {
+    if (userData?.adminCompanyInfo) {
+      const companyInfo = userData?.adminCompanyInfo
+
+      setCompanyImage(companyInfo?.companyLogo || '')
+      setCompanyBanner(companyInfo?.companyBanner || '')
+
+      setValue('companyName', companyInfo?.companyName || '')
+      setValue('companyId', companyInfo?.companyId || '')
+      setValue('companyDescription', companyInfo?.companyDescription || '')
+    }
+  }, [userData, setValue])
+
   return (
     <InfoContainer
       headerIcon={<IoStorefrontOutline />}
       headerLabel="Informações básicas"
+      loading={userData === null}
     >
-      <S.MainInfosForm layout="vertical">
+      <S.MainInfosForm layout="vertical" onFinish={handleSubmit(handleUpdate)}>
         <S.MainInfosImagesContainer>
           <ImgCrop rotationSlider>
             <Upload
@@ -207,20 +267,42 @@ const MainInfosContainer = ({}: IMainInfosContainer) => {
           </ImgCrop>
         </S.MainInfosImagesContainer>
         <Form.Item label="Nome da empresa">
-          <Input placeholder="Nome da empresa" />
+          <Controller
+            name="companyName"
+            control={control}
+            rules={{ required: 'Este campo é obrigatório' }}
+            render={({ field }) => (
+              <Input {...field} placeholder="Nome da empresa" />
+            )}
+          />
         </Form.Item>
         <Form.Item label="ID da empresa">
-          <Input placeholder="ID da empresa na URL" />
+          <Controller
+            name="companyId"
+            control={control}
+            rules={{ required: 'Este campo é obrigatório' }}
+            render={({ field }) => (
+              <Input {...field} placeholder="ID da empresa na URL" />
+            )}
+          />
         </Form.Item>
         <Form.Item label="Descrição da empresa">
-          <Input.TextArea
-            placeholder="Descrição da empresa"
-            rows={6}
-            style={{ resize: 'none' }}
+          <Controller
+            name="companyDescription"
+            control={control}
+            rules={{ required: 'Este campo é obrigatório' }}
+            render={({ field }) => (
+              <Input.TextArea
+                {...field}
+                placeholder="Descrição da empresa"
+                rows={6}
+                style={{ resize: 'none' }}
+              />
+            )}
           />
         </Form.Item>
         <S.MainInfosFormFooter>
-          <Button type="primary" disabled={true}>
+          <Button type="primary" htmlType="submit" loading={updatingCompany}>
             Salvar
           </Button>
         </S.MainInfosFormFooter>
@@ -231,40 +313,128 @@ const MainInfosContainer = ({}: IMainInfosContainer) => {
 
 // ========================================== LOCATION CONTAINER
 
-interface ILocationContainer {}
+interface ILocationContainer {
+  userData: IUserData | null
+}
 
-const LocationContainer = ({}: ILocationContainer) => {
+const LocationContainer = ({ userData }: ILocationContainer) => {
+  const [updatingCompany, setUpdatingCompany] = useState(false)
+
+  const { control, handleSubmit, reset, setValue, formState } =
+    useForm<ICompanyLocationForm>()
+
+  const { isValid } = formState
+
+  const handleUpdate = async (data: ICompanyLocationForm) => {
+    setUpdatingCompany(true)
+
+    await handleUpdateCompanyLocation(data)
+
+    setUpdatingCompany(false)
+  }
+
+  useEffect(() => {
+    if (userData?.adminCompanyInfo) {
+      const companyLocation = userData?.adminCompanyInfo?.companyLocation
+
+      setValue('companyCep', companyLocation?.companyCep || '')
+      setValue('companyAddress', companyLocation?.companyAddress || '')
+      setValue(
+        'companyAddressNumber',
+        companyLocation?.companyAddressNumber || ''
+      )
+      setValue('companyDistrict', companyLocation?.companyDistrict || '')
+      setValue('companyCity', companyLocation?.companyCity || '')
+    }
+  }, [userData, setValue])
+
   return (
-    <InfoContainer headerIcon={<IoLocationOutline />} headerLabel="Localização">
-      <S.LocationForm layout="vertical">
+    <InfoContainer
+      headerIcon={<IoLocationOutline />}
+      headerLabel="Localização"
+      loading={userData === null}
+    >
+      <S.LocationForm layout="vertical" onFinish={handleSubmit(handleUpdate)}>
         <Form.Item label="CEP">
-          <Input
-            placeholder="Número"
-            style={{ width: '100%', maxWidth: '200px' }}
+          <Controller
+            name="companyCep"
+            control={control}
+            rules={{ required: 'Este campo é obrigatório' }}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder="CEP"
+                style={{ width: '100%', maxWidth: '200px' }}
+              />
+            )}
           />
         </Form.Item>
         <Form.Item label="Endereço completo">
           <Space.Compact style={{ width: '100%' }}>
             <Form.Item noStyle>
-              <Input placeholder="Endereço" style={{ width: '75%' }} />
+              <Controller
+                name="companyAddress"
+                control={control}
+                rules={{ required: 'Este campo é obrigatório' }}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder="Endereço"
+                    style={{ width: '75%' }}
+                  />
+                )}
+              />
             </Form.Item>
             <Form.Item noStyle>
-              <Input placeholder="Número" style={{ width: '25%' }} />
+              <Controller
+                name="companyAddressNumber"
+                control={control}
+                rules={{ required: 'Este campo é obrigatório' }}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder="Número"
+                    style={{ width: '25%' }}
+                  />
+                )}
+              />
             </Form.Item>
           </Space.Compact>
         </Form.Item>
         <Form.Item>
           <Space.Compact style={{ width: '100%', columnGap: '10px' }}>
             <Form.Item label="Bairro" style={{ width: '50%' }}>
-              <Input placeholder="Bairro" style={{ borderRadius: '6px' }} />
+              <Controller
+                name="companyDistrict"
+                control={control}
+                rules={{ required: 'Este campo é obrigatório' }}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder="Bairro"
+                    style={{ borderRadius: '6px' }}
+                  />
+                )}
+              />
             </Form.Item>
             <Form.Item label="Cidade" style={{ width: '50%' }}>
-              <Input placeholder="Cidade" style={{ borderRadius: '6px' }} />
+              <Controller
+                name="companyCity"
+                control={control}
+                rules={{ required: 'Este campo é obrigatório' }}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    placeholder="Cidade"
+                    style={{ borderRadius: '6px' }}
+                  />
+                )}
+              />
             </Form.Item>
           </Space.Compact>
         </Form.Item>
         <S.LocationFormFooter>
-          <Button type="primary" disabled={true}>
+          <Button type="primary" htmlType="submit" loading={updatingCompany}>
             Salvar
           </Button>
         </S.LocationFormFooter>
@@ -275,15 +445,43 @@ const LocationContainer = ({}: ILocationContainer) => {
 
 // ========================================== CONTACT CONTAINER
 
-interface IContactContainer {}
+interface IContactContainer {
+  userData: IUserData | null
+}
 
-const ContactContainer = ({}: IContactContainer) => {
+const ContactContainer = ({ userData }: IContactContainer) => {
   const { token } = useToken()
 
-  const notRequiredMessage = 'Essa campo não irá aparecer se estiver vazio'
+  const [updatingCompany, setUpdatingCompany] = useState(false)
+
+  const { control, handleSubmit, reset, setValue, formState } =
+    useForm<ICompanyContactForm>()
+
+  const { isValid } = formState
+
+  const handleUpdate = async (data: ICompanyContactForm) => {
+    setUpdatingCompany(true)
+
+    await handleUpdateCompanyContact(data)
+
+    setUpdatingCompany(false)
+  }
+
+  useEffect(() => {
+    if (userData?.adminCompanyInfo) {
+      const companyContacts = userData?.adminCompanyInfo?.companyContacts
+
+      setValue('companyPhone', companyContacts?.companyPhone || '')
+      setValue('companyWhatsapp', companyContacts?.companyWhatsapp || '')
+      setValue('companyEmail', companyContacts?.companyEmail || '')
+      setValue('companyFacebook', companyContacts?.companyFacebook || '')
+      setValue('companyInstagram', companyContacts?.companyInstagram || '')
+      setValue('companyWebsite', companyContacts?.companyWebsite || '')
+    }
+  }, [userData, setValue])
 
   const customTootip = (
-    <Tooltip title={notRequiredMessage}>
+    <Tooltip title="Essa campo não irá aparecer se estiver vazio">
       <InfoCircleOutlined
         style={{ fontSize: '14px', color: 'rgba(0,0,0,0.45)' }}
       />
@@ -294,6 +492,7 @@ const ContactContainer = ({}: IContactContainer) => {
     <InfoContainer
       headerIcon={<IoCallOutline />}
       headerLabel="Meios de contato"
+      loading={userData === null}
     >
       <S.ContactForm
         layout="vertical"
@@ -306,81 +505,124 @@ const ContactContainer = ({}: IContactContainer) => {
             </>
           )
         }
+        onFinish={handleSubmit(handleUpdate)}
       >
         <Form.Item label="Telefone">
-          <Input
-            placeholder="Telefone comercial"
-            prefix={
-              <LiaPhoneAltSolid
-                className="icon_large"
-                style={{ color: token.colorTextPlaceholder }}
+          <Controller
+            name="companyPhone"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder="Telefone comercial"
+                prefix={
+                  <LiaPhoneAltSolid
+                    className="icon_large"
+                    style={{ color: token.colorTextPlaceholder }}
+                  />
+                }
+                suffix={customTootip}
               />
-            }
-            suffix={customTootip}
+            )}
           />
         </Form.Item>
         <Form.Item label="Whatsapp">
-          <Input
-            placeholder="Whatsapp comercial"
-            prefix={
-              <LiaWhatsapp
-                className="icon_large"
-                style={{ color: token.colorTextPlaceholder }}
+          <Controller
+            name="companyWhatsapp"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder="Whatsapp comercial"
+                prefix={
+                  <LiaWhatsapp
+                    className="icon_large"
+                    style={{ color: token.colorTextPlaceholder }}
+                  />
+                }
+                suffix={customTootip}
               />
-            }
-            suffix={customTootip}
+            )}
           />
         </Form.Item>
         <Form.Item label="E-mail">
-          <Input
-            placeholder="E-mail comercial"
-            prefix={
-              <LiaEnvelope
-                className="icon_large"
-                style={{ color: token.colorTextPlaceholder }}
+          <Controller
+            name="companyEmail"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder="E-mail comercial"
+                prefix={
+                  <LiaEnvelope
+                    className="icon_large"
+                    style={{ color: token.colorTextPlaceholder }}
+                  />
+                }
+                suffix={customTootip}
               />
-            }
-            suffix={customTootip}
+            )}
           />
         </Form.Item>
         <Form.Item label="Facebook">
-          <Input
-            placeholder="Facebook comercial"
-            prefix={
-              <LiaFacebook
-                className="icon_large"
-                style={{ color: token.colorTextPlaceholder }}
+          <Controller
+            name="companyFacebook"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder="Facebook comercial"
+                prefix={
+                  <LiaFacebook
+                    className="icon_large"
+                    style={{ color: token.colorTextPlaceholder }}
+                  />
+                }
+                suffix={customTootip}
               />
-            }
-            suffix={customTootip}
+            )}
           />
         </Form.Item>
         <Form.Item label="Instagram">
-          <Input
-            placeholder="Instagram comercial"
-            prefix={
-              <LiaInstagram
-                className="icon_large"
-                style={{ color: token.colorTextPlaceholder }}
+          <Controller
+            name="companyInstagram"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder="Instagram comercial"
+                prefix={
+                  <LiaInstagram
+                    className="icon_large"
+                    style={{ color: token.colorTextPlaceholder }}
+                  />
+                }
+                suffix={customTootip}
               />
-            }
-            suffix={customTootip}
+            )}
           />
         </Form.Item>
         <Form.Item label="Website">
-          <Input
-            placeholder="Website comercial"
-            prefix={
-              <LiaLaptopSolid
-                className="icon_large"
-                style={{ color: token.colorTextPlaceholder }}
+          <Controller
+            name="companyWebsite"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                placeholder="Website comercial"
+                prefix={
+                  <LiaLaptopSolid
+                    className="icon_large"
+                    style={{ color: token.colorTextPlaceholder }}
+                  />
+                }
+                suffix={customTootip}
               />
-            }
-            suffix={customTootip}
+            )}
           />
         </Form.Item>
         <S.ContactFormFooter>
-          <Button type="primary" disabled={true}>
+          <Button type="primary" htmlType="submit" loading={updatingCompany}>
             Salvar
           </Button>
         </S.ContactFormFooter>
@@ -414,28 +656,20 @@ interface ScheduleItem {
   closeTime: moment.Moment
 }
 
-interface IScheduleContainer {}
+interface IScheduleContainer {
+  userData: IUserData | null
+}
 
-const ScheduleContainer = ({}: IScheduleContainer) => {
+const ScheduleContainer = ({ userData }: IScheduleContainer) => {
   const { token } = useToken()
+
+  const [updatingCompany, setUpdatingCompany] = useState(false)
 
   const [schedule, setSchedule] = useState<ScheduleItem[]>([])
   const { control, handleSubmit, watch, setValue, reset, formState } = useForm()
   const selectedDay = watch('day')
 
   const { isValid } = formState
-
-  const onSubmit = (data: any) => {
-    if (selectedDay === 'todos') {
-      setSchedule([data])
-    } else if (!schedule.some((item) => item.day === 'todos')) {
-      if (!schedule.some((item) => item.day === data.day)) {
-        setSchedule([...schedule, data])
-      } else {
-        console.log(`Dia ${data.day} já foi adicionado.`)
-      }
-    }
-  }
 
   const handleRemove = (indexToRemove: number) => {
     const updatedSchedule = schedule.filter(
@@ -452,12 +686,42 @@ const ScheduleContainer = ({}: IScheduleContainer) => {
     reset()
   }
 
+  const onSubmit = (data: any) => {
+    if (selectedDay === 'todos') {
+      setSchedule([data])
+    } else if (!schedule.some((item) => item.day === 'todos')) {
+      if (!schedule.some((item) => item.day === data.day)) {
+        setSchedule([...schedule, data])
+      } else {
+        console.log(`Dia ${data.day} já foi adicionado.`)
+      }
+    }
+  }
+
+  const handleUpdate = async () => {
+    setUpdatingCompany(true)
+    handleUpdateCompanySchedules(schedule)
+    setUpdatingCompany(false)
+  }
+
+  useEffect(() => {
+    if (userData?.adminCompanyInfo) {
+      const companySchedules = userData.adminCompanyInfo.companySchedules
+
+      setSchedule(companySchedules || [])
+    }
+  }, [userData])
+
   const isAddButtonDisabled =
     schedule.some((item) => item.day === 'todos' || item.day === selectedDay) ||
     !isValid
 
   return (
-    <InfoContainer headerIcon={<IoCalendarOutline />} headerLabel="Horários">
+    <InfoContainer
+      headerIcon={<IoCalendarOutline />}
+      headerLabel="Horários"
+      loading={userData === null}
+    >
       <S.ScheduleForm layout="vertical" onFinish={handleSubmit(onSubmit)}>
         <ScheduleFormDesktop
           control={control}
@@ -503,7 +767,11 @@ const ScheduleContainer = ({}: IScheduleContainer) => {
           )}
         </S.SchedulesSelected>
         <S.ScheduleFormFooter>
-          <Button type="primary" disabled={true}>
+          <Button
+            type="primary"
+            loading={updatingCompany}
+            onClick={handleUpdate}
+          >
             Salvar
           </Button>
         </S.ScheduleFormFooter>

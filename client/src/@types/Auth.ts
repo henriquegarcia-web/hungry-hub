@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import moment from 'moment'
+
 // ====================== TYPES ====================== //
 
 type Subscription = {
@@ -25,6 +27,40 @@ export interface ISignupUser {
   adminPassword: string
 }
 
+export interface ICompanyLocation {
+  companyCep: string
+  companyAddress: string
+  companyAddressNumber: string
+  companyDistrict: string
+  companyCity: string
+}
+
+export interface ICompanyContactMethods {
+  companyPhone?: string
+  companyWhatsapp?: string
+  companyEmail?: string
+  companyFacebook?: string
+  companyInstagram?: string
+  companyWebsite?: string
+}
+
+export interface ICompanySchedule {
+  day: string
+  openTime: moment.Moment
+  closeTime: moment.Moment
+}
+
+export interface ICompanyData {
+  companyLogo?: string
+  companyBanner?: string
+  companyName?: string
+  companyId?: string
+  companyDescription?: string
+  companyLocation?: ICompanyLocation
+  companyContacts?: ICompanyContactMethods
+  companySchedules?: ICompanySchedule[]
+}
+
 export interface IUserData {
   adminId: string
   adminName: string
@@ -32,11 +68,7 @@ export interface IUserData {
   adminPhone: string
   adminRegisteredAt: number
   adminSubscription?: Subscription
-}
-
-export interface ICompanyData {
-  companyId: string
-  companyName: string
+  adminCompanyInfo?: ICompanyData
 }
 
 // export interface ISigninAdmin extends ISigninUser {}

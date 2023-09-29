@@ -94,7 +94,30 @@ const handleSignupAdmin = async ({
         adminName: adminName,
         adminEmail: adminEmail,
         adminPhone: adminPhone,
-        adminRegisteredAt: Date.now()
+        adminRegisteredAt: Date.now(),
+        adminCompanyInfo: {
+          companyLogo: '',
+          companyBanner: '',
+          companyName: '',
+          companyId: '',
+          companyDescription: '',
+          companyLocation: {
+            companyCep: '',
+            companyAddress: '',
+            companyAddressNumber: '',
+            companyDistrict: '',
+            companyCity: ''
+          },
+          companyContacts: {
+            companyPhone: '',
+            companyWhatsapp: '',
+            companyEmail: '',
+            companyFacebook: '',
+            companyInstagram: '',
+            companyWebsite: ''
+          },
+          companySchedules: []
+        }
       }
 
       const adminDataResponse = await createAdminAccount(adminData)
