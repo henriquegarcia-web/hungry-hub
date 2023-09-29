@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import * as S from './styles'
 
 interface ILogo {
-  type: 'default' | 'dark' | 'full_default' | 'full_dark'
+  type: 'default' | 'dark' | 'large_default' | 'large_dark'
 }
 
 const Logo = ({ type }: ILogo) => {
@@ -13,10 +13,10 @@ const Logo = ({ type }: ILogo) => {
         return <img src="/logo_default.png" alt="Logo HungryHub" />
       case 'dark':
         return <img src="/logo_dark.png" alt="Logo HungryHub" />
-      case 'full_default':
-        return <img src="/logo_full_default.png" alt="Logo HungryHub" />
-      case 'full_dark':
-        return <img src="/logo_full_dark.png" alt="Logo HungryHub" />
+      case 'large_default':
+        return <img src="/logo_large_default.png" alt="Logo HungryHub" />
+      case 'large_dark':
+        return <img src="/logo_large_dark.png" alt="Logo HungryHub" />
 
       default:
         return <img src="/logo_default.png" alt="Logo HungryHub" />

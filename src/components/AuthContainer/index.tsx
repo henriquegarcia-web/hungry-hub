@@ -1,3 +1,4 @@
+import { Logo } from '..'
 import * as S from './styles'
 
 import { theme } from 'antd'
@@ -14,7 +15,7 @@ const AuthContainer = ({ title, children }: IAuthContainer) => {
   return (
     <S.AuthContainer style={{ backgroundColor: token.colorBgElevated }}>
       <S.AuthContainerHeader>
-        <img src="/logo_large_dark.png" alt="Logo HungryHub" />
+        <Logo type="large_dark" />
         <span>{title}</span>
       </S.AuthContainerHeader>
       <S.AuthContainerContent>{children}</S.AuthContainerContent>
