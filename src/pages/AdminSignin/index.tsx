@@ -6,6 +6,8 @@ import { Button, Input, ConfigProvider, theme } from 'antd'
 
 import { Controller, useForm } from 'react-hook-form'
 
+import { handleSigninAdmin } from '@/firebase/auth'
+
 interface ISigninForm {
   adminEmail: string
   adminPassword: string
@@ -18,10 +20,16 @@ const AdminSignin = () => {
 
   const { isValid } = formState
 
-  const handleSignin = (data: ISigninForm) => {
-    console.log(data)
+  const handleSignin = async (data: ISigninForm) => {
+    const signupAdminResponse = await handleSigninAdmin({
+      adminEmail: data.adminEmail,
+      adminPassword: data.adminPassword
+    })
 
-    reset()
+    if (signupAdminResponse) {
+      reset()
+      navigate('/admin')
+    }
   }
 
   return (

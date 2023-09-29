@@ -2,7 +2,7 @@ import firebase from '@/firebase/firebase'
 
 import { handleTranslateFbError } from '@/utils/functions/firebaseTranslateErrors'
 
-// import { toaster } from 'evergreen-ui'
+import { message } from 'antd'
 
 import { ISigninUser, ISignupUser, IUserData } from '@/@types/Auth'
 
@@ -16,10 +16,16 @@ const createAdminAccount = async (adminData: IUserData): Promise<boolean> => {
 
     await adminAccountsRef.set(adminData)
 
-    // toaster.success('Credenciais salvas com sucesso')
+    message.open({
+      type: 'success',
+      content: 'Credenciais salvas com sucesso'
+    })
     return true
   } catch (error) {
-    // toaster.danger('Falha ao salvar credenciais')
+    message.open({
+      type: 'error',
+      content: 'Falha ao salvar credenciais'
+    })
     return false
   }
 }
@@ -37,8 +43,11 @@ const handleSigninAdmin = async ({
   } catch (error: any) {
     const errorCode = error.code
     const traslatedError = handleTranslateFbError(errorCode)
-    // toaster.danger(traslatedError)
 
+    message.open({
+      type: 'error',
+      content: traslatedError
+    })
     return false
   }
 }
@@ -61,9 +70,11 @@ const handleSignupAdmin = async ({
     const adminQuerySnapshot = await adminQuery.get()
 
     if (adminQuerySnapshot.exists()) {
-      // toaster.warning(
-      //   'Essa conta já possuí cadastro, faça login para acessar o sistema'
-      // )
+      message.open({
+        type: 'warning',
+        content:
+          'Essa conta já possuí cadastro, faça login para acessar o sistema'
+      })
       return false
     }
 
@@ -89,20 +100,28 @@ const handleSignupAdmin = async ({
       const adminDataResponse = await createAdminAccount(adminData)
 
       if (!adminDataResponse) {
-        // toaster.danger('Falha ao realizar cadastro')
+        message.open({
+          type: 'error',
+          content: 'Falha ao realizar cadastro'
+        })
         return false
       }
     }
 
-    // toaster.success('Conta criada com sucesso')
+    message.open({
+      type: 'success',
+      content: 'Conta criada com sucesso'
+    })
     return true
   } catch (error: any) {
     const errorCode = error.code
 
     const traslatedError = handleTranslateFbError(errorCode)
-    // toaster.danger(traslatedError)
 
-    console.error(error.message)
+    message.open({
+      type: 'error',
+      content: traslatedError
+    })
     return false
   }
 }
@@ -146,7 +165,10 @@ const handleGetUserData = (
         callback(null)
       }
     } catch (error) {
-      // toaster.danger('Falha ao obter dados da empresa')
+      message.open({
+        type: 'error',
+        content: 'Falha ao obter dados da empresa'
+      })
     }
   }
 
