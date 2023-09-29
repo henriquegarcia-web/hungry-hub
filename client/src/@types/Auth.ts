@@ -51,6 +51,7 @@ export interface ICompanySchedule {
 }
 
 export interface ICompanyData {
+  companyActive: boolean
   companyLogo?: string
   companyBanner?: string
   companyName?: string

@@ -54,6 +54,22 @@ export const AccountDetailsPlan = styled.div`
   color: rgba(0, 0, 0, 0.8);
 `
 
+export const AccountDelete = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  border-radius: 10px;
+
+  border: 1px solid lightgrey;
+
+  p {
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 500;
+  }
+`
+
 // ========================================== ACCOUNT CONTAINER BASE
 
 export const AccountContainer = styled.div`

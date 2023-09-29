@@ -10,14 +10,13 @@ import React, {
 } from 'react'
 
 import { useAdminAuth } from './AdminAuthContext'
+import { handleActiveCompanyMenu } from '@/firebase/company'
 
 export type ThemeProps = 'default' | 'dark'
 
 interface AdminContextData {
   adminTheme: ThemeProps
-  isCompanyActive: boolean
-  handleActiveCompany: () => void
-  handleDesactiveCompany: () => void
+  handleActiveMenu: (checked: boolean) => void
   toogleThemeDark: (activeThemeDark: boolean) => void
 }
 
@@ -34,24 +33,24 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [adminTheme, setAdminTheme] = useState<ThemeProps>('default')
 
-  const [isCompanyActive, setIsCompanyActive] = useState<boolean>(false)
-
   // =================================================================
 
-  const handleDesactiveCompany = () => setIsCompanyActive(false)
+  const handleActiveMenu = useCallback(
+    (checked: boolean) => {
+      if (!companyHasAllDataFilledIn) {
+        message.open({
+          type: 'warning',
+          content:
+            'Não é possível ativar o cardápio até que todos dados sejam preenchidos!'
+        })
+        // handleActiveCompanyMenu(false)
+        return
+      }
 
-  const handleActiveCompany = useCallback(() => {
-    if (!companyHasAllDataFilledIn) {
-      message.open({
-        type: 'warning',
-        content:
-          'Não é possível ativar o cardápio até que todos dados sejam preenchidos!'
-      })
-      return
-    }
-
-    setIsCompanyActive(true)
-  }, [companyHasAllDataFilledIn])
+      handleActiveCompanyMenu(checked)
+    },
+    [companyHasAllDataFilledIn]
+  )
 
   // ------------------------------------------------------------------
 
@@ -71,11 +70,9 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     return {
       adminTheme,
       toogleThemeDark,
-      isCompanyActive,
-      handleActiveCompany,
-      handleDesactiveCompany
+      handleActiveMenu
     }
-  }, [adminTheme, isCompanyActive, handleActiveCompany])
+  }, [adminTheme, handleActiveMenu])
 
   return (
     <AdminContext.Provider value={AdminContextValues}>

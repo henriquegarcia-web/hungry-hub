@@ -64,19 +64,10 @@ const CompanyInfos = () => {
   const { token } = useToken()
   const { userData } = useAdminAuth()
 
-  const {
-    isCompanyActive,
-    handleDesactiveCompany,
-    handleActiveCompany
-    // companyHasAllDataFilledIn
-  } = useAdmin()
+  const { handleActiveMenu } = useAdmin()
 
   const onChange = (checked: boolean) => {
-    if (checked) {
-      handleActiveCompany()
-    } else {
-      handleDesactiveCompany()
-    }
+    handleActiveMenu(checked)
   }
 
   return (
@@ -90,9 +81,8 @@ const CompanyInfos = () => {
           </p>
           <Switch
             size="small"
-            checked={isCompanyActive}
+            checked={userData?.adminCompanyInfo?.companyActive || false}
             onChange={onChange}
-            // disabled={!companyHasAllDataFilledIn}
           />
         </S.CompanyInfosActiveCompany>
         <MainInfosContainer userData={userData} />
@@ -705,31 +695,6 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
       }
     }
   }
-
-  // const onSubmit = (data: any) => {
-  //   if (selectedDay === 'todos') {
-  //     setSchedule([
-  //       {
-  //         day: data.day,
-  //         openTime: momentToString(schedule.openTime),
-  //         closeTime: momentToString(schedule.closeTime)
-  //       }
-  //     ])
-  //   } else if (!schedule.some((item) => item.day === 'todos')) {
-  //     if (!schedule.some((item) => item.day === data.day)) {
-  //       setSchedule([
-  //         ...schedule,
-  //         {
-  //           day: data.day,
-  //           openTime: momentToString(schedule.openTime),
-  //           closeTime: momentToString(schedule.closeTime)
-  //         }
-  //       ])
-  //     } else {
-  //       console.log(`Dia ${data.day} já foi adicionado.`)
-  //     }
-  //   }
-  // }
 
   const handleUpdate = async () => {
     setUpdatingCompany(true)

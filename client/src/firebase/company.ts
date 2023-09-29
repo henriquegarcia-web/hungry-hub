@@ -227,11 +227,44 @@ const handleUpdateCompanySchedules = async (
   }
 }
 
+// ============================================== ACTIVE COMPANY
+
+const handleActiveCompanyMenu = async (isActive: boolean): Promise<boolean> => {
+  try {
+    const user = firebase.auth().currentUser
+
+    if (!user) return false
+
+    const userDataRef = firebase
+      .database()
+      .ref(`adminAccounts/${user.uid}/adminCompanyInfo/companyActive`)
+
+    await userDataRef.set(isActive)
+
+    message.open({
+      type: 'success',
+      content: `O cardápio agora está ${isActive ? 'ativo' : 'inativo'}.`
+    })
+
+    return true
+  } catch (error) {
+    console.error(error)
+
+    message.open({
+      type: 'error',
+      content: 'Falha ao modificar status do cardápio'
+    })
+
+    return false
+  }
+}
+
 // ============================================================================
 
 export {
   handleUpdateCompanyMainInfos,
   handleUpdateCompanyLocation,
   handleUpdateCompanyContact,
-  handleUpdateCompanySchedules
+  handleUpdateCompanySchedules,
+  handleActiveCompanyMenu
 }

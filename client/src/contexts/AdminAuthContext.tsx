@@ -12,7 +12,11 @@ import React, {
 import { message } from 'antd'
 
 import firebase from '@/firebase/firebase'
-import { handleGetUserData, handleLogoutUser } from '@/firebase/auth'
+import {
+  handleDeleteAdminAccount,
+  handleGetAdminData,
+  handleLogoutAdmin
+} from '@/firebase/auth'
 
 import { IUserData } from '@/@types/Auth'
 
@@ -24,6 +28,7 @@ interface AdminAuthContextData {
   // isAdminPremium: boolean
 
   handleLogout: () => void
+  handleDeleteAccount: () => void
 }
 
 // ===================================================================
@@ -98,7 +103,7 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   useEffect(() => {
-    const unsubscribe = handleGetUserData((accountData) => {
+    const unsubscribe = handleGetAdminData((accountData) => {
       setUserData(accountData)
     })
 
@@ -112,15 +117,16 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
   // -----------------------------------------------------------------
 
   const handleLogout = useCallback(async () => {
-    const response = await handleLogoutUser()
+    const response = await handleLogoutAdmin()
+    if (!response) return
 
-    if (!response) {
-      message.open({
-        type: 'error',
-        content: 'Falha ao fazer logout'
-      })
-      return
-    }
+    setUserId(null)
+    setUserData(null)
+  }, [])
+
+  const handleDeleteAccount = useCallback(async () => {
+    const response = await handleDeleteAdminAccount()
+    if (!response) return
 
     setUserId(null)
     setUserData(null)
@@ -139,9 +145,17 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
       userData,
       isAdminLogged,
       companyHasAllDataFilledIn,
-      handleLogout
+      handleLogout,
+      handleDeleteAccount
     }
-  }, [userId, userData, isAdminLogged, companyHasAllDataFilledIn, handleLogout])
+  }, [
+    userId,
+    userData,
+    isAdminLogged,
+    companyHasAllDataFilledIn,
+    handleLogout,
+    handleDeleteAccount
+  ])
 
   return (
     <AdminAuthContext.Provider value={AdminAuthContextValues}>

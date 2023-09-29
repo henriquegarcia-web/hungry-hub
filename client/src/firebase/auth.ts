@@ -96,6 +96,7 @@ const handleSignupAdmin = async ({
         adminPhone: adminPhone,
         adminRegisteredAt: Date.now(),
         adminCompanyInfo: {
+          companyActive: false,
           companyLogo: '',
           companyBanner: '',
           companyName: '',
@@ -151,15 +152,16 @@ const handleSignupAdmin = async ({
 
 // ============================================== LOGOUT
 
-const handleLogoutUser = async (): Promise<boolean> => {
+const handleLogoutAdmin = async (): Promise<boolean> => {
   try {
     await firebase.auth().signOut()
 
     return true
   } catch (error: any) {
-    const errorCode = error.code
-    const errorMessage = error.message
-    console.error('Erro ao deslogar usuário: ', errorMessage, errorCode)
+    message.open({
+      type: 'error',
+      content: 'Falha ao fazer logout'
+    })
 
     return false
   }
@@ -167,7 +169,7 @@ const handleLogoutUser = async (): Promise<boolean> => {
 
 // ============================================== HANDLE GET USER DATA
 
-const handleGetUserData = (
+const handleGetAdminData = (
   callback: (accountData: IUserData | null) => void
 ) => {
   const user = firebase.auth().currentUser
@@ -204,11 +206,46 @@ const handleGetUserData = (
   return offCallback
 }
 
+// ============================================== HANDLE DELETE ACCOUNT
+
+const handleDeleteAdminAccount = async () => {
+  try {
+    const user = firebase.auth().currentUser
+
+    if (!user) {
+      message.open({
+        type: 'error',
+        content: 'Você precisa estar logado para excluir sua conta.'
+      })
+      return false
+    }
+
+    const adminsRef = firebase.database().ref('adminAccounts/' + user.uid)
+    await adminsRef.remove()
+    await user.delete()
+
+    message.open({
+      type: 'success',
+      content: 'Sua conta foi excluída com sucesso.'
+    })
+
+    return true
+  } catch (error) {
+    console.error('Erro ao excluir a conta: ', error)
+    message.open({
+      type: 'error',
+      content: 'Falha ao excluir a conta. Tente novamente mais tarde.'
+    })
+    return false
+  }
+}
+
 // -----------------------------------------------------------------
 
 export {
   handleSigninAdmin,
   handleSignupAdmin,
-  handleLogoutUser,
-  handleGetUserData
+  handleLogoutAdmin,
+  handleGetAdminData,
+  handleDeleteAdminAccount
 }

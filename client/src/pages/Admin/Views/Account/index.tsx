@@ -2,14 +2,18 @@ import * as S from './styles'
 import { LiaEnvelope, LiaUserLockSolid } from 'react-icons/lia'
 
 import { PremiumStatus } from '@/components'
-import { Button, Form, Input, theme } from 'antd'
+import { Button, Form, Input, Popconfirm, theme } from 'antd'
 
 const { useToken } = theme
 
 import { Controller, useForm } from 'react-hook-form'
 
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
+
 const Account = () => {
   const { token } = useToken()
+
+  const { handleDeleteAccount } = useAdminAuth()
 
   return (
     <S.Account>
@@ -35,6 +39,19 @@ const Account = () => {
         >
           <AccountPasswordChange />
         </AccountContainer>
+        <S.AccountDelete style={{ backgroundColor: token.colorBgContainer }}>
+          <p style={{ color: token.colorTextSecondary }}>Deletar conta</p>
+          <Popconfirm
+            placement="top"
+            title={'Tem certeza de que deseja deletar sua conta?'}
+            description={'Essa ação não pode ser desfeita.'}
+            onConfirm={handleDeleteAccount}
+            okText="Sim"
+            cancelText="Não"
+          >
+            <Button type="primary">Deletar</Button>
+          </Popconfirm>
+        </S.AccountDelete>
       </S.AccountWrapper>
     </S.Account>
   )
