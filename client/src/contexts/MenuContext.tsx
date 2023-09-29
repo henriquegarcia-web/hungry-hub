@@ -12,11 +12,13 @@ import { message } from 'antd'
 
 // ===================================================================
 
-import { ICategory, IProduct } from '@/pages/Admin/Views/Menu/@types'
+import { ICategory, IProduct } from '@/@types/Auth'
+import { handleDeleteCategory } from '@/firebase/menu'
+
+import { useAdminAuth } from './AdminAuthContext'
 
 interface MenuContextData {
   categories: ICategory[]
-  setCategories: React.Dispatch<React.SetStateAction<ICategory[]>>
   createProductCategory: ICategory | null
   setCreateProductCategory: React.Dispatch<
     React.SetStateAction<ICategory | null>
@@ -34,8 +36,6 @@ interface MenuContextData {
   isEditingProduct: boolean
   setIsEditingProduct: React.Dispatch<React.SetStateAction<boolean>>
 
-  handleEditCategory: (data: ICreateCategoryForm) => void
-  handleCreateCategory: (data: ICreateCategoryForm) => void
   handleCategoryEdit: ({
     category,
     setValue
@@ -44,7 +44,7 @@ interface MenuContextData {
     setValue: any
   }) => void
   handleCategoryDelete: (categoryId: string) => void
-  handleCancelEdit: ({ reset }: { reset: any }) => void
+  handleCancelEdit: (reset: any) => void
 
   handleProductDelete: (productId: string) => void
   handleOpenCreateProductModal: (category: ICategory) => void
@@ -52,16 +52,14 @@ interface MenuContextData {
   handleCloseEditProductModal: () => void
 }
 
-interface ICreateCategoryForm {
-  categoryName: string
-}
-
 export const MenuContext = createContext<MenuContextData>({} as MenuContextData)
 
 const MenuProvider = ({ children }: { children: React.ReactNode }) => {
+  const { userData } = useAdminAuth()
+
   // =================================================================
 
-  const [categories, setCategories] = useState<ICategory[]>([])
+  // const [categories, setCategories] = useState<ICategory[]>([])
   const [createProductCategory, setCreateProductCategory] =
     useState<ICategory | null>(null)
   const [editProductCategory, setEditProductCategory] =
@@ -77,60 +75,19 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
 
   // ------------------------------------- CATEGORIES CONTROL
 
-  const handleEditCategory = useCallback(
-    (data: ICreateCategoryForm) => {
-      if (!editingCategory) return
+  const categories: ICategory[] = useMemo(() => {
+    if (!userData?.adminCompanyInfo?.companyMenu) return []
 
-      const updatedCategory: ICategory = {
-        ...editingCategory,
-        name: data.categoryName
-      }
+    const companyMenu: any = userData?.adminCompanyInfo?.companyMenu
+    const companyArray: ICategory[] = Object.keys(companyMenu).map((key) => ({
+      id: key,
+      ...companyMenu[key]
+    }))
 
-      const updatedCategories = categories.map((category) =>
-        category.id === updatedCategory.id ? updatedCategory : category
-      )
+    // console.log(companyArray.length)
 
-      setCategories(updatedCategories)
-      setIsEditingCategory(false)
-      setEditingCategory(null)
-    },
-    [categories, editingCategory]
-  )
-
-  const handleCreateCategory = useCallback(
-    (data: ICreateCategoryForm) => {
-      if (data.categoryName.trim() === '') {
-        return
-      }
-
-      const isCategoryExists = categories.some(
-        (category) => category.name === data.categoryName
-      )
-
-      if (isCategoryExists) {
-        message.open({
-          type: 'warning',
-          content: 'Já existe uma categoria com esse nome!'
-        })
-        return
-      }
-
-      const id = data.categoryName
-        .toLowerCase()
-        .replace(/[^a-zA-Z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
-
-      const newCategory: ICategory = {
-        id,
-        name: data.categoryName,
-        products: []
-      }
-
-      setCategories([...categories, newCategory])
-    },
-    [categories]
-  )
+    return companyArray || []
+  }, [userData])
 
   const handleCategoryEdit = ({
     category,
@@ -144,17 +101,11 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     setValue('categoryName', category.name)
   }
 
-  const handleCategoryDelete = useCallback(
-    (categoryId: string) => {
-      const updatedCategories = categories.filter(
-        (category) => category.id !== categoryId
-      )
-      setCategories(updatedCategories)
-    },
-    [categories]
-  )
+  const handleCategoryDelete = useCallback((categoryId: string) => {
+    handleDeleteCategory(categoryId)
+  }, [])
 
-  const handleCancelEdit = ({ reset }: { reset: any }) => {
+  const handleCancelEdit = (reset: any) => {
     setIsEditingCategory(false)
     setEditingCategory(null)
     reset()
@@ -181,29 +132,24 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     setEditProductCategory(null)
   }
 
-  const handleProductDelete = useCallback(
-    (productId: string) => {
-      const updatedCategories = categories.map((category) => {
-        const updatedProducts = category.products.filter(
-          (product) => product.productId !== productId
-        )
-        return {
-          ...category,
-          products: updatedProducts
-        }
-      })
-
-      setCategories(updatedCategories)
-    },
-    [categories]
-  )
+  const handleProductDelete = useCallback((productId: string) => {
+    // const updatedCategories = categories.map((category) => {
+    //   const updatedProducts = category.products.filter(
+    //     (product) => product.productId !== productId
+    //   )
+    //   return {
+    //     ...category,
+    //     products: updatedProducts
+    //   }
+    // })
+    // setCategories(updatedCategories)
+  }, [])
 
   // =================================================================
 
   const MenuContextValues = useMemo(() => {
     return {
       categories,
-      setCategories,
       createProductCategory,
       setCreateProductCategory,
       editProductCategory,
@@ -219,8 +165,6 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
       isEditingProduct,
       setIsEditingProduct,
 
-      handleEditCategory,
-      handleCreateCategory,
       handleCategoryEdit,
       handleCategoryDelete,
       handleCancelEdit,
@@ -237,8 +181,7 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     editingCategory,
     editingProduct,
     handleCategoryDelete,
-    handleCreateCategory,
-    handleEditCategory,
+
     handleProductDelete,
     isEditingCategory,
     isEditingProduct

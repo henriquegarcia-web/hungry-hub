@@ -23,16 +23,18 @@ const { useToken } = theme
 
 import { Controller, useForm } from 'react-hook-form'
 
+import { handleCreateCategory, handleEditCategory } from '@/firebase/menu'
 import { formatCurrency } from '@/utils/functions/formatCurrency'
 
 import { useMenu } from '@/contexts/MenuContext'
 
 import { ICategory, IProduct } from './@types'
+import { useEffect } from 'react'
 
 const Menu = () => {
   const {
     categories,
-    setCategories,
+    // setCategories,
     createProductCategory,
     setCreateProductCategory,
     editProductCategory,
@@ -53,7 +55,7 @@ const Menu = () => {
         </S.CategoriesListContainer>
       </S.MenuWrapper>
 
-      <Modal
+      {/* <Modal
         title="Criar produto"
         open={createProductCategory !== null}
         onOk={() => setCreateProductCategory(null)}
@@ -62,7 +64,7 @@ const Menu = () => {
       >
         <CreateProductModal
           categories={categories}
-          setCategories={setCategories}
+          // setCategories={setCategories}
           createProductCategory={createProductCategory}
           setCreateProductCategory={setCreateProductCategory}
         />
@@ -77,13 +79,13 @@ const Menu = () => {
       >
         <EditProductModal
           categories={categories}
-          setCategories={setCategories}
+          // setCategories={setCategories}
           editProductCategory={editProductCategory}
           setEditProductCategory={setEditProductCategory}
           editingProduct={editingProduct}
           handleCloseModal={handleCloseEditProductModal}
         />
-      </Modal>
+      </Modal> */}
     </S.Menu>
   )
 }
@@ -105,8 +107,6 @@ const CreateCategory = ({}: ICreateCategory) => {
     categories,
     editingCategory,
     isEditingCategory,
-    handleEditCategory,
-    handleCreateCategory,
     handleCategoryEdit,
     handleCategoryDelete,
     handleCancelEdit
@@ -115,14 +115,41 @@ const CreateCategory = ({}: ICreateCategory) => {
   const { control, handleSubmit, setValue, reset } =
     useForm<ICreateCategoryForm>()
 
-  const handleSubmitCategoryForm = (data: ICreateCategoryForm) => {
-    if (isEditingCategory) {
-      handleEditCategory(data)
-    } else {
-      handleCreateCategory(data)
-    }
+  const handleSubmitCategoryForm = async (data: ICreateCategoryForm) => {
+    const categoryId = data.categoryName
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
 
-    reset()
+    if (isEditingCategory && editingCategory) {
+      const editedCategory = {
+        id: categoryId,
+        name: data.categoryName,
+        products: []
+      }
+
+      const result = await handleEditCategory({
+        categoryId: editingCategory.id,
+        updatedCategoryData: editedCategory
+      })
+
+      if (result) {
+        handleCancelEdit(reset)
+      }
+    } else {
+      const newCategory = {
+        id: categoryId,
+        name: data.categoryName,
+        products: []
+      }
+
+      const result = await handleCreateCategory(newCategory)
+
+      if (result) {
+        handleCancelEdit(reset)
+      }
+    }
   }
 
   const emptyDataComponent = (
@@ -145,7 +172,7 @@ const CreateCategory = ({}: ICreateCategory) => {
       <S.CreateCategoryWrapper>
         <List
           style={{ width: '100%' }}
-          dataSource={categories}
+          dataSource={categories || []}
           locale={{ emptyText: emptyDataComponent }}
           renderItem={(category) => (
             <List.Item
@@ -195,7 +222,7 @@ const CreateCategory = ({}: ICreateCategory) => {
             <Button type="primary" htmlType="submit" icon={<EditOutlined />} />
             <Button
               icon={<CloseOutlined />}
-              onClick={() => handleCancelEdit({ reset })}
+              onClick={() => handleCancelEdit(reset)}
             />
           </>
         ) : (
@@ -229,6 +256,10 @@ const CategoriesList = ({}: ICategoriesList) => {
 
   const { categories, handleOpenCreateProductModal } = useMenu()
 
+  useEffect(() => {
+    console.log(categories)
+  }, [categories])
+
   const emptyDataComponent = (
     <S.ProductsListEmptyData>
       {Empty.PRESENTED_IMAGE_SIMPLE}
@@ -238,8 +269,8 @@ const CategoriesList = ({}: ICategoriesList) => {
 
   return (
     <S.CategoriesList>
-      {categories.length !== 0
-        ? categories.map((category: ICategory) => (
+      {categories?.length !== 0
+        ? categories?.map((category: ICategory) => (
             <S.CategoryWrapper key={category.id}>
               <S.CategoryWrapperHeader
                 style={{
@@ -258,18 +289,18 @@ const CategoriesList = ({}: ICategoriesList) => {
                     color: token.colorTextHeading
                   }}
                 >
-                  {category.products.length}{' '}
-                  {category.products.length === 1 ? 'produto' : 'produtos'}
+                  {category.products?.length || 0}{' '}
+                  {category.products?.length === 1 ? 'produto' : 'produtos'}
                 </S.CategoryCounter>
               </S.CategoryWrapperHeader>
               <S.CategoryWrapperContent>
-                {category.products?.map((product: IProduct) => (
+                {/* {category.products?.map((product: IProduct) => (
                   <CategoriesProduct
                     key={product.productId}
                     product={product}
                     category={category}
                   />
-                ))}
+                ))} */}
               </S.CategoryWrapperContent>
               <S.CategoryWrapperFooter>
                 <Button

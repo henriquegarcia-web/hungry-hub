@@ -50,6 +50,20 @@ export interface ICompanySchedule {
   closeTime: moment.Moment
 }
 
+export interface IProduct {
+  productId: string
+  productImage: string
+  productName: string
+  productPrice: number
+  productDescription: string
+}
+
+export interface ICategory {
+  id: string
+  name: string
+  products: IProduct[]
+}
+
 export interface ICompanyData {
   companyActive: boolean
   companyLogo?: string
@@ -60,6 +74,7 @@ export interface ICompanyData {
   companyLocation?: ICompanyLocation
   companyContacts?: ICompanyContactMethods
   companySchedules?: ICompanySchedule[]
+  companyMenu?: ICategory[]
 }
 
 export interface IUserData {
