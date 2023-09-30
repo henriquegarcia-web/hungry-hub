@@ -1,9 +1,12 @@
 import styled from 'styled-components'
 import { View, adminViewDisclosureWrapper } from '@/utils/styles/globals'
 
+interface IDisclosureMethodWrapper {
+  disabled?: number
+}
+
 interface IDisclosureMethod {
   background: string
-  full?: number
 }
 
 export const Disclosure = styled(View)`
@@ -14,7 +17,6 @@ export const Disclosure = styled(View)`
 
 export const DisclosureWrapper = styled.div`
   display: flex;
-  /* flex-direction: column; */
   flex-wrap: wrap;
   gap: 10px;
   width: 100%;
@@ -22,11 +24,23 @@ export const DisclosureWrapper = styled.div`
   height: fit-content;
 `
 
+export const DisclosureMethodWrapper = styled.div<IDisclosureMethodWrapper>`
+  display: flex;
+  width: calc(50% - 5px);
+
+  opacity: ${({ disabled }) => (disabled ? '0.6' : '1')};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'all')};
+
+  @media screen and (max-width: 600px) {
+    width: 100%;
+  }
+`
+
 export const DisclosureMethod = styled.div<IDisclosureMethod>`
   display: flex;
   align-items: center;
   column-gap: 10px;
-  width: ${({ full }) => (full ? '100%' : 'calc(50% - 5px)')};
+  width: 100%;
   padding: 15px;
   border-radius: 10px;
   cursor: pointer;
@@ -37,10 +51,6 @@ export const DisclosureMethod = styled.div<IDisclosureMethod>`
 
   &:hover {
     opacity: 1;
-  }
-
-  @media screen and (max-width: 600px) {
-    width: 100%;
   }
 `
 
@@ -66,4 +76,23 @@ export const DisclosureMethodLabel = styled.div`
   font-weight: 600;
 
   color: white;
+`
+
+export const QrCodeModalContent = styled.div`
+  display: flex;
+  padding: 15px 0;
+  column-gap: 20px;
+
+  @media screen and (max-width: 560px) {
+    flex-direction: column;
+    align-items: center;
+    row-gap: 20px;
+  }
+`
+
+export const QrCodeModalContentOptions = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  flex: 1;
 `
