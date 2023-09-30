@@ -33,8 +33,6 @@ import { useEffect } from 'react'
 
 const Menu = () => {
   const {
-    categories,
-    // setCategories,
     createProductCategory,
     setCreateProductCategory,
     editProductCategory,
@@ -55,7 +53,7 @@ const Menu = () => {
         </S.CategoriesListContainer>
       </S.MenuWrapper>
 
-      {/* <Modal
+      <Modal
         title="Criar produto"
         open={createProductCategory !== null}
         onOk={() => setCreateProductCategory(null)}
@@ -63,8 +61,6 @@ const Menu = () => {
         footer={null}
       >
         <CreateProductModal
-          categories={categories}
-          // setCategories={setCategories}
           createProductCategory={createProductCategory}
           setCreateProductCategory={setCreateProductCategory}
         />
@@ -78,14 +74,12 @@ const Menu = () => {
         footer={null}
       >
         <EditProductModal
-          categories={categories}
-          // setCategories={setCategories}
           editProductCategory={editProductCategory}
           setEditProductCategory={setEditProductCategory}
           editingProduct={editingProduct}
           handleCloseModal={handleCloseEditProductModal}
         />
-      </Modal> */}
+      </Modal>
     </S.Menu>
   )
 }
@@ -116,15 +110,8 @@ const CreateCategory = ({}: ICreateCategory) => {
     useForm<ICreateCategoryForm>()
 
   const handleSubmitCategoryForm = async (data: ICreateCategoryForm) => {
-    const categoryId = data.categoryName
-      .toLowerCase()
-      .replace(/[^a-zA-Z0-9]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '')
-
     if (isEditingCategory && editingCategory) {
       const editedCategory = {
-        id: categoryId,
         name: data.categoryName,
         products: []
       }
@@ -139,7 +126,6 @@ const CreateCategory = ({}: ICreateCategory) => {
       }
     } else {
       const newCategory = {
-        id: categoryId,
         name: data.categoryName,
         products: []
       }
@@ -294,13 +280,13 @@ const CategoriesList = ({}: ICategoriesList) => {
                 </S.CategoryCounter>
               </S.CategoryWrapperHeader>
               <S.CategoryWrapperContent>
-                {/* {category.products?.map((product: IProduct) => (
+                {category?.products?.map((product: IProduct) => (
                   <CategoriesProduct
                     key={product.productId}
                     product={product}
                     category={category}
                   />
-                ))} */}
+                ))}
               </S.CategoryWrapperContent>
               <S.CategoryWrapperFooter>
                 <Button
@@ -378,7 +364,7 @@ const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
           placement="right"
           title={'Tem certeza de que deseja excluir este produto?'}
           description={'Essa ação não pode ser desfeita.'}
-          onConfirm={() => handleProductDelete(product.productId)}
+          onConfirm={() => handleProductDelete(category.id, product.productId)}
           okText="Sim"
           cancelText="Não"
         >

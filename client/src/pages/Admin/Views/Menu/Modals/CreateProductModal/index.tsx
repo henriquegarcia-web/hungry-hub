@@ -23,10 +23,9 @@ import useScrollbar from '@/hooks/useScrollbar'
 import { ICategory, IProduct } from '../../@types'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { UploadChangeParam } from 'antd/es/upload'
+import { handleCreateProduct } from '@/firebase/menu'
 
 interface ICreateProductModal {
-  categories: ICategory[]
-  // setCategories: React.Dispatch<React.SetStateAction<ICategory[]>>
   createProductCategory: ICategory | null
   setCreateProductCategory: React.Dispatch<
     React.SetStateAction<ICategory | null>
@@ -41,8 +40,6 @@ interface ICreateProductForm {
 }
 
 const CreateProductModal = ({
-  categories,
-  // setCategories,
   createProductCategory,
   setCreateProductCategory
 }: ICreateProductModal) => {
@@ -55,47 +52,31 @@ const CreateProductModal = ({
 
   const [productImage, setProductImage] = useState<string>('')
 
-  const handleCreateProduct = (data: ICreateProductForm) => {
-    if (createProductCategory) {
-      const productId = data.productName
-        .toLowerCase()
-        .replace(/[^a-zA-Z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '')
+  const handleCancel = () => {
+    setCreateProductCategory(null)
+    reset()
+    setProductImage('')
+  }
 
-      const newProduct: IProduct = {
-        productId: productId,
+  const handleSubmitProductCreation = async (data: ICreateProductForm) => {
+    if (createProductCategory) {
+      const productData = {
         productImage: productImage,
         productName: data.productName,
         productPrice: formatByCurrency(data.productPrice),
         productDescription: data.productDescription
       }
 
-      const existingProduct = createProductCategory.products.find(
-        (product) => product.productId === newProduct.productId
+      console.log(createProductCategory.id)
+
+      const createProductResponse = await handleCreateProduct(
+        createProductCategory.id,
+        productData
       )
 
-      if (existingProduct) {
-        message.open({
-          type: 'warning',
-          content: 'Já existe um produto com esse nome!'
-        })
-        return
+      if (createProductResponse) {
+        handleCancel()
       }
-
-      const updatedCategory = {
-        ...createProductCategory,
-        products: [...createProductCategory.products, newProduct]
-      }
-
-      const updatedCategories = categories.map((category) =>
-        category.id === createProductCategory.id ? updatedCategory : category
-      )
-
-      // setCategories(updatedCategories)
-      setCreateProductCategory(null)
-      reset()
-      setProductImage('')
     }
   }
 
@@ -107,12 +88,6 @@ const CreateProductModal = ({
     })
   }
 
-  const handleCancel = () => {
-    setCreateProductCategory(null)
-    reset()
-    setProductImage('')
-  }
-
   const [containerHasScrollbar] = useScrollbar(formContainerRef)
 
   const formIsValid = isValid
@@ -120,7 +95,7 @@ const CreateProductModal = ({
   return (
     <S.CreateProductModal
       layout="vertical"
-      onFinish={handleSubmit(handleCreateProduct)}
+      onFinish={handleSubmit(handleSubmitProductCreation)}
     >
       <S.CreateProductModalFormContent
         ref={formContainerRef}

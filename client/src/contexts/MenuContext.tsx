@@ -13,7 +13,7 @@ import { message } from 'antd'
 // ===================================================================
 
 import { ICategory, IProduct } from '@/@types/Auth'
-import { handleDeleteCategory } from '@/firebase/menu'
+import { handleDeleteCategory, handleDeleteProduct } from '@/firebase/menu'
 
 import { useAdminAuth } from './AdminAuthContext'
 
@@ -46,7 +46,7 @@ interface MenuContextData {
   handleCategoryDelete: (categoryId: string) => void
   handleCancelEdit: (reset: any) => void
 
-  handleProductDelete: (productId: string) => void
+  handleProductDelete: (categoryId: string, productId: string) => void
   handleOpenCreateProductModal: (category: ICategory) => void
   handleOpenEditProductModal: (product: IProduct, category: ICategory) => void
   handleCloseEditProductModal: () => void
@@ -132,18 +132,12 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     setEditProductCategory(null)
   }
 
-  const handleProductDelete = useCallback((productId: string) => {
-    // const updatedCategories = categories.map((category) => {
-    //   const updatedProducts = category.products.filter(
-    //     (product) => product.productId !== productId
-    //   )
-    //   return {
-    //     ...category,
-    //     products: updatedProducts
-    //   }
-    // })
-    // setCategories(updatedCategories)
-  }, [])
+  const handleProductDelete = useCallback(
+    (categoryId: string, productId: string) => {
+      handleDeleteProduct(categoryId, productId)
+    },
+    []
+  )
 
   // =================================================================
 

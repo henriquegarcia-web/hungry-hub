@@ -23,10 +23,9 @@ import useScrollbar from '@/hooks/useScrollbar'
 import { ICategory, IProduct } from '../../@types'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { UploadChangeParam } from 'antd/es/upload'
+import { handleEditProduct } from '@/firebase/menu'
 
 interface IEditProductModal {
-  categories: ICategory[]
-  // setCategories: React.Dispatch<React.SetStateAction<ICategory[]>>
   editProductCategory: ICategory | null
   setEditProductCategory: React.Dispatch<React.SetStateAction<ICategory | null>>
   editingProduct: IProduct | null
@@ -41,8 +40,6 @@ interface IEditProductForm {
 }
 
 const EditProductModal = ({
-  categories,
-  // setCategories,
   editProductCategory,
   editingProduct,
   handleCloseModal
@@ -56,9 +53,15 @@ const EditProductModal = ({
 
   const [productImage, setProductImage] = useState<string>('')
 
-  const handleEditProduct = (data: IEditProductForm) => {
-    if (editProductCategory) {
-      const updatedProduct = {
+  const handleCancel = () => {
+    handleCloseModal()
+    reset()
+    setProductImage('')
+  }
+
+  const handleSubmitProductEdition = async (data: IEditProductForm) => {
+    if (editProductCategory && editingProduct) {
+      const updatedProduct: IProduct = {
         ...editingProduct,
         productImage: productImage,
         productName: data.productName,
@@ -66,23 +69,16 @@ const EditProductModal = ({
         productDescription: data.productDescription
       }
 
-      const updatedCategory = {
-        ...editProductCategory,
-        products: editProductCategory.products.map((product: any) =>
-          product.productId === updatedProduct.productId
-            ? updatedProduct
-            : product
-        )
-      }
-
-      const updatedCategories = categories.map((category: ICategory) =>
-        category.id === editProductCategory.id ? updatedCategory : category
+      const editProductResponse = await handleEditProduct(
+        editProductCategory.id,
+        editingProduct.productId,
+        updatedProduct
       )
 
-      // setCategories(updatedCategories)
+      if (editProductResponse) {
+        handleCancel()
+      }
     }
-
-    handleCloseModal()
   }
 
   const handleChangeCompanyImage: UploadProps['onChange'] = (
@@ -91,12 +87,6 @@ const EditProductModal = ({
     getBase64(info.file.originFileObj as RcFile, (url) => {
       setProductImage(url)
     })
-  }
-
-  const handleCancel = () => {
-    handleCloseModal()
-    reset()
-    setProductImage('')
   }
 
   useEffect(() => {
@@ -119,7 +109,7 @@ const EditProductModal = ({
   return (
     <S.EditProductModal
       layout="vertical"
-      onFinish={handleSubmit(handleEditProduct)}
+      onFinish={handleSubmit(handleSubmitProductEdition)}
     >
       <S.EditProductModalFormContent
         ref={formContainerRef}

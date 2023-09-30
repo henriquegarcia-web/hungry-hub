@@ -58,8 +58,20 @@ export interface IProduct {
   productDescription: string
 }
 
+export interface IProductManipulate {
+  productImage: string
+  productName: string
+  productPrice: number
+  productDescription: string
+}
+
 export interface ICategory {
   id: string
+  name: string
+  products: IProduct[]
+}
+
+export interface ICategoryManipulate {
   name: string
   products: IProduct[]
 }
