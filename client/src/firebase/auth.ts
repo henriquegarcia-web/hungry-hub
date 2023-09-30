@@ -241,6 +241,92 @@ const handleDeleteAdminAccount = async () => {
   }
 }
 
+// ============================================== HANDLE EDIT E-MAIL
+
+const handleChangeEmailAdmin = async (newEmail: string): Promise<boolean> => {
+  try {
+    const user = firebase.auth().currentUser
+
+    if (!user) {
+      message.open({
+        type: 'error',
+        content: 'Você precisa estar logado para alterar o e-mail.'
+      })
+      return false
+    }
+
+    await user.updateEmail(newEmail)
+    await user.sendEmailVerification()
+
+    await firebase.auth().signOut()
+
+    message.open({
+      type: 'success',
+      content: 'Um e-mail de verificação foi enviado para o novo endereço.'
+    })
+
+    return true
+  } catch (error: any) {
+    const errorCode = error.code
+
+    if (errorCode === 'auth/requires-recent-login') {
+      message.open({
+        type: 'error',
+        content: 'Você precisa fazer login novamente para alterar o e-mail.'
+      })
+    } else {
+      message.open({
+        type: 'error',
+        content: 'Erro ao alterar o e-mail: ' + error.message
+      })
+    }
+
+    return false
+  }
+}
+
+// ============================================== HANDLE EDIT PASSWORD
+
+const handleChangePasswordAdmin = async (
+  currentPassword: string,
+  newPassword: string
+): Promise<boolean> => {
+  try {
+    const user = firebase.auth().currentUser
+
+    if (!user?.email) {
+      message.open({
+        type: 'error',
+        content: 'Você precisa estar logado para alterar a senha.'
+      })
+      return false
+    }
+
+    const credentials = firebase.auth.EmailAuthProvider.credential(
+      user.email,
+      currentPassword
+    )
+    await user.reauthenticateWithCredential(credentials)
+
+    await user.updatePassword(newPassword)
+
+    message.open({
+      type: 'success',
+      content: 'Senha alterada com sucesso.'
+    })
+
+    return true
+  } catch (error) {
+    console.error('Erro ao alterar a senha: ', error)
+    message.open({
+      type: 'error',
+      content:
+        'Falha ao alterar a senha. Verifique a senha atual e tente novamente.'
+    })
+    return false
+  }
+}
+
 // -----------------------------------------------------------------
 
 export {
@@ -248,5 +334,7 @@ export {
   handleSignupAdmin,
   handleLogoutAdmin,
   handleGetAdminData,
-  handleDeleteAdminAccount
+  handleDeleteAdminAccount,
+  handleChangeEmailAdmin,
+  handleChangePasswordAdmin
 }

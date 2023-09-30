@@ -6,9 +6,15 @@ import { Button, Form, Input, Popconfirm, theme } from 'antd'
 
 const { useToken } = theme
 
+import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
+import {
+  handleChangeEmailAdmin,
+  handleChangePasswordAdmin
+} from '@/firebase/auth'
 
 const Account = () => {
   const { token } = useToken()
@@ -27,12 +33,12 @@ const Account = () => {
             <PremiumStatus />
           </S.AccountDetailsPlan>
         </S.AccountDetails>
-        <AccountContainer
+        {/* <AccountContainer
           headerIcon={<LiaEnvelope />}
           headerLabel="Editar e-mail"
         >
           <AccountEmailChange />
-        </AccountContainer>
+        </AccountContainer> */}
         <AccountContainer
           headerIcon={<LiaUserLockSolid />}
           headerLabel="Trocar senha"
@@ -98,21 +104,31 @@ const AccountContainer = ({
 interface IAccountEmailChange {}
 
 interface IChangeEmailForm {
-  adminEmailCurrent: string
   adminEmailNew: string
   adminEmailNewConfirmation: string
 }
 
+const editEmailSchema = Yup.object().shape({
+  adminEmailNew: Yup.string().required(),
+  adminEmailNewConfirmation: Yup.string()
+    .required()
+    .oneOf([Yup.ref('adminEmailNew')])
+})
+
 const AccountEmailChange = ({}: IAccountEmailChange) => {
-  const { control, handleSubmit, reset, formState } =
-    useForm<IChangeEmailForm>()
+  const { control, handleSubmit, reset, formState } = useForm({
+    mode: 'onBlur',
+    resolver: yupResolver(editEmailSchema)
+  })
 
   const { isValid } = formState
 
-  const handleChangeEmail = (data: IChangeEmailForm) => {
-    console.log(data)
+  const handleChangeEmail = async (data: IChangeEmailForm) => {
+    const changeEmailResponse = await handleChangeEmailAdmin(data.adminEmailNew)
 
-    reset()
+    if (changeEmailResponse) {
+      reset()
+    }
   }
 
   return (
@@ -121,22 +137,12 @@ const AccountEmailChange = ({}: IAccountEmailChange) => {
       onFinish={handleSubmit(handleChangeEmail)}
     >
       <Controller
-        name="adminEmailCurrent"
-        control={control}
-        rules={{ required: 'Este campo é obrigatório' }}
-        render={({ field }) => (
-          <Form.Item label="E-mail atual">
-            <Input placeholder="Digite seu e-mail atual" />
-          </Form.Item>
-        )}
-      />
-      <Controller
         name="adminEmailNew"
         control={control}
         rules={{ required: 'Este campo é obrigatório' }}
         render={({ field }) => (
           <Form.Item label="E-mail novo">
-            <Input placeholder="Digite seu novo e-mail" />
+            <Input {...field} placeholder="Digite seu novo e-mail" />
           </Form.Item>
         )}
       />
@@ -146,7 +152,7 @@ const AccountEmailChange = ({}: IAccountEmailChange) => {
         rules={{ required: 'Este campo é obrigatório' }}
         render={({ field }) => (
           <Form.Item label="E-mail novo confirmação">
-            <Input placeholder="Confirme seu novo e-mail" />
+            <Input {...field} placeholder="Confirme seu novo e-mail" />
           </Form.Item>
         )}
       />
@@ -169,16 +175,31 @@ interface IChangePasswordForm {
   adminPasswordNewConfirmation: string
 }
 
+const editPasswordSchema = Yup.object().shape({
+  adminPasswordCurrent: Yup.string().required(),
+  adminPasswordNew: Yup.string().required(),
+  adminPasswordNewConfirmation: Yup.string()
+    .required()
+    .oneOf([Yup.ref('adminPasswordNew')])
+})
+
 const AccountPasswordChange = ({}: IAccountPasswordChange) => {
-  const { control, handleSubmit, reset, formState } =
-    useForm<IChangePasswordForm>()
+  const { control, handleSubmit, reset, formState } = useForm({
+    mode: 'onBlur',
+    resolver: yupResolver(editPasswordSchema)
+  })
 
   const { isValid } = formState
 
-  const handleChangePassword = (data: IChangePasswordForm) => {
-    console.log(data)
+  const handleChangePassword = async (data: IChangePasswordForm) => {
+    const changePasswordResponse = await handleChangePasswordAdmin(
+      data.adminPasswordCurrent,
+      data.adminPasswordNew
+    )
 
-    reset()
+    if (changePasswordResponse) {
+      reset()
+    }
   }
 
   return (
@@ -192,7 +213,7 @@ const AccountPasswordChange = ({}: IAccountPasswordChange) => {
         rules={{ required: 'Este campo é obrigatório' }}
         render={({ field }) => (
           <Form.Item label="Senha atual">
-            <Input.Password placeholder="Digite sua senha atual" />
+            <Input.Password {...field} placeholder="Digite sua senha atual" />
           </Form.Item>
         )}
       />
@@ -202,7 +223,7 @@ const AccountPasswordChange = ({}: IAccountPasswordChange) => {
         rules={{ required: 'Este campo é obrigatório' }}
         render={({ field }) => (
           <Form.Item label="Senha nova">
-            <Input.Password placeholder="Digite sua nova senha" />
+            <Input.Password {...field} placeholder="Digite sua nova senha" />
           </Form.Item>
         )}
       />
@@ -212,7 +233,7 @@ const AccountPasswordChange = ({}: IAccountPasswordChange) => {
         rules={{ required: 'Este campo é obrigatório' }}
         render={({ field }) => (
           <Form.Item label="Senha nova confirmação">
-            <Input.Password placeholder="Confirme sua nova senha" />
+            <Input.Password {...field} placeholder="Confirme sua nova senha" />
           </Form.Item>
         )}
       />
