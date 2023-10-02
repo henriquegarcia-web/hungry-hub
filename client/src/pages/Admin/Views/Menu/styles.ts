@@ -47,7 +47,7 @@ export const CategoriesListContainer = styled.div`
 
 export const CreateCategory = styled.div`
   position: sticky;
-  top: 20px;
+  top: 65px;
   display: flex;
   flex-direction: column;
   row-gap: 6px;

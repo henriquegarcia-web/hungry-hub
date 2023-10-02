@@ -13,7 +13,7 @@ export const CompanyMenu = styled(Window)`
 export const Menu = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
+  row-gap: 10px;
   width: 100%;
   max-width: 580px;
   height: fit-content;
@@ -25,6 +25,7 @@ export const MenuMainInfos = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding: 15px;
 `
 
 export const MenuMainInfosBannerWrapper = styled.div`
@@ -71,7 +72,7 @@ export const MenuMainInfosLogo = styled.div`
     color: rgb(80, 80, 80);
   }
 
-  border: 2px solid white;
+  border: 4px solid white;
   background-color: rgb(245, 245, 245);
 `
 
@@ -91,12 +92,15 @@ export const MenuMainInfosOpenLabel = styled.div<IOpenLabel>`
   padding: 4px 8px;
   border-radius: 4px;
 
-  font-size: 12px;
-  line-height: 12px;
-  font-weight: 400;
+  font-size: 11px;
+  line-height: 11px;
+  font-weight: 500;
 
-  background-color: green;
+  background-color: ${({ open }) =>
+    open ? 'rgba(34, 204, 0, 0.7)' : 'rgba(230, 31, 0, 0.7)'};
   color: white;
+  border: 1px solid
+    ${({ open }) => (open ? 'rgba(34, 204, 0, 1)' : 'rgba(230, 31, 0, 1)')};
 `
 
 export const MenuMainInfosWrapper = styled.div`
@@ -113,14 +117,16 @@ export const MenuMainInfosName = styled.h1`
   font-size: 17px;
   line-height: 17px;
   font-weight: 600;
+  text-align: center;
 `
 
 export const MenuMainInfosDescription = styled.p`
   display: flex;
 
   font-size: 13px;
-  line-height: 13px;
+  line-height: 16px;
   font-weight: 400;
+  text-align: center;
 `
 
 export const MenuMainInfosLocation = styled.p`
@@ -129,6 +135,7 @@ export const MenuMainInfosLocation = styled.p`
   font-size: 13px;
   line-height: 13px;
   font-weight: 300;
+  text-align: center;
 `
 
 export const MenuWrapper = styled.div`
@@ -184,6 +191,7 @@ export const MenuListBlockHeader = styled.div`
 export const MenuListBlockList = styled.div`
   display: flex;
   flex-direction: column;
+  row-gap: 20px;
 `
 
 // =============================================== MAIN MENU LIST
@@ -193,7 +201,7 @@ export const MenuListBlockList = styled.div`
 export const MenuCategory = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 10px;
+  row-gap: 12px;
 `
 
 export const MenuCategoryHeader = styled.h3`
@@ -206,6 +214,8 @@ export const MenuCategoryHeader = styled.h3`
 
 export const MenuCategoryWrapper = styled.div`
   display: flex;
+  flex-direction: column;
+  row-gap: 6px;
 `
 
 // ---------------------- PRODUCT
@@ -226,6 +236,7 @@ export const MenuProductImage = styled.div`
   align-items: center;
   width: 60px;
   height: 60px;
+  border-radius: 8px;
   padding: 8px;
   overflow: hidden;
 
@@ -254,12 +265,28 @@ export const MenuProductDetails = styled.div`
     font-size: 14px;
     line-height: 14px;
     font-weight: 500;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 14px;
+    max-height: 14px;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
 
   p {
     font-size: 14px;
     line-height: 16px;
     font-weight: 400;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-height: 16px;
+    max-height: 32px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 `
 
