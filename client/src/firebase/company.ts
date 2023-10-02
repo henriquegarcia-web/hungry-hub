@@ -259,6 +259,32 @@ const handleActiveCompanyMenu = async (isActive: boolean): Promise<boolean> => {
   }
 }
 
+// ============================================== FIND MENU BY ID
+
+const handleFindMenuByCompanyId = async (companyId: string) => {
+  try {
+    const adminAccountsRef = firebase.database().ref('adminAccounts')
+    const adminAccountsSnapshot = await adminAccountsRef.once('value')
+    const adminAccountsData = adminAccountsSnapshot.val()
+
+    for (const userId in adminAccountsData) {
+      const userData = adminAccountsData[userId]
+
+      if (
+        userData.adminCompanyInfo &&
+        userData.adminCompanyInfo.companyId === companyId
+      ) {
+        return userData.adminCompanyInfo
+      }
+    }
+
+    return null
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
 // ============================================================================
 
 export {
@@ -266,5 +292,6 @@ export {
   handleUpdateCompanyLocation,
   handleUpdateCompanyContact,
   handleUpdateCompanySchedules,
-  handleActiveCompanyMenu
+  handleActiveCompanyMenu,
+  handleFindMenuByCompanyId
 }

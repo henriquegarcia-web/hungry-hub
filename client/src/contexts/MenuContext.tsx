@@ -84,8 +84,6 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
       ...companyMenu[key]
     }))
 
-    // console.log(companyArray.length)
-
     return companyArray || []
   }, [userData])
 
