@@ -10,7 +10,6 @@ import {
 import {
   LiaPhoneAltSolid,
   LiaWhatsapp,
-  LiaEnvelope,
   LiaFacebook,
   LiaInstagram,
   LiaLaptopSolid
@@ -18,7 +17,6 @@ import {
 
 import { formatCurrency } from '@/utils/functions/formatCurrency'
 import { handleFindMenuByCompanyId } from '@/firebase/company'
-import { useMenu } from '@/contexts/MenuContext'
 
 import { ICategory, ICompanyContactMethods, ICompanyData } from '@/@types/Auth'
 
@@ -26,9 +24,7 @@ const CompanyMenu = () => {
   const params = useParams()
   const { companyId } = params
 
-  const { categories } = useMenu()
-
-  const [menuData, setMenuData] = useState(null)
+  const [menuData, setMenuData] = useState<ICompanyData | null>(null)
   const [menuDataLoading, setMenuDataLoading] = useState(false)
 
   const getMenuData = useCallback(async () => {
@@ -44,6 +40,18 @@ const CompanyMenu = () => {
   useEffect(() => {
     getMenuData()
   }, [getMenuData])
+
+  const categories: ICategory[] = useMemo(() => {
+    if (!menuData?.companyMenu) return []
+
+    const companyMenu: any = menuData?.companyMenu
+    const companyArray: ICategory[] = Object.keys(companyMenu).map((key) => ({
+      id: key,
+      ...companyMenu[key]
+    }))
+
+    return companyArray || []
+  }, [menuData])
 
   return (
     <S.CompanyMenu>
