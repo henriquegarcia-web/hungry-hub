@@ -21,6 +21,57 @@ export const CompanyMenuWrapper = styled.div`
   }
 `
 
+export const CompanyMenuLoading = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: calc(100vh - 40px);
+  row-gap: 20px;
+
+  img {
+    width: 165px;
+  }
+
+  p {
+    font-size: 15px;
+    line-height: 18px;
+    font-weight: 400;
+    text-align: center;
+
+    color: rgba(0, 0, 0, 0.85);
+  }
+`
+
+export const CompanyMenuNotFound = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: calc(100vh - 40px);
+  row-gap: 15px;
+
+  img {
+    width: 165px;
+  }
+
+  p {
+    display: flex;
+    padding: 7px 14px;
+    border-radius: 6px;
+
+    font-size: 15px;
+    line-height: 18px;
+    font-weight: 500;
+    text-align: center;
+
+    background-color: #ff7a00;
+    color: white;
+  }
+`
+
 export const Menu = styled.div`
   position: relative;
   display: flex;
@@ -109,7 +160,7 @@ export const MenuMainInfosOpenLabel = styled.div<IOpenLabel>`
   font-weight: 500;
 
   background-color: ${({ open }) =>
-    open ? 'rgba(34, 204, 0, 0.7)' : 'rgba(230, 31, 0, 0.7)'};
+    open ? 'rgba(34, 204, 0, 0.85)' : 'rgba(230, 31, 0, 0.85)'};
   color: white;
   border: 1px solid
     ${({ open }) => (open ? 'rgba(34, 204, 0, 1)' : 'rgba(230, 31, 0, 1)')};
@@ -153,20 +204,6 @@ export const MenuMainInfosLocation = styled.p`
 export const MenuWrapper = styled.div`
   display: flex;
   flex-direction: column;
-`
-
-export const MenuLoading = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-
-  background-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(2px);
 `
 
 export const DrawerProductContainer = styled.div`

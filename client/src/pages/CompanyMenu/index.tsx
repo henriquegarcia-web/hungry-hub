@@ -25,6 +25,7 @@ import {
   IProduct
 } from '@/@types/Auth'
 import { Drawer, Spin, message } from 'antd'
+import { Logo } from '@/components'
 
 const CompanyMenu = () => {
   const params = useParams()
@@ -75,15 +76,30 @@ const CompanyMenu = () => {
   return (
     <S.CompanyMenu>
       <S.CompanyMenuWrapper>
-        {!menuData && !menuDataLoading ? (
-          <>Este cardápio não existe ou não está disponível publicamente</>
-        ) : (
+        {/* {menuDataLoading && (
+        <S.MenuLoading>
+          <Spin />
+        </S.MenuLoading>
+      )} */}
+
+        {menuDataLoading ? (
+          <S.CompanyMenuLoading>
+            <Spin />
+            <p>Carregando o cardápio ...</p>
+          </S.CompanyMenuLoading>
+        ) : menuData ? (
           <Menu
             menuData={menuData}
             categories={categories}
             showDrawerProduct={showDrawerProduct}
-            menuDataLoading={menuDataLoading}
           />
+        ) : (
+          <S.CompanyMenuNotFound>
+            <a href="https://www.hungryhub.com.br/">
+              <img src="/logo_large_default.png" alt="" />
+            </a>
+            <p>Este cardápio não existe ou não está disponível publicamente</p>
+          </S.CompanyMenuNotFound>
         )}
 
         <Drawer
@@ -126,7 +142,6 @@ export default CompanyMenu
 interface IMenu {
   menuData: ICompanyData | null
   categories: ICategory[]
-  menuDataLoading: boolean
   showDrawerProduct: (product: IProduct) => void
 }
 
@@ -150,12 +165,7 @@ const mapDay = (day: string): string => {
   return daysMap[day] || day
 }
 
-const Menu = ({
-  menuData,
-  categories,
-  showDrawerProduct,
-  menuDataLoading
-}: IMenu) => {
+const Menu = ({ menuData, categories, showDrawerProduct }: IMenu) => {
   const companyLocation = useMemo(() => {
     const companyAddress = menuData?.companyLocation?.companyAddress || ''
     const companyAddressNumber =
@@ -233,19 +243,15 @@ const Menu = ({
         </S.MenuMainInfosWrapper>
       </S.MenuMainInfos>
       <S.MenuWrapper>
-        <MenuListBlock listIcon={<IoReceiptOutline />} listTitle="Cardápio">
-          <MainMenuList
-            categories={categories}
-            showDrawerProduct={showDrawerProduct}
-          />
-        </MenuListBlock>
+        {categories.length > 0 && (
+          <MenuListBlock listIcon={<IoReceiptOutline />} listTitle="Cardápio">
+            <MainMenuList
+              categories={categories}
+              showDrawerProduct={showDrawerProduct}
+            />
+          </MenuListBlock>
+        )}
       </S.MenuWrapper>
-
-      {menuDataLoading && (
-        <S.MenuLoading>
-          <Spin />
-        </S.MenuLoading>
-      )}
     </S.Menu>
   )
 }
