@@ -18,14 +18,24 @@ import {
 import { formatCurrency } from '@/utils/functions/formatCurrency'
 import { handleFindMenuByCompanyId } from '@/firebase/company'
 
-import { ICategory, ICompanyContactMethods, ICompanyData } from '@/@types/Auth'
+import {
+  ICategory,
+  ICompanyContactMethods,
+  ICompanyData,
+  IProduct
+} from '@/@types/Auth'
+import { Drawer, Spin, message } from 'antd'
 
 const CompanyMenu = () => {
   const params = useParams()
   const { companyId } = params
 
+  const [openDrawerProduct, setOpenDrawerProduct] = useState<boolean>(false)
+  const [drawerProductDetails, setDrawerProductDetails] =
+    useState<IProduct | null>(null)
+
   const [menuData, setMenuData] = useState<ICompanyData | null>(null)
-  const [menuDataLoading, setMenuDataLoading] = useState(false)
+  const [menuDataLoading, setMenuDataLoading] = useState<boolean>(false)
 
   const getMenuData = useCallback(async () => {
     if (!companyId) return
@@ -53,15 +63,58 @@ const CompanyMenu = () => {
     return companyArray || []
   }, [menuData])
 
+  const showDrawerProduct = (product: IProduct) => {
+    setDrawerProductDetails(product)
+    setOpenDrawerProduct(true)
+  }
+
+  const onCloseDrawerProduct = () => {
+    setOpenDrawerProduct(false)
+  }
+
   return (
     <S.CompanyMenu>
-      {menuDataLoading ? (
-        <>Loading</>
-      ) : menuData ? (
-        <Menu menuData={menuData} categories={categories} />
-      ) : (
-        <>Este cardápio não existe ou não está disponível publicamente</>
-      )}
+      <S.CompanyMenuWrapper>
+        {!menuData && !menuDataLoading ? (
+          <>Este cardápio não existe ou não está disponível publicamente</>
+        ) : (
+          <Menu
+            menuData={menuData}
+            categories={categories}
+            showDrawerProduct={showDrawerProduct}
+            menuDataLoading={menuDataLoading}
+          />
+        )}
+
+        <Drawer
+          title="Detalhes do produto"
+          headerStyle={{ padding: 15 }}
+          bodyStyle={{ padding: 15 }}
+          placement="right"
+          onClose={onCloseDrawerProduct}
+          open={openDrawerProduct}
+          afterOpenChange={(open) => {
+            if (!open) {
+              setDrawerProductDetails(null)
+            }
+          }}
+        >
+          <S.DrawerProductContainer>
+            <S.DrawerProductImage>
+              <img src={drawerProductDetails?.productImage} alt="" />
+              <S.DrawerProductPrice>
+                {formatCurrency(drawerProductDetails?.productPrice || 0)}
+              </S.DrawerProductPrice>
+            </S.DrawerProductImage>
+            <S.DrawerProductTitle>
+              {drawerProductDetails?.productName}
+            </S.DrawerProductTitle>
+            <S.DrawerProductDescription>
+              {drawerProductDetails?.productDescription}
+            </S.DrawerProductDescription>
+          </S.DrawerProductContainer>
+        </Drawer>
+      </S.CompanyMenuWrapper>
     </S.CompanyMenu>
   )
 }
@@ -71,8 +124,10 @@ export default CompanyMenu
 // =========================================== MENU
 
 interface IMenu {
-  menuData: ICompanyData
+  menuData: ICompanyData | null
   categories: ICategory[]
+  menuDataLoading: boolean
+  showDrawerProduct: (product: IProduct) => void
 }
 
 interface IScheduleItem {
@@ -95,12 +150,18 @@ const mapDay = (day: string): string => {
   return daysMap[day] || day
 }
 
-const Menu = ({ menuData, categories }: IMenu) => {
+const Menu = ({
+  menuData,
+  categories,
+  showDrawerProduct,
+  menuDataLoading
+}: IMenu) => {
   const companyLocation = useMemo(() => {
-    const companyAddress = menuData.companyLocation?.companyAddress
-    const companyAddressNumber = menuData.companyLocation?.companyAddressNumber
-    const companyDistrict = menuData.companyLocation?.companyDistrict
-    const companyCity = menuData.companyLocation?.companyCity
+    const companyAddress = menuData?.companyLocation?.companyAddress || ''
+    const companyAddressNumber =
+      menuData?.companyLocation?.companyAddressNumber || ''
+    const companyDistrict = menuData?.companyLocation?.companyDistrict || ''
+    const companyCity = menuData?.companyLocation?.companyCity || ''
 
     const formattedCompanyLocation = `${companyAddress}, ${companyAddressNumber}, ${companyDistrict} - ${companyCity}`
 
@@ -108,21 +169,19 @@ const Menu = ({ menuData, categories }: IMenu) => {
   }, [menuData])
 
   const isStoreOpen = useMemo(() => {
-    if (!menuData.companySchedules) return false
-    const companySchedules: any = menuData.companySchedules
+    if (!menuData?.companySchedules) return false
+    const companySchedules: any = menuData?.companySchedules
 
     const currentDate = new Date()
-
     const currentDay = currentDate
       .toLocaleDateString('pt-BR', { weekday: 'long' })
       .toLowerCase()
-
     const mappedCurrentDay = mapDay(currentDay)
-
     const currentTime = currentDate.toISOString()
 
     const schedule = companySchedules.find(
-      (schedule: IScheduleItem) => mapDay(schedule.day) === mappedCurrentDay
+      (schedule: IScheduleItem) =>
+        schedule.day === 'todos' || mapDay(schedule.day) === mappedCurrentDay
     )
 
     if (schedule) {
@@ -145,39 +204,48 @@ const Menu = ({ menuData, categories }: IMenu) => {
       <S.MenuMainInfos>
         <S.MenuMainInfosBannerWrapper>
           <S.MenuMainInfosBanner>
-            {menuData.companyBanner ? (
-              <img src={menuData.companyBanner} alt="" />
+            {menuData?.companyBanner ? (
+              <img src={menuData?.companyBanner} alt="" />
             ) : (
               <img src="/default_menu_banner.png" alt="" />
             )}
           </S.MenuMainInfosBanner>
           <S.MenuMainInfosLogo>
-            {menuData.companyLogo ? (
-              <img src={menuData.companyLogo} alt="" />
+            {menuData?.companyLogo ? (
+              <img src={menuData?.companyLogo} alt="" />
             ) : (
               <IoStorefrontOutline />
             )}
           </S.MenuMainInfosLogo>
           <S.MenuMainInfosLinks>
-            <MenuContactMethods contactMethods={menuData.companyContacts} />
+            <MenuContactMethods contactMethods={menuData?.companyContacts} />
           </S.MenuMainInfosLinks>
           <S.MenuMainInfosOpenLabel open={isStoreOpen ? 1 : 0}>
             {isStoreOpen ? 'Aberta' : 'Fechada'}
           </S.MenuMainInfosOpenLabel>
         </S.MenuMainInfosBannerWrapper>
         <S.MenuMainInfosWrapper>
-          <S.MenuMainInfosName>{menuData.companyName}</S.MenuMainInfosName>
+          <S.MenuMainInfosName>{menuData?.companyName}</S.MenuMainInfosName>
           <S.MenuMainInfosDescription>
-            {menuData.companyDescription}
+            {menuData?.companyDescription}
           </S.MenuMainInfosDescription>
           <S.MenuMainInfosLocation>{companyLocation}</S.MenuMainInfosLocation>
         </S.MenuMainInfosWrapper>
       </S.MenuMainInfos>
       <S.MenuWrapper>
         <MenuListBlock listIcon={<IoReceiptOutline />} listTitle="Cardápio">
-          <MainMenuList categories={categories} />
+          <MainMenuList
+            categories={categories}
+            showDrawerProduct={showDrawerProduct}
+          />
         </MenuListBlock>
       </S.MenuWrapper>
+
+      {menuDataLoading && (
+        <S.MenuLoading>
+          <Spin />
+        </S.MenuLoading>
+      )}
     </S.Menu>
   )
 }
@@ -206,9 +274,10 @@ const MenuListBlock = ({ listIcon, listTitle, children }: IMenuListBlock) => {
 
 interface IMainMenuList {
   categories: ICategory[]
+  showDrawerProduct: (product: IProduct) => void
 }
 
-const MainMenuList = ({ categories }: IMainMenuList) => {
+const MainMenuList = ({ categories, showDrawerProduct }: IMainMenuList) => {
   return (
     <>
       {categories?.map((category) => (
@@ -216,7 +285,10 @@ const MainMenuList = ({ categories }: IMainMenuList) => {
           <S.MenuCategoryHeader>{category.name}</S.MenuCategoryHeader>
           <S.MenuCategoryWrapper>
             {category.products.map((product) => (
-              <S.MenuProduct key={product.productId}>
+              <S.MenuProduct
+                key={product.productId}
+                onClick={() => showDrawerProduct(product)}
+              >
                 <S.MenuProductImage>
                   {product.productImage ? (
                     <img src={product.productImage} alt="" />
@@ -247,30 +319,49 @@ interface IMenuContactMethods {
 }
 
 const MenuContactMethods = ({ contactMethods }: IMenuContactMethods) => {
+  const whatsappLink = `https://wa.me/${contactMethods?.companyWhatsapp}?text=Ol%C3%A1%21+Vim+atrav%C3%A9s+do+card%C3%A1pio+online...`
+
+  const handleCall = () => {
+    const phone = contactMethods?.companyPhone
+
+    if (
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
+    ) {
+      window.location.href = `tel:${phone}`
+    } else {
+      message.open({
+        type: 'warning',
+        content: 'Este recurso só está disponível em dispositivos móveis.'
+      })
+    }
+  }
+
   return (
     <S.MenuContactMethods>
       {contactMethods?.companyFacebook && (
-        <S.ContactMethod>
+        <S.ContactMethod href={contactMethods?.companyFacebook}>
           <LiaFacebook />
         </S.ContactMethod>
       )}
       {contactMethods?.companyInstagram && (
-        <S.ContactMethod>
+        <S.ContactMethod href={contactMethods?.companyInstagram}>
           <LiaInstagram />
         </S.ContactMethod>
       )}
       {contactMethods?.companyWhatsapp && (
-        <S.ContactMethod>
+        <S.ContactMethod href={whatsappLink}>
           <LiaWhatsapp />
         </S.ContactMethod>
       )}
       {contactMethods?.companyWebsite && (
-        <S.ContactMethod>
+        <S.ContactMethod href={contactMethods?.companyWebsite}>
           <LiaLaptopSolid />
         </S.ContactMethod>
       )}
       {contactMethods?.companyPhone && (
-        <S.ContactMethod>
+        <S.ContactMethod onClick={handleCall}>
           <LiaPhoneAltSolid />
         </S.ContactMethod>
       )}

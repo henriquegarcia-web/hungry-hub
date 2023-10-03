@@ -13,26 +13,26 @@ const verifyIfCompanyIdExists = async (companyId: string): Promise<boolean> => {
 
     const adminAccountsRef = firebase.database().ref('adminAccounts')
 
-    const [companyIdSnapshot, userSnapshot] = await Promise.all([
-      adminAccountsRef
-        .orderByChild('adminCompanyInfo/companyId')
-        .equalTo(companyId)
-        .once('value'),
-      adminAccountsRef
-        .child(user.uid)
-        .child('adminCompanyInfo/companyId')
-        .once('value')
-    ])
+    const companyIdSnapshot = await adminAccountsRef
+      .orderByChild('adminCompanyInfo/companyId')
+      .equalTo(companyId)
+      .once('value')
 
-    const companyIdExists = companyIdSnapshot.exists()
+    if (!companyIdSnapshot.exists()) {
+      return false
+    }
 
-    const isCurrentUserCompany = userSnapshot.val() === companyId
+    const companyIdExists = Object.keys(companyIdSnapshot.val()).some(
+      (userId) => {
+        return userId !== user.uid
+      }
+    )
 
-    return companyIdExists && isCurrentUserCompany
+    return companyIdExists
   } catch (error: any) {
     message.open({
       type: 'error',
-      content: 'Já existe uma empresa com esse ID!'
+      content: 'Erro ao verificar a existência do companyId.'
     })
 
     return false
@@ -42,16 +42,16 @@ const verifyIfCompanyIdExists = async (companyId: string): Promise<boolean> => {
 // ============================================== CREATE/EDIT COMPANY MAIN INFOS
 
 export interface ICompanyMainInfosForm {
-  companyLogo: string
-  companyBanner: string
+  companyLogo?: string
+  companyBanner?: string
   companyName: string
   companyId: string
   companyDescription: string
 }
 
 const handleUpdateCompanyMainInfos = async ({
-  companyLogo,
-  companyBanner,
+  companyLogo = '',
+  companyBanner = '',
   companyName,
   companyId,
   companyDescription
@@ -63,7 +63,13 @@ const handleUpdateCompanyMainInfos = async ({
 
     const companyIdVerification = await verifyIfCompanyIdExists(companyId)
 
-    if (companyIdVerification) return false
+    if (companyIdVerification) {
+      message.open({
+        type: 'warning',
+        content: 'Já existe uma empresa com esse ID.'
+      })
+      return false
+    }
 
     const userDataRef = firebase
       .database()

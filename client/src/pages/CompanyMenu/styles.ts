@@ -1,16 +1,28 @@
 import styled from 'styled-components'
-import { Window } from '@/utils/styles/globals'
+import { Window, responsiveMobile } from '@/utils/styles/globals'
 
 interface IOpenLabel {
   open: number
 }
 
-export const CompanyMenu = styled(Window)`
+export const CompanyMenu = styled(Window)``
+
+export const CompanyMenuWrapper = styled.div`
+  position: relative;
+  display: flex;
   justify-content: center;
+  width: 100%;
+  height: fit-content;
   padding: 20px;
+  overflow: hidden;
+
+  @media screen and (max-width: ${responsiveMobile}) {
+    padding-bottom: 60px;
+  }
 `
 
 export const Menu = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   row-gap: 10px;
@@ -143,6 +155,76 @@ export const MenuWrapper = styled.div`
   flex-direction: column;
 `
 
+export const MenuLoading = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(2px);
+`
+
+export const DrawerProductContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+`
+
+export const DrawerProductImage = styled.div`
+  position: relative;
+  display: flex;
+  width: 100%;
+  /* height: 180px; */
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+`
+
+export const DrawerProductPrice = styled.div`
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  padding: 8px 12px;
+  border-radius: 6px;
+
+  font-size: 15px;
+  line-height: 15px;
+  font-weight: 500;
+
+  background-color: rgb(30, 30, 30);
+  color: white;
+`
+
+export const DrawerProductTitle = styled.div`
+  display: flex;
+
+  font-size: 15px;
+  line-height: 15px;
+  font-weight: 500;
+`
+
+export const DrawerProductDescription = styled.div`
+  display: flex;
+
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 300;
+`
+
 // =============================================== MENU LIST BLOCK
 
 export const MenuListBlock = styled.div`
@@ -226,8 +308,15 @@ export const MenuProduct = styled.div`
   width: 100%;
   padding: 10px;
   border-radius: 8px;
+  transition: 0.3s;
+  cursor: pointer;
 
   border: 1px solid rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.05);
+  }
 `
 
 export const MenuProductImage = styled.div`
@@ -237,13 +326,14 @@ export const MenuProductImage = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 8px;
-  padding: 8px;
+  padding: 4px;
   overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 6px;
   }
 
   svg {
@@ -263,21 +353,19 @@ export const MenuProductDetails = styled.div`
 
   b {
     font-size: 14px;
-    line-height: 14px;
     font-weight: 500;
 
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    line-height: 14px;
-    max-height: 14px;
+    line-height: 16px;
+    max-height: 16px;
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
   }
 
   p {
     font-size: 14px;
-    line-height: 16px;
     font-weight: 400;
 
     overflow: hidden;

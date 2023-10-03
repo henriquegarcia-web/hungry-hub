@@ -176,8 +176,8 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
     setUpdatingCompany(true)
 
     await handleUpdateCompanyMainInfos({
-      companyLogo: companyImage || '',
-      companyBanner: companyBanner || '',
+      companyLogo: companyImage,
+      companyBanner: companyBanner,
       companyName: data.companyName,
       companyId: data.companyId,
       companyDescription: data.companyDescription
