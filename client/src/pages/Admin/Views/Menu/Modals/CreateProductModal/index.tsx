@@ -50,8 +50,13 @@ const CreateProductModal = ({
 
   const [productImage, setProductImage] = useState<string>('')
 
+  const [productCreationIsLoading, setProductCreationIsLoading] =
+    useState<boolean>(false)
+
   const handleSubmitProductCreation = async (data: ICreateProductForm) => {
     if (createProductCategory) {
+      setProductCreationIsLoading(true)
+
       const productData = {
         productImage: productImage,
         productName: data.productName,
@@ -67,6 +72,8 @@ const CreateProductModal = ({
       if (createProductResponse) {
         handleCloseModal()
       }
+
+      setProductCreationIsLoading(false)
     }
   }
 
@@ -189,7 +196,11 @@ const CreateProductModal = ({
         </S.CreateProductModalMainForm>
       </S.CreateProductModalFormContent>
       <S.CreateProductModalFormFooter>
-        <Button key="back" onClick={handleCloseModal}>
+        <Button
+          key="back"
+          onClick={handleCloseModal}
+          disabled={productCreationIsLoading}
+        >
           Cancelar
         </Button>
         <Button
@@ -197,6 +208,7 @@ const CreateProductModal = ({
           type="primary"
           htmlType="submit"
           disabled={!formIsValid}
+          loading={productCreationIsLoading}
         >
           Criar
         </Button>

@@ -53,8 +53,13 @@ const EditProductModal = ({
 
   const [productImage, setProductImage] = useState<string>('')
 
+  const [productEditionIsLoading, setProductEditionIsLoading] =
+    useState<boolean>(false)
+
   const handleSubmitProductEdition = async (data: IEditProductForm) => {
     if (editProductCategory && editingProduct) {
+      setProductEditionIsLoading(true)
+
       const updatedProduct: IProduct = {
         ...editingProduct,
         productImage: productImage,
@@ -72,6 +77,8 @@ const EditProductModal = ({
       if (editProductResponse) {
         handleCloseModal()
       }
+
+      setProductEditionIsLoading(false)
     }
   }
 
@@ -207,7 +214,11 @@ const EditProductModal = ({
         </S.EditProductModalMainForm>
       </S.EditProductModalFormContent>
       <S.EditProductModalFormFooter>
-        <Button key="back" onClick={handleCloseModal}>
+        <Button
+          key="back"
+          onClick={handleCloseModal}
+          disabled={productEditionIsLoading}
+        >
           Cancelar
         </Button>
         <Button
@@ -215,6 +226,7 @@ const EditProductModal = ({
           type="primary"
           htmlType="submit"
           disabled={!formIsValid}
+          loading={productEditionIsLoading}
         >
           Editar
         </Button>

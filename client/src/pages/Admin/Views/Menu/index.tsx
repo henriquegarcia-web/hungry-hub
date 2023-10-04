@@ -16,7 +16,8 @@ import {
   Popconfirm,
   Empty,
   Modal,
-  theme
+  theme,
+  Switch
 } from 'antd'
 
 const { useToken } = theme
@@ -288,6 +289,9 @@ const CategoriesList = ({}: ICategoriesList) => {
                 >
                   {category.name}
                 </S.CategoryTitle>
+                <S.CategoryOptions>
+                  <Switch size="small" />
+                </S.CategoryOptions>
                 <S.CategoryCounter
                   style={{
                     color: token.colorTextHeading
@@ -373,21 +377,28 @@ const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
         </S.ProductDetailsPrice>
       </S.ProductDetails>
       <S.ProductOptions>
-        <Button
-          size="small"
-          icon={<EditOutlined />}
-          onClick={() => handleOpenEditProductModal(product, category)}
-        />
-        <Popconfirm
-          placement="right"
-          title={'Tem certeza de que deseja excluir este produto?'}
-          description={'Essa ação não pode ser desfeita.'}
-          onConfirm={() => handleProductDelete(category.id, product.productId)}
-          okText="Sim"
-          cancelText="Não"
-        >
-          <Button size="small" icon={<DeleteOutlined />} />
-        </Popconfirm>
+        <S.ProductOptionsWrapper>
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => handleOpenEditProductModal(product, category)}
+          />
+          <Popconfirm
+            placement="right"
+            title={'Tem certeza de que deseja excluir este produto?'}
+            description={'Essa ação não pode ser desfeita.'}
+            onConfirm={() =>
+              handleProductDelete(category.id, product.productId)
+            }
+            okText="Sim"
+            cancelText="Não"
+          >
+            <Button size="small" icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </S.ProductOptionsWrapper>
+        <S.ProductOptionsWrapper>
+          <Switch size="small" />
+        </S.ProductOptionsWrapper>
       </S.ProductOptions>
     </S.CategoryProduct>
   )

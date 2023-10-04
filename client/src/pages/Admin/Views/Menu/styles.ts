@@ -142,6 +142,7 @@ export const CategoryWrapperHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  column-gap: 10px;
   padding: 12px;
 
   border-bottom: 1px solid lightgrey;
@@ -154,6 +155,11 @@ export const CategoryTitle = styled.div`
   font-size: 16px;
   line-height: 16px;
   font-weight: 500;
+`
+
+export const CategoryOptions = styled.div`
+  display: flex;
+  margin-left: auto;
 `
 
 export const CategoryCounter = styled.div`
@@ -285,6 +291,13 @@ export const ProductDetailsPrice = styled.div`
 `
 
 export const ProductOptions = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+`
+
+export const ProductOptionsWrapper = styled.div`
   display: flex;
   column-gap: 5px;
 `
