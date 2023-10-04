@@ -13,7 +13,11 @@ const AuthContainer = ({ title, children }: IAuthContainer) => {
   const { token } = useToken()
 
   return (
-    <S.AuthContainer style={{ backgroundColor: token.colorBgElevated }}>
+    <S.AuthContainer
+      style={{ backgroundColor: token.colorBgElevated }}
+      color={token.colorText}
+      background={token.colorBgContainer}
+    >
       <S.AuthContainerHeader>
         <Logo type="large_dark" />
         <span>{title}</span>

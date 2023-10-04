@@ -7,15 +7,30 @@ import {
   responsiveTablet
 } from '@/utils/styles/globals'
 
+interface IAdmin {
+  color: string
+  background: string
+}
+
 interface IHeaderMobile {
   open: number
 }
 
 // ========================================== ADMIN
 
-export const Admin = styled(Window)`
+export const Admin = styled(Window)<IAdmin>`
   display: flex;
   flex-direction: column;
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: ${({ color }) => color};
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px ${({ background }) => background};
+  }
 `
 
 export const AdminContent = styled.section`

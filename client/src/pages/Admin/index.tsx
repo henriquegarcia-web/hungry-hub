@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 
 import * as S from './styles'
 import {
@@ -17,6 +17,7 @@ import { useAdminAuth } from '@/contexts/AdminAuthContext'
 import { ThemeProps, useAdmin } from '@/contexts/AdminContext'
 
 import { formatUsername } from '@/utils/functions/formatUsername'
+import useClickOutside from '@/hooks/useClickOutside'
 
 import { IMenu, IMenuPrivate, menusData, privateMenusData } from '@/data/menus'
 import { IUserData } from '@/@types/Auth'
@@ -79,7 +80,11 @@ const Admin = () => {
   }
 
   return (
-    <S.Admin style={{ backgroundColor: token.colorBgElevated }}>
+    <S.Admin
+      style={{ backgroundColor: token.colorBgElevated }}
+      color={token.colorText}
+      background={token.colorBgContainer}
+    >
       <AdminHeader
         userData={userData}
         adminTheme={adminTheme}
@@ -123,6 +128,8 @@ const AdminHeader = ({
 
   const toggleMenuMobile = () => setMenuMobileIsOpen(!menuMobileIsOpen)
 
+  const menuMobileRef = useRef(null)
+
   // ------------------------------------------------------------------
 
   useEffect(() => {
@@ -160,6 +167,12 @@ const AdminHeader = ({
 
     return transformedMenus
   }, [])
+
+  useClickOutside({
+    active: menuMobileIsOpen,
+    containerRef: menuMobileRef,
+    onClickOutside: () => setMenuMobileIsOpen(false)
+  })
 
   return (
     <S.AdminHeader>
@@ -227,9 +240,11 @@ const AdminHeader = ({
           )}
         </S.AdminHeaderMobileToggle>
       </S.AdminHeaderWrapper>
+
       <S.AdminHeaderMobile
         open={menuMobileIsOpen ? 1 : 0}
         style={{ backgroundColor: token.colorBgContainer }}
+        ref={menuMobileRef}
       >
         <S.UserMenuMobile
           style={{ borderColor: token.colorBgContainerDisabled }}

@@ -1,7 +1,12 @@
 import styled from 'styled-components'
 import Colors from '@/utils/styles/colors'
 
-export const AuthContainer = styled.div`
+interface IAuth {
+  color: string
+  background: string
+}
+
+export const AuthContainer = styled.div<IAuth>`
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -13,6 +18,16 @@ export const AuthContainer = styled.div`
 
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
   background-color: #04020f;
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: ${({ color }) => color};
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px ${({ background }) => background};
+  }
 `
 
 export const AuthContainerHeader = styled.div`
