@@ -28,7 +28,7 @@ const { useToken } = theme
 
 const Admin = () => {
   const { token } = useToken()
-  const { userData, handleLogout } = useAdminAuth()
+  const { userData, handleLogout, companyHasAllDataFilledIn } = useAdminAuth()
   const { adminTheme, toogleThemeDark } = useAdmin()
 
   // ------------------------------------------------------------------
@@ -54,10 +54,14 @@ const Admin = () => {
   // ------------------------------------------------------------------
 
   useEffect(() => {
-    if (!activeMenu) {
-      setActiveMenu(menusData[0]?.menuId || '')
+    if (activeMenu === '' && !!userData) {
+      if (companyHasAllDataFilledIn) {
+        setActiveMenu('menu_menu')
+      } else {
+        setActiveMenu('menu_company_infos')
+      }
     }
-  }, [activeMenu])
+  }, [userData, activeMenu, companyHasAllDataFilledIn])
 
   let viewToRender
 
@@ -129,13 +133,6 @@ const AdminHeader = ({
   const toggleMenuMobile = () => setMenuMobileIsOpen(!menuMobileIsOpen)
 
   const menuMobileRef = useRef(null)
-
-  // ------------------------------------------------------------------
-
-  useEffect(() => {
-    handleSelectMenu('menu_company_infos')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   // ------------------------------------------------------------------
 
