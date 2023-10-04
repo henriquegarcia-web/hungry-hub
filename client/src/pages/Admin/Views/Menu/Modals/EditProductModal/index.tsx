@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import * as S from './styles'
 import { PlusOutlined } from '@ant-design/icons'
 
-import { Input, Button, Space, Upload, Form } from 'antd'
+import { Input, Button, Space, Upload, Form, message, Spin } from 'antd'
 import ImgCrop from 'antd-img-crop'
 import {
   beforeUpload,
@@ -20,10 +20,12 @@ import {
 } from '@/utils/functions/formatCurrency'
 import useScrollbar from '@/hooks/useScrollbar'
 
+import firebase from '@/firebase/firebase'
+import { handleEditProduct } from '@/firebase/menu'
+
 import { ICategory, IProduct } from '../../@types'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { UploadChangeParam } from 'antd/es/upload'
-import { handleEditProduct } from '@/firebase/menu'
 
 interface IEditProductModal {
   editProductCategory: ICategory | null
@@ -55,6 +57,8 @@ const EditProductModal = ({
 
   const [productEditionIsLoading, setProductEditionIsLoading] =
     useState<boolean>(false)
+  const [imageUploadIsLoading, setImageUploadIsLoading] =
+    useState<boolean>(false)
 
   const handleSubmitProductEdition = async (data: IEditProductForm) => {
     if (editProductCategory && editingProduct) {
@@ -82,12 +86,33 @@ const EditProductModal = ({
     }
   }
 
-  const handleChangeCompanyImage: UploadProps['onChange'] = (
+  const handleChangeCompanyImage: UploadProps['onChange'] = async (
     info: UploadChangeParam<UploadFile>
   ) => {
-    getBase64(info.file.originFileObj as RcFile, (url) => {
-      setProductImage(url)
-    })
+    try {
+      setImageUploadIsLoading(true)
+
+      if (info.file.status !== 'uploading' && !!info.file.originFileObj) {
+        const file = info.file.originFileObj as RcFile
+
+        const uniqueFileName = `${Date.now()}_${file.name}`
+
+        const storageRef = firebase.storage().ref(`/products/${uniqueFileName}`)
+        await storageRef.put(file)
+
+        const imageUrl = await storageRef.getDownloadURL()
+
+        setProductImage(imageUrl)
+        setValue('productImage', imageUrl)
+      }
+    } catch (error) {
+      message.open({
+        type: 'error',
+        content: 'Falha ao fazer upload da imagem do produto.'
+      })
+    } finally {
+      setImageUploadIsLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -127,7 +152,11 @@ const EditProductModal = ({
               onPreview={onPreview}
               className="company_image"
             >
-              {productImage ? (
+              {imageUploadIsLoading ? (
+                <div>
+                  <Spin />
+                </div>
+              ) : productImage ? (
                 <img
                   src={productImage}
                   alt="avatar"
@@ -217,7 +246,7 @@ const EditProductModal = ({
         <Button
           key="back"
           onClick={handleCloseModal}
-          disabled={productEditionIsLoading}
+          disabled={productEditionIsLoading || imageUploadIsLoading}
         >
           Cancelar
         </Button>
@@ -226,7 +255,7 @@ const EditProductModal = ({
           type="primary"
           htmlType="submit"
           disabled={!formIsValid}
-          loading={productEditionIsLoading}
+          loading={productEditionIsLoading || imageUploadIsLoading}
         >
           Editar
         </Button>

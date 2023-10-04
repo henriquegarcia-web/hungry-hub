@@ -29,6 +29,10 @@ export const CreateProductModalFormContent = styled.div<IFormContent>`
 
   padding-right: ${({ scrollbar }) => (scrollbar ? '10px' : '0')};
 
+  .ant-upload-select {
+    overflow: hidden;
+  }
+
   &::-webkit-scrollbar {
     width: 3px;
     z-index: 1000;

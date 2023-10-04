@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import * as S from './styles'
 import { PlusOutlined } from '@ant-design/icons'
 
-import { Input, Button, Space, Upload, Form, message } from 'antd'
+import { Input, Button, Space, Upload, Form, message, Spin } from 'antd'
 
 import ImgCrop from 'antd-img-crop'
 import {
@@ -20,10 +20,12 @@ import {
 } from '@/utils/functions/formatCurrency'
 import useScrollbar from '@/hooks/useScrollbar'
 
+import firebase from '@/firebase/firebase'
+import { handleCreateProduct } from '@/firebase/menu'
+
 import { ICategory } from '../../@types'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { UploadChangeParam } from 'antd/es/upload'
-import { handleCreateProduct } from '@/firebase/menu'
 
 interface ICreateProductModal {
   createProductCategory: ICategory | null
@@ -52,6 +54,8 @@ const CreateProductModal = ({
 
   const [productCreationIsLoading, setProductCreationIsLoading] =
     useState<boolean>(false)
+  const [imageUploadIsLoading, setImageUploadIsLoading] =
+    useState<boolean>(false)
 
   const handleSubmitProductCreation = async (data: ICreateProductForm) => {
     if (createProductCategory) {
@@ -77,12 +81,33 @@ const CreateProductModal = ({
     }
   }
 
-  const handleChangeCompanyImage: UploadProps['onChange'] = (
+  const handleChangeCompanyImage: UploadProps['onChange'] = async (
     info: UploadChangeParam<UploadFile>
   ) => {
-    getBase64(info.file.originFileObj as RcFile, (url) => {
-      setProductImage(url)
-    })
+    try {
+      setImageUploadIsLoading(true)
+
+      if (info.file.status !== 'uploading' && !!info.file.originFileObj) {
+        const file = info.file.originFileObj as RcFile
+
+        const uniqueFileName = `${Date.now()}_${file.name}`
+
+        const storageRef = firebase.storage().ref(`/products/${uniqueFileName}`)
+        await storageRef.put(file)
+
+        const imageUrl = await storageRef.getDownloadURL()
+
+        setProductImage(imageUrl)
+        setValue('productImage', imageUrl)
+      }
+    } catch (error) {
+      message.open({
+        type: 'error',
+        content: 'Falha ao fazer upload da imagem do produto.'
+      })
+    } finally {
+      setImageUploadIsLoading(false)
+    }
   }
 
   const [containerHasScrollbar] = useScrollbar(formContainerRef)
@@ -109,7 +134,11 @@ const CreateProductModal = ({
               onPreview={onPreview}
               className="company_image"
             >
-              {productImage ? (
+              {imageUploadIsLoading ? (
+                <div>
+                  <Spin />
+                </div>
+              ) : productImage ? (
                 <img
                   src={productImage}
                   alt="avatar"
@@ -199,7 +228,7 @@ const CreateProductModal = ({
         <Button
           key="back"
           onClick={handleCloseModal}
-          disabled={productCreationIsLoading}
+          disabled={productCreationIsLoading || imageUploadIsLoading}
         >
           Cancelar
         </Button>
@@ -208,7 +237,7 @@ const CreateProductModal = ({
           type="primary"
           htmlType="submit"
           disabled={!formIsValid}
-          loading={productCreationIsLoading}
+          loading={productCreationIsLoading || imageUploadIsLoading}
         >
           Criar
         </Button>
