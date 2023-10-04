@@ -78,13 +78,9 @@ const EditProductModal = ({
           const storageRef = firebase
             .storage()
             .refFromURL(editingProduct.productImage)
-          storageRef.delete()
-          // .then(() => {
-          //   console.log('Imagem anterior excluída com sucesso.')
-          // })
-          // .catch((error) => {
-          //   console.error('Erro ao excluir imagem anterior:', error)
-          // })
+          storageRef.delete().catch((error) => {
+            console.error('Erro ao excluir imagem anterior:', error)
+          })
         }
       }
 
@@ -123,7 +119,6 @@ const EditProductModal = ({
         reader.onload = () => {
           const dataURL = reader.result
           setTempProductImage(dataURL as string)
-          setValue('productImage', dataURL as string)
           setProductImageUploaded(file)
           setImageModified(true)
         }

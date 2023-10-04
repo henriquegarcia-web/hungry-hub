@@ -104,7 +104,6 @@ const CreateProductModal = ({
         reader.onload = () => {
           const dataURL = reader.result
           setTempProductImage(dataURL as string)
-          setValue('productImage', dataURL as string)
           setProductImageUploaded(file)
         }
       }

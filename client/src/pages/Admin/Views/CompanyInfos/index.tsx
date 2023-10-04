@@ -50,6 +50,7 @@ import {
 import { useAdmin } from '@/contexts/AdminContext'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
+import firebase from '@/firebase/firebase'
 import {
   ICompanyContactForm,
   ICompanyLocationForm,
@@ -154,23 +155,45 @@ interface IMainInfosContainer {
 const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
   const [updatingCompany, setUpdatingCompany] = useState(false)
 
-  const [companyImage, setCompanyImage] = useState<string>()
-  const [companyBanner, setCompanyBanner] = useState<string>()
+  const [tempCompanyImage, setTempCompanyImage] = useState<string>('')
+  const [companyImageUploaded, setTempCompanyImageUploaded] = useState<RcFile>()
+
+  const [tempCompanyBanner, setTempCompanyBanner] = useState<string>('')
+  const [companyBannerUploaded, setTempCompanyBannerUploaded] =
+    useState<RcFile>()
 
   const handleChangeCompanyImage: UploadProps['onChange'] = (
     info: UploadChangeParam<UploadFile>
   ) => {
-    getBase64(info.file.originFileObj as RcFile, (url) => {
-      setCompanyImage(url)
-    })
+    if (info.file.status !== 'uploading' && !!info.file.originFileObj) {
+      const file = info.file.originFileObj as RcFile
+
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+
+      reader.onload = () => {
+        const dataURL = reader.result
+        setTempCompanyImage(dataURL as string)
+        setTempCompanyImageUploaded(file)
+      }
+    }
   }
 
   const handleChangeCompanyBanner: UploadProps['onChange'] = (
     info: UploadChangeParam<UploadFile>
   ) => {
-    getBase64(info.file.originFileObj as RcFile, (url) => {
-      setCompanyBanner(url)
-    })
+    if (info.file.status !== 'uploading' && !!info.file.originFileObj) {
+      const file = info.file.originFileObj as RcFile
+
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+
+      reader.onload = () => {
+        const dataURL = reader.result
+        setTempCompanyBanner(dataURL as string)
+        setTempCompanyBannerUploaded(file)
+      }
+    }
   }
 
   // ---------------------------------------------------------------
@@ -183,9 +206,54 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
   const handleUpdate = async (data: ICompanyMainInfosForm) => {
     setUpdatingCompany(true)
 
+    const companyInfo = userData?.adminCompanyInfo
+
+    let logoUrl = ''
+    let bannerUrl = ''
+
+    if (companyImageUploaded) {
+      const uniqueFileName = `${Date.now()}_${companyImageUploaded.name}`
+
+      const storageRef = firebase
+        .storage()
+        .ref(`/companyInfos/${uniqueFileName}`)
+      await storageRef.put(companyImageUploaded)
+
+      logoUrl = await storageRef.getDownloadURL()
+
+      if (companyInfo && companyInfo?.companyLogo) {
+        const storageRef = firebase
+          .storage()
+          .refFromURL(companyInfo?.companyLogo)
+        storageRef.delete().catch((error) => {
+          console.error('Erro ao excluir imagem anterior:', error)
+        })
+      }
+    }
+
+    if (companyBannerUploaded) {
+      const uniqueFileName = `${Date.now()}_${companyBannerUploaded.name}`
+
+      const storageRef = firebase
+        .storage()
+        .ref(`/companyInfos/${uniqueFileName}`)
+      await storageRef.put(companyBannerUploaded)
+
+      bannerUrl = await storageRef.getDownloadURL()
+
+      if (companyInfo && companyInfo.companyBanner) {
+        const storageRef = firebase
+          .storage()
+          .refFromURL(companyInfo.companyBanner)
+        storageRef.delete().catch((error) => {
+          console.error('Erro ao excluir imagem anterior:', error)
+        })
+      }
+    }
+
     await handleUpdateCompanyMainInfos({
-      companyLogo: companyImage,
-      companyBanner: companyBanner,
+      companyLogo: logoUrl,
+      companyBanner: bannerUrl,
       companyName: data.companyName,
       companyId: data.companyId,
       companyDescription: data.companyDescription
@@ -198,8 +266,8 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
     if (userData?.adminCompanyInfo) {
       const companyInfo = userData?.adminCompanyInfo
 
-      setCompanyImage(companyInfo?.companyLogo || '')
-      setCompanyBanner(companyInfo?.companyBanner || '')
+      setTempCompanyImage(companyInfo?.companyLogo || '')
+      setTempCompanyBanner(companyInfo?.companyBanner || '')
 
       setValue('companyName', companyInfo?.companyName || '')
       setValue('companyId', companyInfo?.companyId || '')
@@ -231,9 +299,9 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
               onPreview={onPreview}
               className="company_image"
             >
-              {companyImage ? (
+              {tempCompanyImage ? (
                 <img
-                  src={companyImage}
+                  src={tempCompanyImage}
                   alt="avatar"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
@@ -255,9 +323,9 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
               onPreview={onPreview}
               className="company_banner"
             >
-              {companyBanner ? (
+              {tempCompanyBanner ? (
                 <img
-                  src={companyBanner}
+                  src={tempCompanyBanner}
                   alt="avatar"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
