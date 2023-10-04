@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import * as S from './styles'
 import {
@@ -40,6 +40,8 @@ import type { UploadChangeParam } from 'antd/es/upload'
 
 const { useToken } = theme
 
+import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 
 import {
@@ -61,6 +63,7 @@ import {
   handleUpdateCompanyMainInfos,
   handleUpdateCompanySchedules
 } from '@/firebase/company'
+
 import { IUserData } from '@/@types/Auth'
 
 const CompanyInfos = () => {
@@ -153,6 +156,14 @@ interface IMainInfosContainer {
   userData: IUserData | null
 }
 
+const companyMainInfosSchema = Yup.object().shape({
+  companyLogo: Yup.string(),
+  companyBanner: Yup.string(),
+  companyName: Yup.string().required(),
+  companyId: Yup.string().required(),
+  companyDescription: Yup.string().required()
+})
+
 const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
   const [updatingCompany, setUpdatingCompany] = useState(false)
 
@@ -208,9 +219,12 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
   // ---------------------------------------------------------------
 
   const { control, handleSubmit, reset, setValue, getValues, formState } =
-    useForm<ICompanyMainInfosForm>()
+    useForm({
+      mode: 'all',
+      resolver: yupResolver(companyMainInfosSchema)
+    })
 
-  const { isValid } = formState
+  const { errors } = formState
 
   const handleUpdate = async (data: ICompanyMainInfosForm) => {
     try {
@@ -348,7 +362,7 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
               )}
             </Upload>
           </ImgCrop>
-          <ImgCrop rotationSlider aspect={6 / 1}>
+          <ImgCrop rotationSlider aspect={4 / 1}>
             <Upload
               name="company-banner"
               listType="picture-card"
@@ -377,7 +391,6 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
           <Controller
             name="companyName"
             control={control}
-            rules={{ required: 'Este campo é obrigatório' }}
             render={({ field }) => (
               <Input
                 {...field}
@@ -395,7 +408,6 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
           <Controller
             name="companyId"
             control={control}
-            rules={{ required: 'Este campo é obrigatório' }}
             render={({ field }) => (
               <Input
                 {...field}
@@ -413,7 +425,6 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
           <Controller
             name="companyDescription"
             control={control}
-            rules={{ required: 'Este campo é obrigatório' }}
             render={({ field }) => (
               <Input.TextArea
                 {...field}
@@ -433,7 +444,7 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
           <Button
             type="primary"
             htmlType="submit"
-            disabled={!saveButtonEnable || !isValid}
+            disabled={!saveButtonEnable || Object.keys(errors).length !== 0}
             loading={updatingCompany}
           >
             Salvar
