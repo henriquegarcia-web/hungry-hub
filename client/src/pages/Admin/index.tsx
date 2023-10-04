@@ -214,7 +214,7 @@ const AdminHeader = ({
           >
             <S.UserMenu>
               <S.UserMenuName style={{ color: token.colorText }}>
-                {userData?.adminName}
+                {!userData ? 'Carregando...' : userData?.adminName}
               </S.UserMenuName>
               <Avatar
                 size={30}
@@ -224,7 +224,11 @@ const AdminHeader = ({
                   color: '#f56a00'
                 }}
               >
-                {formatUsername(userData?.adminName || '')}
+                {!userData ? (
+                  <Spin size="small" style={{ marginTop: '-4px' }} />
+                ) : (
+                  formatUsername(userData?.adminName)
+                )}
               </Avatar>
             </S.UserMenu>
           </Dropdown>

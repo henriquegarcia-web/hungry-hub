@@ -4,7 +4,7 @@ import moment from 'moment'
 
 // ====================== TYPES ====================== //
 
-type Subscription = {
+type ISubscription = {
   sessionId: string
   planId: string
   planType: string
@@ -97,7 +97,7 @@ export interface IUserData {
   adminEmail: string
   adminPhone: string
   adminRegisteredAt: number
-  adminSubscription?: Subscription
+  adminSubscription?: ISubscription
   adminCompanyInfo?: ICompanyData
 }
 
