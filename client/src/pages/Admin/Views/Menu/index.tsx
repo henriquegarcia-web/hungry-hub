@@ -29,6 +29,8 @@ import { formatCurrency } from '@/utils/functions/formatCurrency'
 import { useMenu } from '@/contexts/MenuContext'
 
 import { ICategory, IProduct } from './@types'
+import useClickOutside from '@/hooks/useClickOutside'
+import { useRef } from 'react'
 
 const Menu = () => {
   const {
@@ -107,11 +109,18 @@ const CreateCategory = ({}: ICreateCategory) => {
     isEditingCategory,
     handleCategoryEdit,
     handleCategoryDelete,
-    handleCancelEdit
+    handleCancelCategoryEdit
   } = useMenu()
 
   const { control, handleSubmit, setValue, reset } =
     useForm<ICreateCategoryForm>()
+
+  const createCategoryRef = useRef(null)
+
+  const handleCancelCategoryEdition = () => {
+    handleCancelCategoryEdit()
+    reset()
+  }
 
   const handleSubmitCategoryForm = async (data: ICreateCategoryForm) => {
     if (isEditingCategory && editingCategory) {
@@ -126,7 +135,7 @@ const CreateCategory = ({}: ICreateCategory) => {
       })
 
       if (result) {
-        handleCancelEdit(reset)
+        handleCancelCategoryEdition()
       }
     } else {
       const newCategory = {
@@ -137,10 +146,16 @@ const CreateCategory = ({}: ICreateCategory) => {
       const result = await handleCreateCategory(newCategory)
 
       if (result) {
-        handleCancelEdit(reset)
+        handleCancelCategoryEdition()
       }
     }
   }
+
+  useClickOutside({
+    active: isEditingCategory,
+    containerRef: createCategoryRef,
+    onClickOutside: handleCancelCategoryEdition
+  })
 
   const emptyDataComponent = (
     <S.CategoriesListEmptyData>
@@ -191,7 +206,10 @@ const CreateCategory = ({}: ICreateCategory) => {
           )}
         />
       </S.CreateCategoryWrapper>
-      <S.CreateCategoryFooter onSubmit={handleSubmit(handleSubmitCategoryForm)}>
+      <S.CreateCategoryFooter
+        onSubmit={handleSubmit(handleSubmitCategoryForm)}
+        ref={createCategoryRef}
+      >
         {isEditingCategory ? (
           <>
             <Controller
@@ -212,7 +230,7 @@ const CreateCategory = ({}: ICreateCategory) => {
             <Button type="primary" htmlType="submit" icon={<EditOutlined />} />
             <Button
               icon={<CloseOutlined />}
-              onClick={() => handleCancelEdit(reset)}
+              onClick={() => handleCancelCategoryEdition()}
             />
           </>
         ) : (

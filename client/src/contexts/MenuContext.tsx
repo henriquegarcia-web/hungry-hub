@@ -45,7 +45,7 @@ interface MenuContextData {
     setValue: any
   }) => void
   handleCategoryDelete: (categoryId: string) => void
-  handleCancelEdit: (reset: any) => void
+  handleCancelCategoryEdit: () => void
 
   handleProductDelete: (categoryId: string, productId: string) => void
   handleOpenCreateProductModal: (category: ICategory) => void
@@ -106,10 +106,9 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     handleDeleteCategory(categoryId)
   }, [])
 
-  const handleCancelEdit = (reset: any) => {
+  const handleCancelCategoryEdit = () => {
     setIsEditingCategory(false)
     setEditingCategory(null)
-    reset()
   }
 
   // ------------------------------------- PRODUCTS CONTROL
@@ -175,7 +174,7 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
 
       handleCategoryEdit,
       handleCategoryDelete,
-      handleCancelEdit,
+      handleCancelCategoryEdit,
 
       handleProductDelete,
       handleOpenCreateProductModal,
