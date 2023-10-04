@@ -50,19 +50,29 @@ const CreateProductModal = ({
 
   const formContainerRef = useRef(null)
 
-  const [productImage, setProductImage] = useState<string>('')
+  const [tempProductImage, setTempProductImage] = useState<string>('')
+  const [productImageUploaded, setProductImageUploaded] = useState<RcFile>()
 
   const [productCreationIsLoading, setProductCreationIsLoading] =
-    useState<boolean>(false)
-  const [imageUploadIsLoading, setImageUploadIsLoading] =
     useState<boolean>(false)
 
   const handleSubmitProductCreation = async (data: ICreateProductForm) => {
     if (createProductCategory) {
       setProductCreationIsLoading(true)
 
+      let imageUrl = ''
+
+      if (productImageUploaded) {
+        const uniqueFileName = `${Date.now()}_${productImageUploaded.name}`
+
+        const storageRef = firebase.storage().ref(`/products/${uniqueFileName}`)
+        await storageRef.put(productImageUploaded)
+
+        imageUrl = await storageRef.getDownloadURL()
+      }
+
       const productData = {
-        productImage: productImage,
+        productImage: imageUrl,
         productName: data.productName,
         productPrice: formatByCurrency(data.productPrice),
         productDescription: data.productDescription
@@ -85,28 +95,24 @@ const CreateProductModal = ({
     info: UploadChangeParam<UploadFile>
   ) => {
     try {
-      setImageUploadIsLoading(true)
-
       if (info.file.status !== 'uploading' && !!info.file.originFileObj) {
         const file = info.file.originFileObj as RcFile
 
-        const uniqueFileName = `${Date.now()}_${file.name}`
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
 
-        const storageRef = firebase.storage().ref(`/products/${uniqueFileName}`)
-        await storageRef.put(file)
-
-        const imageUrl = await storageRef.getDownloadURL()
-
-        setProductImage(imageUrl)
-        setValue('productImage', imageUrl)
+        reader.onload = () => {
+          const dataURL = reader.result
+          setTempProductImage(dataURL as string)
+          setValue('productImage', dataURL as string)
+          setProductImageUploaded(file)
+        }
       }
     } catch (error) {
       message.open({
         type: 'error',
         content: 'Falha ao fazer upload da imagem do produto.'
       })
-    } finally {
-      setImageUploadIsLoading(false)
     }
   }
 
@@ -134,13 +140,9 @@ const CreateProductModal = ({
               onPreview={onPreview}
               className="company_image"
             >
-              {imageUploadIsLoading ? (
-                <div>
-                  <Spin />
-                </div>
-              ) : productImage ? (
+              {tempProductImage ? (
                 <img
-                  src={productImage}
+                  src={tempProductImage}
                   alt="avatar"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
@@ -228,7 +230,7 @@ const CreateProductModal = ({
         <Button
           key="back"
           onClick={handleCloseModal}
-          disabled={productCreationIsLoading || imageUploadIsLoading}
+          disabled={productCreationIsLoading}
         >
           Cancelar
         </Button>
@@ -237,7 +239,7 @@ const CreateProductModal = ({
           type="primary"
           htmlType="submit"
           disabled={!formIsValid}
-          loading={productCreationIsLoading || imageUploadIsLoading}
+          loading={productCreationIsLoading}
         >
           Criar
         </Button>

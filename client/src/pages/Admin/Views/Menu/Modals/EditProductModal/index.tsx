@@ -53,20 +53,44 @@ const EditProductModal = ({
 
   const formContainerRef = useRef(null)
 
-  const [productImage, setProductImage] = useState<string>('')
+  const [tempProductImage, setTempProductImage] = useState<string>('')
+  const [productImageUploaded, setProductImageUploaded] = useState<RcFile>()
+  const [imageModified, setImageModified] = useState(false)
 
   const [productEditionIsLoading, setProductEditionIsLoading] =
-    useState<boolean>(false)
-  const [imageUploadIsLoading, setImageUploadIsLoading] =
     useState<boolean>(false)
 
   const handleSubmitProductEdition = async (data: IEditProductForm) => {
     if (editProductCategory && editingProduct) {
       setProductEditionIsLoading(true)
 
+      let imageUrl = ''
+
+      if (productImageUploaded) {
+        const uniqueFileName = `${Date.now()}_${productImageUploaded.name}`
+
+        const storageRef = firebase.storage().ref(`/products/${uniqueFileName}`)
+        await storageRef.put(productImageUploaded)
+
+        imageUrl = await storageRef.getDownloadURL()
+
+        if (editingProduct && editingProduct.productImage) {
+          const storageRef = firebase
+            .storage()
+            .refFromURL(editingProduct.productImage)
+          storageRef.delete()
+          // .then(() => {
+          //   console.log('Imagem anterior excluída com sucesso.')
+          // })
+          // .catch((error) => {
+          //   console.error('Erro ao excluir imagem anterior:', error)
+          // })
+        }
+      }
+
       const updatedProduct: IProduct = {
         ...editingProduct,
-        productImage: productImage,
+        productImage: imageUrl,
         productName: data.productName,
         productPrice: formatByCurrency(data.productPrice),
         productDescription: data.productDescription
@@ -90,47 +114,44 @@ const EditProductModal = ({
     info: UploadChangeParam<UploadFile>
   ) => {
     try {
-      setImageUploadIsLoading(true)
-
       if (info.file.status !== 'uploading' && !!info.file.originFileObj) {
         const file = info.file.originFileObj as RcFile
 
-        const uniqueFileName = `${Date.now()}_${file.name}`
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
 
-        const storageRef = firebase.storage().ref(`/products/${uniqueFileName}`)
-        await storageRef.put(file)
-
-        const imageUrl = await storageRef.getDownloadURL()
-
-        setProductImage(imageUrl)
-        setValue('productImage', imageUrl)
+        reader.onload = () => {
+          const dataURL = reader.result
+          setTempProductImage(dataURL as string)
+          setValue('productImage', dataURL as string)
+          setProductImageUploaded(file)
+          setImageModified(true)
+        }
       }
     } catch (error) {
       message.open({
         type: 'error',
         content: 'Falha ao fazer upload da imagem do produto.'
       })
-    } finally {
-      setImageUploadIsLoading(false)
     }
   }
 
   useEffect(() => {
     if (editingProduct) {
-      setValue('productImage', editingProduct.productImage)
       setValue('productName', editingProduct.productName)
       setValue(
         'productPrice',
         formatCurrencyToEdit(editingProduct.productPrice)
       )
       setValue('productDescription', editingProduct.productDescription)
-      setProductImage(editingProduct.productImage)
+
+      setTempProductImage(editingProduct.productImage)
     }
   }, [editingProduct, setValue])
 
   const [containerHasScrollbar] = useScrollbar(formContainerRef)
 
-  const formIsValid = isValid
+  const isEditDisabled = !isValid && !imageModified
 
   return (
     <S.EditProductModal
@@ -152,13 +173,9 @@ const EditProductModal = ({
               onPreview={onPreview}
               className="company_image"
             >
-              {imageUploadIsLoading ? (
-                <div>
-                  <Spin />
-                </div>
-              ) : productImage ? (
+              {tempProductImage ? (
                 <img
-                  src={productImage}
+                  src={tempProductImage}
                   alt="avatar"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
@@ -246,7 +263,7 @@ const EditProductModal = ({
         <Button
           key="back"
           onClick={handleCloseModal}
-          disabled={productEditionIsLoading || imageUploadIsLoading}
+          disabled={productEditionIsLoading}
         >
           Cancelar
         </Button>
@@ -254,8 +271,8 @@ const EditProductModal = ({
           key="submit"
           type="primary"
           htmlType="submit"
-          disabled={!formIsValid}
-          loading={productEditionIsLoading || imageUploadIsLoading}
+          disabled={isEditDisabled}
+          loading={productEditionIsLoading}
         >
           Editar
         </Button>
