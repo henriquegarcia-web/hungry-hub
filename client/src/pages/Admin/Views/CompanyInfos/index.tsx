@@ -272,11 +272,6 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
       setCompanyImageModified(false)
       setCompanyBannerModified(false)
       setSaveButtonEnable(false)
-    } catch (error) {
-      message.open({
-        type: 'error',
-        content: 'Falha ao editar informações da empresa.'
-      })
     } finally {
       setUpdatingCompany(false)
     }
@@ -472,11 +467,6 @@ const LocationContainer = ({ userData }: ILocationContainer) => {
       await handleUpdateCompanyLocation(data)
 
       setSaveButtonEnable(false)
-    } catch (error) {
-      message.open({
-        type: 'error',
-        content: 'Falha ao editar informações de localização da empresa.'
-      })
     } finally {
       setUpdatingCompany(false)
     }
@@ -661,15 +651,21 @@ const ContactContainer = ({ userData }: IContactContainer) => {
 
   const [updatingCompany, setUpdatingCompany] = useState(false)
 
-  const { control, handleSubmit, reset, setValue } =
+  const [saveButtonEnable, setSaveButtonEnable] = useState(false)
+
+  const { control, handleSubmit, reset, setValue, getValues } =
     useForm<ICompanyContactForm>()
 
   const handleUpdate = async (data: ICompanyContactForm) => {
-    setUpdatingCompany(true)
+    try {
+      setUpdatingCompany(true)
 
-    await handleUpdateCompanyContact(data)
+      await handleUpdateCompanyContact(data)
 
-    setUpdatingCompany(false)
+      setSaveButtonEnable(false)
+    } finally {
+      setUpdatingCompany(false)
+    }
   }
 
   useEffect(() => {
@@ -684,6 +680,33 @@ const ContactContainer = ({ userData }: IContactContainer) => {
       setValue('companyWebsite', companyContacts?.companyWebsite || '')
     }
   }, [userData, setValue])
+
+  const handleFieldChange = () => {
+    const formData = getValues()
+    const companyContacts = userData?.adminCompanyInfo?.companyContacts
+
+    const companyPhoneChanged =
+      formData.companyPhone !== (companyContacts?.companyPhone || '')
+    const companyWhatsappChanged =
+      formData.companyWhatsapp !== (companyContacts?.companyWhatsapp || '')
+    const companyEmailChanged =
+      formData.companyEmail !== (companyContacts?.companyEmail || '')
+    const companyFacebookChanged =
+      formData.companyFacebook !== (companyContacts?.companyFacebook || '')
+    const companyInstagramChanged =
+      formData.companyInstagram !== (companyContacts?.companyInstagram || '')
+    const companyWebsiteChanged =
+      formData.companyWebsite !== (companyContacts?.companyWebsite || '')
+
+    setSaveButtonEnable(
+      companyPhoneChanged ||
+        companyWhatsappChanged ||
+        companyEmailChanged ||
+        companyFacebookChanged ||
+        companyInstagramChanged ||
+        companyWebsiteChanged
+    )
+  }
 
   const customTootip = (
     <Tooltip title="Essa campo não irá aparecer se estiver vazio">
@@ -727,6 +750,11 @@ const ContactContainer = ({ userData }: IContactContainer) => {
                   />
                 }
                 suffix={customTootip}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
               />
             )}
           />
@@ -746,6 +774,11 @@ const ContactContainer = ({ userData }: IContactContainer) => {
                   />
                 }
                 suffix={customTootip}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
               />
             )}
           />
@@ -765,6 +798,11 @@ const ContactContainer = ({ userData }: IContactContainer) => {
                   />
                 }
                 suffix={customTootip}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
               />
             )}
           />
@@ -784,6 +822,11 @@ const ContactContainer = ({ userData }: IContactContainer) => {
                   />
                 }
                 suffix={customTootip}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
               />
             )}
           />
@@ -803,6 +846,11 @@ const ContactContainer = ({ userData }: IContactContainer) => {
                   />
                 }
                 suffix={customTootip}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
               />
             )}
           />
@@ -822,12 +870,22 @@ const ContactContainer = ({ userData }: IContactContainer) => {
                   />
                 }
                 suffix={customTootip}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
               />
             )}
           />
         </Form.Item>
         <S.ContactFormFooter>
-          <Button type="primary" htmlType="submit" loading={updatingCompany}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={!saveButtonEnable}
+            loading={updatingCompany}
+          >
             Salvar
           </Button>
         </S.ContactFormFooter>
@@ -919,11 +977,6 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
       handleUpdateCompanySchedules(schedule)
 
       setSaveButtonEnable(false)
-    } catch (error) {
-      message.open({
-        type: 'error',
-        content: 'Falha ao editar horários da empresa.'
-      })
     } finally {
       setUpdatingCompany(false)
     }
