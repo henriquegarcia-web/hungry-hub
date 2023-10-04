@@ -110,13 +110,24 @@ export const CategoriesList = styled.div`
   height: fit-content;
 `
 
+export const ProductsListLoading = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  height: 120px;
+
+  border: 1px solid lightgray;
+`
+
 export const ProductsListEmptyData = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   row-gap: 8px;
   border-radius: 10px;
-  padding: 20px;
+  height: 120px;
 
   font-size: 14px;
   line-height: 14px;

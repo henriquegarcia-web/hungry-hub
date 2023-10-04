@@ -9,7 +9,7 @@ import {
 } from 'react-icons/io5'
 
 import { Logo } from '@/components'
-import { Avatar, Button, Dropdown, Menu, Switch, theme } from 'antd'
+import { Avatar, Button, Dropdown, Menu, Spin, Switch, theme } from 'antd'
 
 import type { MenuProps } from 'antd'
 
@@ -52,7 +52,31 @@ const Admin = () => {
 
   // ------------------------------------------------------------------
 
-  const viewToRender = getComponentByMenuId(activeMenu)
+  useEffect(() => {
+    if (!activeMenu) {
+      setActiveMenu(menusData[0]?.menuId || '')
+    }
+  }, [activeMenu])
+
+  let viewToRender
+
+  if (userData === null) {
+    viewToRender = (
+      <S.AdminLoadingView>
+        <Spin />
+      </S.AdminLoadingView>
+    )
+  } else {
+    const activeMenuItem = menusData.find(
+      (menuItem) => menuItem.menuId === activeMenu
+    )
+
+    viewToRender = activeMenuItem ? (
+      activeMenuItem.menuRender
+    ) : (
+      <S.AdminNotFoundView>Tela não encontrada</S.AdminNotFoundView>
+    )
+  }
 
   return (
     <S.Admin style={{ backgroundColor: token.colorBgElevated }}>
@@ -71,18 +95,6 @@ const Admin = () => {
 }
 
 export default Admin
-
-// ========================================== ADMIN VIEWS
-
-const getComponentByMenuId = (menuId: string) => {
-  for (const menuItem of menusData) {
-    if (menuItem.menuId === menuId) {
-      return menuItem.menuRender
-    }
-  }
-
-  return <div>View not found</div>
-}
 
 // ========================================== ADMIN MENU
 

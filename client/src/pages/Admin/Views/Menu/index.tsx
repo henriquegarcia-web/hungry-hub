@@ -17,7 +17,8 @@ import {
   Empty,
   Modal,
   theme,
-  Switch
+  Switch,
+  Spin
 } from 'antd'
 
 const { useToken } = theme
@@ -180,6 +181,7 @@ const CreateCategory = ({}: ICreateCategory) => {
           style={{ width: '100%' }}
           dataSource={categories || []}
           locale={{ emptyText: emptyDataComponent }}
+          loading={!categories}
           renderItem={(category) => (
             <List.Item
               actions={[
@@ -265,7 +267,11 @@ const CategoriesList = ({}: ICategoriesList) => {
 
   const { categories, handleOpenCreateProductModal } = useMenu()
 
-  const emptyDataComponent = (
+  const emptyDataComponent = !categories ? (
+    <S.ProductsListLoading>
+      <Spin />
+    </S.ProductsListLoading>
+  ) : (
     <S.ProductsListEmptyData>
       {Empty.PRESENTED_IMAGE_SIMPLE}
       Nenhum produto criado
