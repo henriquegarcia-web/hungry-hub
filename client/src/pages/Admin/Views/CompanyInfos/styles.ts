@@ -77,6 +77,10 @@ export const InfoContainerHeaderLabel = styled.h2`
   font-weight: 500;
 `
 
+export const InfoContainerHeaderIncomplete = styled.h2`
+  display: flex;
+`
+
 export const InfoContainerContent = styled.div`
   position: relative;
   display: flex;

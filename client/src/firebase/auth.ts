@@ -111,7 +111,7 @@ const handleSignupAdmin = async ({
             companyInstagram: '',
             companyWebsite: ''
           },
-          companySchedules: [],
+          // companySchedules: [],
           companyMenu: []
         }
       }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import * as S from './styles'
 import {
@@ -26,6 +26,7 @@ import {
   Space,
   Spin,
   Switch,
+  Tag,
   TimePicker,
   Tooltip,
   Upload,
@@ -102,6 +103,7 @@ interface IInfoContainer {
   headerIcon: React.ReactNode
   headerLabel: string
   loading: boolean
+  isIncomplete?: boolean
   children: React.ReactNode
 }
 
@@ -109,6 +111,7 @@ const InfoContainer = ({
   headerIcon,
   headerLabel,
   loading,
+  isIncomplete,
   children
 }: IInfoContainer) => {
   const { token } = useToken()
@@ -124,6 +127,11 @@ const InfoContainer = ({
         <S.InfoContainerHeaderLabel style={{ color: token.colorTextHeading }}>
           {headerLabel}
         </S.InfoContainerHeaderLabel>
+        {isIncomplete && (
+          <S.InfoContainerHeaderIncomplete>
+            <Tag color="volcano">Pendente</Tag>
+          </S.InfoContainerHeaderIncomplete>
+        )}
       </S.InfoContainerHeader>
       <S.InfoContainerContent>
         {children}
@@ -199,11 +207,17 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
     }
   }, [userData, setValue])
 
+  const mainInfosPendency =
+    !userData?.adminCompanyInfo?.companyName &&
+    !userData?.adminCompanyInfo?.companyId &&
+    !userData?.adminCompanyInfo?.companyDescription
+
   return (
     <InfoContainer
       headerIcon={<IoStorefrontOutline />}
       headerLabel="Informações básicas"
       loading={userData === null}
+      isIncomplete={mainInfosPendency}
     >
       <S.MainInfosForm layout="vertical" onFinish={handleSubmit(handleUpdate)}>
         <S.MainInfosImagesContainer>
@@ -338,11 +352,14 @@ const LocationContainer = ({ userData }: ILocationContainer) => {
     }
   }, [userData, setValue])
 
+  const locationPendency = !userData?.adminCompanyInfo?.companyLocation
+
   return (
     <InfoContainer
       headerIcon={<IoLocationOutline />}
       headerLabel="Localização"
       loading={userData === null}
+      isIncomplete={locationPendency}
     >
       <S.LocationForm layout="vertical" onFinish={handleSubmit(handleUpdate)}>
         <Form.Item label="CEP">
@@ -716,6 +733,8 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
     }
   }, [userData])
 
+  const schedulesPendency = !userData?.adminCompanyInfo?.companySchedules
+
   const isAddButtonDisabled =
     schedule.some((item) => item.day === 'todos' || item.day === selectedDay) ||
     !isValid
@@ -725,6 +744,7 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
       headerIcon={<IoCalendarOutline />}
       headerLabel="Horários"
       loading={userData === null}
+      isIncomplete={schedulesPendency}
     >
       <S.ScheduleForm layout="vertical" onFinish={handleSubmit(onSubmit)}>
         <ScheduleFormDesktop
