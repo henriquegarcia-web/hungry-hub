@@ -20,16 +20,14 @@ import {
 } from '@/utils/functions/formatCurrency'
 import useScrollbar from '@/hooks/useScrollbar'
 
-import { ICategory, IProduct } from '../../@types'
+import { ICategory } from '../../@types'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { UploadChangeParam } from 'antd/es/upload'
 import { handleCreateProduct } from '@/firebase/menu'
 
 interface ICreateProductModal {
   createProductCategory: ICategory | null
-  setCreateProductCategory: React.Dispatch<
-    React.SetStateAction<ICategory | null>
-  >
+  handleCloseModal: () => void
 }
 
 interface ICreateProductForm {
@@ -41,7 +39,7 @@ interface ICreateProductForm {
 
 const CreateProductModal = ({
   createProductCategory,
-  setCreateProductCategory
+  handleCloseModal
 }: ICreateProductModal) => {
   const { control, handleSubmit, setValue, reset, formState } =
     useForm<ICreateProductForm>()
@@ -52,12 +50,6 @@ const CreateProductModal = ({
 
   const [productImage, setProductImage] = useState<string>('')
 
-  const handleCancel = () => {
-    setCreateProductCategory(null)
-    reset()
-    setProductImage('')
-  }
-
   const handleSubmitProductCreation = async (data: ICreateProductForm) => {
     if (createProductCategory) {
       const productData = {
@@ -67,15 +59,13 @@ const CreateProductModal = ({
         productDescription: data.productDescription
       }
 
-      console.log(createProductCategory.id)
-
       const createProductResponse = await handleCreateProduct(
         createProductCategory.id,
         productData
       )
 
       if (createProductResponse) {
-        handleCancel()
+        handleCloseModal()
       }
     }
   }
@@ -199,7 +189,7 @@ const CreateProductModal = ({
         </S.CreateProductModalMainForm>
       </S.CreateProductModalFormContent>
       <S.CreateProductModalFormFooter>
-        <Button key="back" onClick={handleCancel}>
+        <Button key="back" onClick={handleCloseModal}>
           Cancelar
         </Button>
         <Button

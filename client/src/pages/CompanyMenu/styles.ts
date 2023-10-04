@@ -100,9 +100,9 @@ export const MenuMainInfosBannerWrapper = styled.div`
 
 export const MenuMainInfosBanner = styled.div`
   display: flex;
-
   width: 100%;
   height: 140px;
+  border-radius: 8px;
   overflow: hidden;
 
   img {

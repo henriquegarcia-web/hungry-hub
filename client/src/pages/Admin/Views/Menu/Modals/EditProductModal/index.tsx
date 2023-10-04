@@ -53,12 +53,6 @@ const EditProductModal = ({
 
   const [productImage, setProductImage] = useState<string>('')
 
-  const handleCancel = () => {
-    handleCloseModal()
-    reset()
-    setProductImage('')
-  }
-
   const handleSubmitProductEdition = async (data: IEditProductForm) => {
     if (editProductCategory && editingProduct) {
       const updatedProduct: IProduct = {
@@ -76,7 +70,7 @@ const EditProductModal = ({
       )
 
       if (editProductResponse) {
-        handleCancel()
+        handleCloseModal()
       }
     }
   }
@@ -213,7 +207,7 @@ const EditProductModal = ({
         </S.EditProductModalMainForm>
       </S.EditProductModalFormContent>
       <S.EditProductModalFormFooter>
-        <Button key="back" onClick={handleCancel}>
+        <Button key="back" onClick={handleCloseModal}>
           Cancelar
         </Button>
         <Button

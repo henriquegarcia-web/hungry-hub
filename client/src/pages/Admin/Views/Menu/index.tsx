@@ -29,16 +29,16 @@ import { formatCurrency } from '@/utils/functions/formatCurrency'
 import { useMenu } from '@/contexts/MenuContext'
 
 import { ICategory, IProduct } from './@types'
-import { useEffect } from 'react'
 
 const Menu = () => {
   const {
     createProductCategory,
-    setCreateProductCategory,
     editProductCategory,
     setEditProductCategory,
+    isCreatingProduct,
     isEditingProduct,
     editingProduct,
+    handleCloseCreateProductModal,
     handleCloseEditProductModal
   } = useMenu()
 
@@ -55,14 +55,16 @@ const Menu = () => {
 
       <Modal
         title="Criar produto"
-        open={createProductCategory !== null}
-        onOk={() => setCreateProductCategory(null)}
-        onCancel={() => setCreateProductCategory(null)}
+        open={isCreatingProduct && !!createProductCategory}
+        onOk={handleCloseCreateProductModal}
+        onCancel={handleCloseCreateProductModal}
         footer={null}
+        afterClose={() => handleCloseCreateProductModal()}
+        destroyOnClose
       >
         <CreateProductModal
           createProductCategory={createProductCategory}
-          setCreateProductCategory={setCreateProductCategory}
+          handleCloseModal={handleCloseCreateProductModal}
         />
       </Modal>
 
@@ -72,6 +74,8 @@ const Menu = () => {
         onOk={handleCloseEditProductModal}
         onCancel={handleCloseEditProductModal}
         footer={null}
+        afterClose={() => handleCloseEditProductModal()}
+        destroyOnClose
       >
         <EditProductModal
           editProductCategory={editProductCategory}
@@ -241,10 +245,6 @@ const CategoriesList = ({}: ICategoriesList) => {
   const { token } = useToken()
 
   const { categories, handleOpenCreateProductModal } = useMenu()
-
-  useEffect(() => {
-    console.log(categories)
-  }, [categories])
 
   const emptyDataComponent = (
     <S.ProductsListEmptyData>

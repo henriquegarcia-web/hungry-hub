@@ -31,6 +31,7 @@ interface MenuContextData {
   isEditingCategory: boolean
   setIsEditingCategory: React.Dispatch<React.SetStateAction<boolean>>
 
+  isCreatingProduct: boolean
   editingProduct: IProduct | null
   setEditingProduct: React.Dispatch<React.SetStateAction<IProduct | null>>
   isEditingProduct: boolean
@@ -48,6 +49,7 @@ interface MenuContextData {
 
   handleProductDelete: (categoryId: string, productId: string) => void
   handleOpenCreateProductModal: (category: ICategory) => void
+  handleCloseCreateProductModal: () => void
   handleOpenEditProductModal: (product: IProduct, category: ICategory) => void
   handleCloseEditProductModal: () => void
 }
@@ -59,7 +61,6 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
 
   // =================================================================
 
-  // const [categories, setCategories] = useState<ICategory[]>([])
   const [createProductCategory, setCreateProductCategory] =
     useState<ICategory | null>(null)
   const [editProductCategory, setEditProductCategory] =
@@ -67,6 +68,8 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [editingCategory, setEditingCategory] = useState<ICategory | null>(null)
   const [isEditingCategory, setIsEditingCategory] = useState<boolean>(false)
+
+  const [isCreatingProduct, setIsCreatingProduct] = useState<boolean>(false)
 
   const [editingProduct, setEditingProduct] = useState<IProduct | null>(null)
   const [isEditingProduct, setIsEditingProduct] = useState<boolean>(false)
@@ -111,9 +114,19 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
 
   // ------------------------------------- PRODUCTS CONTROL
 
+  // ------------------- CREATE PRODUCT
+
   const handleOpenCreateProductModal = (category: ICategory) => {
+    setIsCreatingProduct(true)
     setCreateProductCategory(category)
   }
+
+  const handleCloseCreateProductModal = () => {
+    setIsCreatingProduct(false)
+    setCreateProductCategory(null)
+  }
+
+  // ------------------- EDIT PRODUCT
 
   const handleOpenEditProductModal = (
     product: IProduct,
@@ -129,6 +142,8 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     setEditingProduct(null)
     setEditProductCategory(null)
   }
+
+  // ------------------- DELETE PRODUCT
 
   const handleProductDelete = useCallback(
     (categoryId: string, productId: string) => {
@@ -152,6 +167,7 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
       isEditingCategory,
       setIsEditingCategory,
 
+      isCreatingProduct,
       editingProduct,
       setEditingProduct,
       isEditingProduct,
@@ -163,6 +179,7 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
 
       handleProductDelete,
       handleOpenCreateProductModal,
+      handleCloseCreateProductModal,
       handleOpenEditProductModal,
       handleCloseEditProductModal
     }
@@ -171,6 +188,7 @@ const MenuProvider = ({ children }: { children: React.ReactNode }) => {
     createProductCategory,
     editProductCategory,
     editingCategory,
+    isCreatingProduct,
     editingProduct,
     handleCategoryDelete,
 
