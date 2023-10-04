@@ -86,36 +86,6 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // -----------------------------------------------------------------
 
-  useEffect(() => {
-    const unsubscribe = firebase
-      .auth()
-      .onAuthStateChanged(async (user: any) => {
-        if (user) {
-          const uid = user.uid
-          setUserId(uid)
-        } else {
-          setUserId(null)
-          setUserData(null)
-        }
-      })
-
-    return () => unsubscribe()
-  }, [])
-
-  useEffect(() => {
-    const unsubscribe = handleGetAdminData((accountData) => {
-      setUserData(accountData)
-    })
-
-    if (unsubscribe) {
-      return () => {
-        unsubscribe()
-      }
-    }
-  }, [userId])
-
-  // -----------------------------------------------------------------
-
   const handleLogout = useCallback(async () => {
     const response = await handleLogoutAdmin()
     if (!response) return
@@ -132,12 +102,43 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUserData(null)
   }, [])
 
-  // =================================================================
+  // -----------------------------------------------------------------
 
   useEffect(() => {
-    console.log('LOGADO ======>', isAdminLogged, userId)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAdminLogged])
+    const unsubscribe = firebase
+      .auth()
+      .onAuthStateChanged(async (user: any) => {
+        if (user) {
+          const uid = user.uid
+          setUserId(uid)
+        } else {
+          setUserId(null)
+          setUserData(null)
+          handleLogout()
+        }
+      })
+
+    return () => unsubscribe()
+  }, [handleLogout])
+
+  useEffect(() => {
+    const unsubscribe = handleGetAdminData((accountData) => {
+      setUserData(accountData)
+    })
+
+    if (unsubscribe) {
+      return () => {
+        unsubscribe()
+      }
+    }
+  }, [userId])
+
+  // =================================================================
+
+  // useEffect(() => {
+  //   console.log('LOGADO ======>', isAdminLogged, userId)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isAdminLogged])
 
   const AdminAuthContextValues = useMemo(() => {
     return {
