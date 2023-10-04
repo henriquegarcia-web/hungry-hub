@@ -3,7 +3,6 @@ import firebase from '@/firebase/firebase'
 import { message } from 'antd'
 
 import {
-  ICategory,
   ICategoryManipulate,
   IProduct,
   IProductManipulate
@@ -27,7 +26,8 @@ const handleCreateCategory = async (
 
     const categoryToSave = {
       id: newCategoryRef.key,
-      ...categoryData
+      ...categoryData,
+      active: true
     }
 
     await newCategoryRef.set(categoryToSave)
@@ -146,67 +146,63 @@ const handleDeleteCategory = async (categoryId: string): Promise<boolean> => {
   }
 }
 
+// ============================================== ACTIVE CATEGORY
+
+export interface IActiveCategoryForm {
+  categoryId: string
+  isActive: boolean
+}
+
+const handleActiveCategory = async ({
+  categoryId,
+  isActive
+}: IActiveCategoryForm): Promise<boolean> => {
+  try {
+    const user = firebase.auth().currentUser
+
+    if (!user) return false
+
+    const categoriesRef = firebase
+      .database()
+      .ref(`adminAccounts/${user.uid}/adminCompanyInfo/companyMenu`)
+
+    const categorySnapshot = await categoriesRef
+      .orderByKey()
+      .equalTo(categoryId)
+      .once('value')
+
+    if (!categorySnapshot.exists()) {
+      message.open({
+        type: 'warning',
+        content: 'Categoria não encontrada.'
+      })
+      return false
+    }
+
+    const categoryKey = Object.keys(categorySnapshot.val())[0]
+    const categoryRef = categoriesRef.child(`${categoryKey}/active`)
+
+    await categoryRef.set(isActive)
+
+    message.open({
+      type: `${isActive ? 'success' : 'warning'}`,
+      content: `A categoria agora está ${isActive ? 'ativa' : 'inativa'}.`
+    })
+
+    return true
+  } catch (error) {
+    console.error(error)
+
+    message.open({
+      type: 'error',
+      content: 'Falha ao modificar status da categoria'
+    })
+
+    return false
+  }
+}
+
 // ============================================== CREATE PRODUCT
-
-// const handleCreateProduct = async (
-//   categoryId: string,
-//   productData: IProductManipulate
-// ): Promise<boolean> => {
-//   try {
-//     const user = firebase.auth().currentUser
-
-//     if (!user) return false
-
-//     const categoriesRef = firebase
-//       .database()
-//       .ref(`adminAccounts/${user.uid}/adminCompanyInfo/companyMenu`)
-
-//     const categorySnapshot = await categoriesRef
-//       .orderByKey()
-//       .equalTo(categoryId)
-//       .once('value')
-
-//     if (!categorySnapshot.exists()) {
-//       message.open({
-//         type: 'error',
-//         content: 'Categoria não encontrada.'
-//       })
-//       return false
-//     }
-
-//     const categoryKey = Object.keys(categorySnapshot.val())[0]
-//     const productsRef = categoriesRef.child(`${categoryKey}/products`)
-
-//     const productsSnapshot = await productsRef.once('value')
-//     const currentProducts = productsSnapshot.val() || []
-
-//     const newProductRef = productsRef.push()
-//     const productId = newProductRef.key
-
-//     const newProduct = {
-//       productId,
-//       ...productData
-//     }
-
-//     currentProducts.push(newProduct)
-
-//     await productsRef.set(currentProducts)
-
-// message.open({
-//   type: 'success',
-//   content: 'Produto criado com sucesso.'
-// })
-
-//     return true
-//   } catch (error: any) {
-// message.open({
-//   type: 'error',
-//   content: 'Erro ao criar o produto.'
-// })
-
-//     return false
-//   }
-// }
 
 const handleCreateProduct = async (
   categoryId: string,
@@ -248,7 +244,8 @@ const handleCreateProduct = async (
       productName: productData.productName,
       productPrice: productData.productPrice,
       productDescription: productData.productDescription,
-      productImage: productData.productImage
+      productImage: productData.productImage,
+      productActive: true
     }
 
     currentProducts.push(newProduct)
@@ -392,11 +389,82 @@ const handleDeleteProduct = async (
   }
 }
 
+// ============================================== ACTIVE CATEGORY
+
+export interface IActiveProductForm {
+  categoryId: string
+  productId: string
+  isActive: boolean
+}
+
+const handleActiveProduct = async ({
+  categoryId,
+  productId,
+  isActive
+}: IActiveProductForm): Promise<boolean> => {
+  try {
+    const user = firebase.auth().currentUser
+
+    if (!user) return false
+
+    const categoriesRef = firebase
+      .database()
+      .ref(`adminAccounts/${user.uid}/adminCompanyInfo/companyMenu`)
+
+    const categorySnapshot = await categoriesRef.child(categoryId).once('value')
+
+    if (!categorySnapshot.exists()) {
+      message.open({
+        type: 'warning',
+        content: 'Categoria não encontrada.'
+      })
+      return false
+    }
+
+    const category = categorySnapshot.val()
+    const products = category.products || []
+
+    const productIndex = products.findIndex(
+      (product: IProduct) => product.productId === productId
+    )
+
+    if (productIndex === -1) {
+      message.open({
+        type: 'error',
+        content: 'O produto que você está tentando editar não existe.'
+      })
+      return false
+    }
+
+    products[productIndex].productActive = isActive
+
+    await categoriesRef.child(categoryId).update({ products })
+
+    message.open({
+      type: `${isActive ? 'success' : 'warning'}`,
+      content: `O produto agora está ${isActive ? 'ativo' : 'inativo'}.`
+    })
+
+    return true
+  } catch (error) {
+    console.error(error)
+
+    message.open({
+      type: 'error',
+      content: 'Falha ao modificar status do produto'
+    })
+
+    return false
+  }
+}
+
 export {
   handleCreateCategory,
   handleEditCategory,
   handleDeleteCategory,
+  handleActiveCategory,
   handleCreateProduct,
   handleEditProduct,
-  handleDeleteProduct
+  handleDeleteProduct,
+  handleActiveProduct
 }

@@ -23,7 +23,7 @@ import useScrollbar from '@/hooks/useScrollbar'
 import firebase from '@/firebase/firebase'
 import { handleCreateProduct } from '@/firebase/menu'
 
-import { ICategory } from '../../@types'
+import { ICategory } from '@/@types/Auth'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { UploadChangeParam } from 'antd/es/upload'
 

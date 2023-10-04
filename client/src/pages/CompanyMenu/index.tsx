@@ -280,34 +280,42 @@ interface IMainMenuList {
 const MainMenuList = ({ categories, showDrawerProduct }: IMainMenuList) => {
   return (
     <>
-      {categories?.map((category) => (
-        <S.MenuCategory key={category.id}>
-          <S.MenuCategoryHeader>{category.name}</S.MenuCategoryHeader>
-          <S.MenuCategoryWrapper>
-            {category.products.map((product) => (
-              <S.MenuProduct
-                key={product.productId}
-                onClick={() => showDrawerProduct(product)}
-              >
-                <S.MenuProductImage>
-                  {product.productImage ? (
-                    <img src={product.productImage} alt="" />
-                  ) : (
-                    <IoRestaurantOutline />
-                  )}
-                </S.MenuProductImage>
-                <S.MenuProductDetails>
-                  <b>{product.productName} </b>
-                  <p>{product.productDescription} </p>
-                </S.MenuProductDetails>
-                <S.MenuProductPrice>
-                  {formatCurrency(product.productPrice)}
-                </S.MenuProductPrice>
-              </S.MenuProduct>
-            ))}
-          </S.MenuCategoryWrapper>
-        </S.MenuCategory>
-      ))}
+      {categories?.map((category) => {
+        if (!category.active) return null
+
+        return (
+          <S.MenuCategory key={category.id}>
+            <S.MenuCategoryHeader>{category.name}</S.MenuCategoryHeader>
+            <S.MenuCategoryWrapper>
+              {category.products.map((product) => {
+                if (!product.productActive) return null
+
+                return (
+                  <S.MenuProduct
+                    key={product.productId}
+                    onClick={() => showDrawerProduct(product)}
+                  >
+                    <S.MenuProductImage>
+                      {product.productImage ? (
+                        <img src={product.productImage} alt="" />
+                      ) : (
+                        <IoRestaurantOutline />
+                      )}
+                    </S.MenuProductImage>
+                    <S.MenuProductDetails>
+                      <b>{product.productName} </b>
+                      <p>{product.productDescription} </p>
+                    </S.MenuProductDetails>
+                    <S.MenuProductPrice>
+                      {formatCurrency(product.productPrice)}
+                    </S.MenuProductPrice>
+                  </S.MenuProduct>
+                )
+              })}
+            </S.MenuCategoryWrapper>
+          </S.MenuCategory>
+        )
+      })}
     </>
   )
 }

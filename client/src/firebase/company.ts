@@ -248,7 +248,7 @@ const handleActiveCompanyMenu = async (isActive: boolean): Promise<boolean> => {
     await userDataRef.set(isActive)
 
     message.open({
-      type: 'success',
+      type: `${isActive ? 'success' : 'warning'}`,
       content: `O cardápio agora está ${isActive ? 'ativo' : 'inativo'}.`
     })
 

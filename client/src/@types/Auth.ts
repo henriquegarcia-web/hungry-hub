@@ -56,6 +56,7 @@ export interface IProduct {
   productName: string
   productPrice: number
   productDescription: string
+  productActive: boolean
 }
 
 export interface IProductManipulate {
@@ -69,6 +70,7 @@ export interface ICategory {
   id: string
   name: string
   products: IProduct[]
+  active: boolean
 }
 
 export interface ICategoryManipulate {

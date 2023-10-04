@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+
 import * as S from './styles'
 import {
   PlusOutlined,
@@ -25,14 +27,18 @@ const { useToken } = theme
 
 import { Controller, useForm } from 'react-hook-form'
 
-import { handleCreateCategory, handleEditCategory } from '@/firebase/menu'
 import { formatCurrency } from '@/utils/functions/formatCurrency'
+import useClickOutside from '@/hooks/useClickOutside'
 
+import {
+  handleActiveCategory,
+  handleActiveProduct,
+  handleCreateCategory,
+  handleEditCategory
+} from '@/firebase/menu'
 import { useMenu } from '@/contexts/MenuContext'
 
-import { ICategory, IProduct } from './@types'
-import useClickOutside from '@/hooks/useClickOutside'
-import { useRef } from 'react'
+import { ICategory, IProduct } from '@/@types/Auth'
 
 const Menu = () => {
   const {
@@ -267,6 +273,13 @@ const CategoriesList = ({}: ICategoriesList) => {
 
   const { categories, handleOpenCreateProductModal } = useMenu()
 
+  const onChangeCategoryStatus = (checked: boolean, categoryId: string) => {
+    handleActiveCategory({
+      categoryId: categoryId,
+      isActive: checked
+    })
+  }
+
   const emptyDataComponent = !categories ? (
     <S.ProductsListLoading>
       <Spin />
@@ -296,7 +309,13 @@ const CategoriesList = ({}: ICategoriesList) => {
                   {category.name}
                 </S.CategoryTitle>
                 <S.CategoryOptions>
-                  <Switch size="small" />
+                  <Switch
+                    size="small"
+                    checked={category?.active || false}
+                    onChange={(checked) =>
+                      onChangeCategoryStatus(checked, category.id)
+                    }
+                  />
                 </S.CategoryOptions>
                 <S.CategoryCounter
                   style={{
@@ -342,6 +361,18 @@ const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
   const { token } = useToken()
 
   const { handleOpenEditProductModal, handleProductDelete } = useMenu()
+
+  const onChangeProductStatus = (
+    checked: boolean,
+    categoryId: string,
+    productId: string
+  ) => {
+    handleActiveProduct({
+      categoryId,
+      productId,
+      isActive: checked
+    })
+  }
 
   return (
     <S.CategoryProduct>
@@ -403,7 +434,13 @@ const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
           </Popconfirm>
         </S.ProductOptionsWrapper>
         <S.ProductOptionsWrapper>
-          <Switch size="small" />
+          <Switch
+            size="small"
+            checked={product?.productActive || false}
+            onChange={(checked) =>
+              onChangeProductStatus(checked, category.id, product.productId)
+            }
+          />
         </S.ProductOptionsWrapper>
       </S.ProductOptions>
     </S.CategoryProduct>
