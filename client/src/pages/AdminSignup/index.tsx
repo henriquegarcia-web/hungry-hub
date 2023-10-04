@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from 'react-router-dom'
+
 import * as S from './styles'
 
 import { AuthContainer } from '@/components'
-import { Button, Input, ConfigProvider, theme } from 'antd'
+import { Button, Input, ConfigProvider, theme, Form } from 'antd'
 
+import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 
 import { handleSignupAdmin } from '@/firebase/auth'
@@ -16,17 +20,56 @@ interface ISignupForm {
   adminPasswordConfirm: string
 }
 
+const signupSchema = Yup.object().shape({
+  adminName: Yup.string()
+    .required('Este campo é obrigatório')
+    .max(30, 'O telefone não pode ter mais de 30 dígitos'),
+  adminPhone: Yup.string()
+    .required('Este campo é obrigatório')
+    .test(
+      'phone-length',
+      'O telefone deve ter exatamente 15 dígitos',
+      (value) => {
+        return value.replace(/[^\d]/g, '').length === 11
+      }
+    ),
+  adminEmail: Yup.string().required('Este campo é obrigatório'),
+  adminPassword: Yup.string()
+    .required('Este campo é obrigatório')
+    .max(20, 'A senha não pode ter mais de 20 dígitos'),
+  adminPasswordConfirm: Yup.string()
+    .required('Este campo é obrigatório')
+    .oneOf([Yup.ref('adminPassword')], 'As senhas precisam ser iguais')
+    .max(20, 'A senha não pode ter mais de 20 dígitos')
+})
+
 const AdminSignup = () => {
   const navigate = useNavigate()
 
-  const { control, handleSubmit, reset, formState } = useForm<ISignupForm>()
+  const { control, handleSubmit, reset, formState } = useForm({
+    mode: 'all',
+    resolver: yupResolver(signupSchema)
+  })
+  const { isValid, errors } = formState
 
-  const { isValid } = formState
+  const formatPhone = (phoneValue: string) => {
+    const match = phoneValue.match(/^(\d{2})(\d{0,5})(\d{0,4})$/)
+    if (match) {
+      let formatted: string = `(${match[1]}) ${match[2]}`
+      if (match[3]) {
+        formatted += `-${match[3]}`
+      }
+      return formatted
+    }
+    return phoneValue
+  }
 
   const handleSignup = async (data: ISignupForm) => {
+    const cleanedPhoneValue = data.adminPhone.replace(/[^\d]/g, '')
+
     const signupAdminResponse = await handleSignupAdmin({
       adminName: data.adminName,
-      adminPhone: data.adminPhone,
+      adminPhone: cleanedPhoneValue,
       adminEmail: data.adminEmail,
       adminPassword: data.adminPassword
     })
@@ -52,39 +95,83 @@ const AdminSignup = () => {
             <Controller
               name="adminName"
               control={control}
-              rules={{ required: 'Este campo é obrigatório' }}
               render={({ field }) => (
-                <Input {...field} placeholder="Nome completo" />
+                <Form.Item
+                  validateStatus={
+                    errors.adminName?.message ? 'error' : undefined
+                  }
+                  help={errors.adminName?.message || null}
+                >
+                  <Input {...field} placeholder="Nome completo" />
+                </Form.Item>
               )}
             />
+
             <Controller
               name="adminPhone"
               control={control}
-              rules={{ required: 'Este campo é obrigatório' }}
               render={({ field }) => (
-                <Input {...field} placeholder="Telefone" />
+                <Form.Item
+                  validateStatus={
+                    errors.adminPhone?.message ? 'error' : undefined
+                  }
+                  help={errors.adminPhone?.message || null}
+                >
+                  <Input
+                    {...field}
+                    placeholder="Telefone"
+                    value={field.value}
+                    onChange={(e) => {
+                      let phoneValue = e.target.value.replace(/\D/g, '')
+                      phoneValue = phoneValue.slice(0, 11)
+                      const formatted = formatPhone(phoneValue)
+
+                      field.onChange(formatted)
+                    }}
+                  />
+                </Form.Item>
               )}
             />
             <Controller
               name="adminEmail"
               control={control}
-              rules={{ required: 'Este campo é obrigatório' }}
-              render={({ field }) => <Input {...field} placeholder="E-mail" />}
+              render={({ field }) => (
+                <Form.Item
+                  validateStatus={
+                    errors.adminEmail?.message ? 'error' : undefined
+                  }
+                  help={errors.adminEmail?.message || null}
+                >
+                  <Input {...field} placeholder="E-mail" />
+                </Form.Item>
+              )}
             />
             <Controller
               name="adminPassword"
               control={control}
-              rules={{ required: 'Este campo é obrigatório' }}
               render={({ field }) => (
-                <Input.Password {...field} placeholder="Senha" />
+                <Form.Item
+                  validateStatus={
+                    errors.adminPassword?.message ? 'error' : undefined
+                  }
+                  help={errors.adminPassword?.message || null}
+                >
+                  <Input.Password {...field} placeholder="Senha" />
+                </Form.Item>
               )}
             />
             <Controller
               name="adminPasswordConfirm"
               control={control}
-              rules={{ required: 'Este campo é obrigatório' }}
               render={({ field }) => (
-                <Input.Password {...field} placeholder="Confirmar senha" />
+                <Form.Item
+                  validateStatus={
+                    errors.adminPasswordConfirm?.message ? 'error' : undefined
+                  }
+                  help={errors.adminPasswordConfirm?.message || null}
+                >
+                  <Input.Password {...field} placeholder="Confirmar senha" />
+                </Form.Item>
               )}
             />
             <S.AdminSignupFormNavigator>

@@ -42,8 +42,8 @@ export const AuthContainerHeader = styled.div`
   }
 
   span {
-    font-size: 15px;
-    line-height: 15px;
+    font-size: 12px;
+    line-height: 12px;
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;

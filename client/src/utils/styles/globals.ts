@@ -49,24 +49,11 @@ const GlobalStyle = createGlobalStyle`
     /* overflow: hidden; */
   }
 
-  /* input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    color: inherit !important;
-  } */
 
-  /* input:-webkit-autofill,
-  input:-webkit-autofill:hover, 
-  input:-webkit-autofill:focus, 
-  input:-webkit-autofill:active{
-    -webkit-box-shadow: 0 0 0 30px transparent inset !important;
-  } */
-
+  .ant-form-item-explain-error {
+    font-size: 12px !important;
+    padding-top: 5px !important;
+  }
  
 
   // ------------------------- SCROLL BAR
