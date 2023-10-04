@@ -229,7 +229,7 @@ const handleCreateProduct = async (
     if (!categorySnapshot.exists()) {
       message.open({
         type: 'error',
-        content: 'Category not found.'
+        content: 'Categoria não encontrada.'
       })
       return false
     }

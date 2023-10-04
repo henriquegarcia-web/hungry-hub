@@ -86,7 +86,7 @@ const EditProductModal = ({
 
       const updatedProduct: IProduct = {
         ...editingProduct,
-        productImage: imageUrl,
+        productImage: imageUrl || tempProductImage,
         productName: data.productName,
         productPrice: formatByCurrency(data.productPrice),
         productDescription: data.productDescription

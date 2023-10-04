@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import * as S from './styles'
 import {
@@ -30,6 +30,7 @@ import {
   TimePicker,
   Tooltip,
   Upload,
+  message,
   theme
 } from 'antd'
 import moment from 'moment'
@@ -157,10 +158,14 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
 
   const [tempCompanyImage, setTempCompanyImage] = useState<string>('')
   const [companyImageUploaded, setTempCompanyImageUploaded] = useState<RcFile>()
+  const [companyImageModified, setCompanyImageModified] = useState(false)
 
   const [tempCompanyBanner, setTempCompanyBanner] = useState<string>('')
   const [companyBannerUploaded, setTempCompanyBannerUploaded] =
     useState<RcFile>()
+  const [companyBannerModified, setCompanyBannerModified] = useState(false)
+
+  const [saveButtonEnable, setSaveButtonEnable] = useState(false)
 
   const handleChangeCompanyImage: UploadProps['onChange'] = (
     info: UploadChangeParam<UploadFile>
@@ -175,6 +180,8 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
         const dataURL = reader.result
         setTempCompanyImage(dataURL as string)
         setTempCompanyImageUploaded(file)
+
+        setCompanyImageModified(true)
       }
     }
   }
@@ -192,74 +199,87 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
         const dataURL = reader.result
         setTempCompanyBanner(dataURL as string)
         setTempCompanyBannerUploaded(file)
+
+        setCompanyBannerModified(true)
       }
     }
   }
 
   // ---------------------------------------------------------------
 
-  const { control, handleSubmit, reset, setValue, formState } =
+  const { control, handleSubmit, reset, setValue, getValues, formState } =
     useForm<ICompanyMainInfosForm>()
 
   const { isValid } = formState
 
   const handleUpdate = async (data: ICompanyMainInfosForm) => {
-    setUpdatingCompany(true)
+    try {
+      setUpdatingCompany(true)
 
-    const companyInfo = userData?.adminCompanyInfo
+      const companyInfo = userData?.adminCompanyInfo
 
-    let logoUrl = ''
-    let bannerUrl = ''
+      let logoUrl = ''
+      let bannerUrl = ''
 
-    if (companyImageUploaded) {
-      const uniqueFileName = `${Date.now()}_${companyImageUploaded.name}`
+      if (companyImageUploaded) {
+        const uniqueFileName = `${Date.now()}_${companyImageUploaded.name}`
 
-      const storageRef = firebase
-        .storage()
-        .ref(`/companyInfos/${uniqueFileName}`)
-      await storageRef.put(companyImageUploaded)
-
-      logoUrl = await storageRef.getDownloadURL()
-
-      if (companyInfo && companyInfo?.companyLogo) {
         const storageRef = firebase
           .storage()
-          .refFromURL(companyInfo?.companyLogo)
-        storageRef.delete().catch((error) => {
-          console.error('Erro ao excluir imagem anterior:', error)
-        })
+          .ref(`/companyInfos/${uniqueFileName}`)
+        await storageRef.put(companyImageUploaded)
+
+        logoUrl = await storageRef.getDownloadURL()
+
+        if (companyInfo && companyInfo?.companyLogo) {
+          const storageRef = firebase
+            .storage()
+            .refFromURL(companyInfo?.companyLogo)
+          storageRef.delete().catch((error) => {
+            console.error('Erro ao excluir imagem anterior:', error)
+          })
+        }
       }
-    }
 
-    if (companyBannerUploaded) {
-      const uniqueFileName = `${Date.now()}_${companyBannerUploaded.name}`
+      if (companyBannerUploaded) {
+        const uniqueFileName = `${Date.now()}_${companyBannerUploaded.name}`
 
-      const storageRef = firebase
-        .storage()
-        .ref(`/companyInfos/${uniqueFileName}`)
-      await storageRef.put(companyBannerUploaded)
-
-      bannerUrl = await storageRef.getDownloadURL()
-
-      if (companyInfo && companyInfo.companyBanner) {
         const storageRef = firebase
           .storage()
-          .refFromURL(companyInfo.companyBanner)
-        storageRef.delete().catch((error) => {
-          console.error('Erro ao excluir imagem anterior:', error)
-        })
+          .ref(`/companyInfos/${uniqueFileName}`)
+        await storageRef.put(companyBannerUploaded)
+
+        bannerUrl = await storageRef.getDownloadURL()
+
+        if (companyInfo && companyInfo.companyBanner) {
+          const storageRef = firebase
+            .storage()
+            .refFromURL(companyInfo.companyBanner)
+          storageRef.delete().catch((error) => {
+            console.error('Erro ao excluir imagem anterior:', error)
+          })
+        }
       }
+
+      await handleUpdateCompanyMainInfos({
+        companyLogo: logoUrl || tempCompanyImage,
+        companyBanner: bannerUrl || tempCompanyBanner,
+        companyName: data.companyName,
+        companyId: data.companyId,
+        companyDescription: data.companyDescription
+      })
+
+      setCompanyImageModified(false)
+      setCompanyBannerModified(false)
+      setSaveButtonEnable(false)
+    } catch (error) {
+      message.open({
+        type: 'error',
+        content: 'Falha ao editar informações da empresa.'
+      })
+    } finally {
+      setUpdatingCompany(false)
     }
-
-    await handleUpdateCompanyMainInfos({
-      companyLogo: logoUrl,
-      companyBanner: bannerUrl,
-      companyName: data.companyName,
-      companyId: data.companyId,
-      companyDescription: data.companyDescription
-    })
-
-    setUpdatingCompany(false)
   }
 
   useEffect(() => {
@@ -274,6 +294,26 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
       setValue('companyDescription', companyInfo?.companyDescription || '')
     }
   }, [userData, setValue])
+
+  const handleFieldChange = () => {
+    const formData = getValues()
+    const companyInfo = userData?.adminCompanyInfo
+
+    const companyNameChanged = formData.companyName !== companyInfo?.companyName
+    const companyIdChanged = formData.companyId !== companyInfo?.companyId
+    const companyDescriptionChanged =
+      formData.companyDescription !== companyInfo?.companyDescription
+
+    setSaveButtonEnable(
+      companyNameChanged || companyIdChanged || companyDescriptionChanged
+    )
+  }
+
+  useEffect(() => {
+    if (companyImageModified || companyBannerModified) {
+      setSaveButtonEnable(companyImageModified || companyBannerModified)
+    }
+  }, [companyImageModified, companyBannerModified])
 
   const mainInfosPendency =
     !userData?.adminCompanyInfo?.companyName &&
@@ -344,7 +384,15 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
             control={control}
             rules={{ required: 'Este campo é obrigatório' }}
             render={({ field }) => (
-              <Input {...field} placeholder="Nome da empresa" />
+              <Input
+                {...field}
+                placeholder="Nome da empresa"
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
+              />
             )}
           />
         </Form.Item>
@@ -354,7 +402,15 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
             control={control}
             rules={{ required: 'Este campo é obrigatório' }}
             render={({ field }) => (
-              <Input {...field} placeholder="ID da empresa na URL" />
+              <Input
+                {...field}
+                placeholder="ID da empresa na URL"
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
+              />
             )}
           />
         </Form.Item>
@@ -369,12 +425,22 @@ const MainInfosContainer = ({ userData }: IMainInfosContainer) => {
                 placeholder="Descrição da empresa"
                 rows={6}
                 style={{ resize: 'none' }}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
               />
             )}
           />
         </Form.Item>
         <S.MainInfosFormFooter>
-          <Button type="primary" htmlType="submit" loading={updatingCompany}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={!saveButtonEnable || !isValid}
+            loading={updatingCompany}
+          >
             Salvar
           </Button>
         </S.MainInfosFormFooter>
@@ -392,17 +458,53 @@ interface ILocationContainer {
 const LocationContainer = ({ userData }: ILocationContainer) => {
   const [updatingCompany, setUpdatingCompany] = useState(false)
 
-  const { control, handleSubmit, reset, setValue, formState } =
+  const [saveButtonEnable, setSaveButtonEnable] = useState(false)
+
+  const { control, handleSubmit, reset, setValue, getValues, formState } =
     useForm<ICompanyLocationForm>()
 
   const { isValid } = formState
 
   const handleUpdate = async (data: ICompanyLocationForm) => {
-    setUpdatingCompany(true)
+    try {
+      setUpdatingCompany(true)
 
-    await handleUpdateCompanyLocation(data)
+      await handleUpdateCompanyLocation(data)
 
-    setUpdatingCompany(false)
+      setSaveButtonEnable(false)
+    } catch (error) {
+      message.open({
+        type: 'error',
+        content: 'Falha ao editar informações de localização da empresa.'
+      })
+    } finally {
+      setUpdatingCompany(false)
+    }
+  }
+
+  const handleFieldChange = () => {
+    const formData = getValues()
+    const companyLocation = userData?.adminCompanyInfo?.companyLocation
+
+    const companyCepChanged =
+      formData.companyCep !== (companyLocation?.companyCep || '')
+    const companyAddressChanged =
+      formData.companyAddress !== (companyLocation?.companyAddress || '')
+    const companyNumberChanged =
+      formData.companyAddressNumber !==
+      (companyLocation?.companyAddressNumber || '')
+    const companyDistrictChanged =
+      formData.companyDistrict !== (companyLocation?.companyDistrict || '')
+    const companyCityChanged =
+      formData.companyCity !== (companyLocation?.companyCity || '')
+
+    setSaveButtonEnable(
+      companyCepChanged ||
+        companyAddressChanged ||
+        companyNumberChanged ||
+        companyDistrictChanged ||
+        companyCityChanged
+    )
   }
 
   useEffect(() => {
@@ -440,6 +542,11 @@ const LocationContainer = ({ userData }: ILocationContainer) => {
                 {...field}
                 placeholder="CEP"
                 style={{ width: '100%', maxWidth: '200px' }}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value)
+                  handleFieldChange()
+                }}
               />
             )}
           />
@@ -456,6 +563,11 @@ const LocationContainer = ({ userData }: ILocationContainer) => {
                     {...field}
                     placeholder="Endereço"
                     style={{ width: '75%' }}
+                    value={field.value}
+                    onChange={(e) => {
+                      field.onChange(e.target.value)
+                      handleFieldChange()
+                    }}
                   />
                 )}
               />
@@ -470,6 +582,11 @@ const LocationContainer = ({ userData }: ILocationContainer) => {
                     {...field}
                     placeholder="Número"
                     style={{ width: '25%' }}
+                    value={field.value}
+                    onChange={(e) => {
+                      field.onChange(e.target.value)
+                      handleFieldChange()
+                    }}
                   />
                 )}
               />
@@ -488,6 +605,11 @@ const LocationContainer = ({ userData }: ILocationContainer) => {
                     {...field}
                     placeholder="Bairro"
                     style={{ borderRadius: '6px' }}
+                    value={field.value}
+                    onChange={(e) => {
+                      field.onChange(e.target.value)
+                      handleFieldChange()
+                    }}
                   />
                 )}
               />
@@ -502,6 +624,11 @@ const LocationContainer = ({ userData }: ILocationContainer) => {
                     {...field}
                     placeholder="Cidade"
                     style={{ borderRadius: '6px' }}
+                    value={field.value}
+                    onChange={(e) => {
+                      field.onChange(e.target.value)
+                      handleFieldChange()
+                    }}
                   />
                 )}
               />
@@ -509,7 +636,12 @@ const LocationContainer = ({ userData }: ILocationContainer) => {
           </Space.Compact>
         </Form.Item>
         <S.LocationFormFooter>
-          <Button type="primary" htmlType="submit" loading={updatingCompany}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={!saveButtonEnable || !isValid}
+            loading={updatingCompany}
+          >
             Salvar
           </Button>
         </S.LocationFormFooter>
@@ -529,10 +661,8 @@ const ContactContainer = ({ userData }: IContactContainer) => {
 
   const [updatingCompany, setUpdatingCompany] = useState(false)
 
-  const { control, handleSubmit, reset, setValue, formState } =
+  const { control, handleSubmit, reset, setValue } =
     useForm<ICompanyContactForm>()
-
-  const { isValid } = formState
 
   const handleUpdate = async (data: ICompanyContactForm) => {
     setUpdatingCompany(true)
@@ -748,6 +878,8 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
 
   const [updatingCompany, setUpdatingCompany] = useState(false)
 
+  const [saveButtonEnable, setSaveButtonEnable] = useState(false)
+
   const [schedule, setSchedule] = useState<ScheduleItem[]>([])
   const { control, handleSubmit, watch, setValue, reset, formState } = useForm()
   const selectedDay = watch('day')
@@ -782,10 +914,33 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
   }
 
   const handleUpdate = async () => {
-    setUpdatingCompany(true)
-    handleUpdateCompanySchedules(schedule)
-    setUpdatingCompany(false)
+    try {
+      setUpdatingCompany(true)
+      handleUpdateCompanySchedules(schedule)
+
+      setSaveButtonEnable(false)
+    } catch (error) {
+      message.open({
+        type: 'error',
+        content: 'Falha ao editar horários da empresa.'
+      })
+    } finally {
+      setUpdatingCompany(false)
+    }
   }
+
+  useEffect(() => {
+    const companySchedules = userData?.adminCompanyInfo?.companySchedules || []
+
+    for (let i = 0; i < schedule.length; i++) {
+      if (companySchedules[i]?.day !== schedule[i]?.day) {
+        setSaveButtonEnable(true)
+        return
+      }
+    }
+
+    setSaveButtonEnable(false)
+  }, [userData, schedule])
 
   useEffect(() => {
     if (userData?.adminCompanyInfo) {
@@ -861,6 +1016,7 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
         <S.ScheduleFormFooter>
           <Button
             type="primary"
+            disabled={!saveButtonEnable}
             loading={updatingCompany}
             onClick={handleUpdate}
           >
