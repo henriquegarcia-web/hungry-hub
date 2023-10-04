@@ -76,18 +76,12 @@ const CompanyMenu = () => {
   return (
     <S.CompanyMenu>
       <S.CompanyMenuWrapper>
-        {/* {menuDataLoading && (
-        <S.MenuLoading>
-          <Spin />
-        </S.MenuLoading>
-      )} */}
-
         {menuDataLoading ? (
           <S.CompanyMenuLoading>
             <Spin />
             <p>Carregando o cardápio ...</p>
           </S.CompanyMenuLoading>
-        ) : menuData ? (
+        ) : menuData && menuData.companyActive ? (
           <Menu
             menuData={menuData}
             categories={categories}

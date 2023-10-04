@@ -102,13 +102,7 @@ const handleSignupAdmin = async ({
           companyName: '',
           companyId: '',
           companyDescription: '',
-          companyLocation: {
-            companyCep: '',
-            companyAddress: '',
-            companyAddressNumber: '',
-            companyDistrict: '',
-            companyCity: ''
-          },
+          // companyLocation: {},
           companyContacts: {
             companyPhone: '',
             companyWhatsapp: '',
