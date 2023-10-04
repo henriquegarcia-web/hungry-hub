@@ -4,12 +4,15 @@ import * as S from './styles'
 import { theme } from 'antd'
 const { useToken } = theme
 
+import { ThemeProps } from '@/contexts/AdminContext'
+
 interface IAuthContainer {
   title: string
+  adminTheme: ThemeProps
   children: React.ReactNode
 }
 
-const AuthContainer = ({ title, children }: IAuthContainer) => {
+const AuthContainer = ({ title, adminTheme, children }: IAuthContainer) => {
   const { token } = useToken()
 
   return (
@@ -19,7 +22,9 @@ const AuthContainer = ({ title, children }: IAuthContainer) => {
       background={token.colorBgContainer}
     >
       <S.AuthContainerHeader>
-        <Logo type="large_dark" />
+        <Logo
+          type={adminTheme === 'default' ? 'large_default' : 'large_dark'}
+        />
         <span>{title}</span>
       </S.AuthContainerHeader>
       <S.AuthContainerContent>{children}</S.AuthContainerContent>

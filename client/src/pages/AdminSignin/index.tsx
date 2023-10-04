@@ -1,10 +1,16 @@
 import { useNavigate } from 'react-router-dom'
+
 import * as S from './styles'
+import { IoSunnyOutline, IoMoonOutline } from 'react-icons/io5'
 
 import { AuthContainer } from '@/components'
-import { Button, Input, ConfigProvider, theme } from 'antd'
+import { Button, Input, Switch, theme } from 'antd'
+
+const { useToken } = theme
 
 import { Controller, useForm } from 'react-hook-form'
+
+import { useAdmin } from '@/contexts/AdminContext'
 
 import { handleSigninAdmin } from '@/firebase/auth'
 
@@ -14,7 +20,11 @@ interface ISigninForm {
 }
 
 const AdminSignin = () => {
+  const { token } = useToken()
+
   const navigate = useNavigate()
+
+  const { adminTheme, toogleThemeDark } = useAdmin()
 
   const { control, handleSubmit, reset, formState } = useForm<ISigninForm>()
 
@@ -32,46 +42,59 @@ const AdminSignin = () => {
     }
   }
 
+  const handleChangeTheme = (checked: boolean) => {
+    toogleThemeDark(checked)
+  }
+
   return (
     <S.AdminSignin>
-      <ConfigProvider
-        theme={{
-          algorithm: theme.darkAlgorithm
-        }}
-      >
-        <AuthContainer title="Entrar">
-          <S.AdminSigninForm
-            layout="vertical"
-            onFinish={handleSubmit(handleSignin)}
-          >
-            <Controller
-              name="adminEmail"
-              control={control}
-              rules={{ required: 'Este campo é obrigatório' }}
-              render={({ field }) => <Input {...field} placeholder="E-mail" />}
-            />
-            <Controller
-              name="adminPassword"
-              control={control}
-              rules={{ required: 'Este campo é obrigatório' }}
-              render={({ field }) => (
-                <Input.Password {...field} placeholder="Senha" />
-              )}
-            />
-            <S.AdminSigninFormNavigator>
-              Não possuí cadastro?
-              <b onClick={() => navigate('/admin/cadastrar')}>Criar conta</b>
-            </S.AdminSigninFormNavigator>
-            <S.AdminSigninFormFooter>
-              <Button type="primary" htmlType="submit" disabled={!isValid}>
-                Entrar
-              </Button>
-            </S.AdminSigninFormFooter>
-          </S.AdminSigninForm>
-        </AuthContainer>
-      </ConfigProvider>
+      <S.SwitchTheme style={{ backgroundColor: token.colorBgContainer }}>
+        <S.SwitchThemeLabel style={{ color: token.colorText }}>
+          <IoSunnyOutline />
+          /
+          <IoMoonOutline />
+        </S.SwitchThemeLabel>
+        <Switch
+          size="small"
+          checked={adminTheme === 'dark'}
+          onChange={handleChangeTheme}
+        />
+      </S.SwitchTheme>
 
-      <S.AdminSigninBackground>
+      <AuthContainer title="Entrar" adminTheme={adminTheme}>
+        <S.AdminSigninForm
+          layout="vertical"
+          onFinish={handleSubmit(handleSignin)}
+        >
+          <Controller
+            name="adminEmail"
+            control={control}
+            rules={{ required: 'Este campo é obrigatório' }}
+            render={({ field }) => <Input {...field} placeholder="E-mail" />}
+          />
+          <Controller
+            name="adminPassword"
+            control={control}
+            rules={{ required: 'Este campo é obrigatório' }}
+            render={({ field }) => (
+              <Input.Password {...field} placeholder="Senha" />
+            )}
+          />
+          <S.AdminSigninFormNavigator>
+            Não possuí cadastro?
+            <b onClick={() => navigate('/admin/cadastrar')}>Criar conta</b>
+          </S.AdminSigninFormNavigator>
+          <S.AdminSigninFormFooter>
+            <Button type="primary" htmlType="submit" disabled={!isValid}>
+              Entrar
+            </Button>
+          </S.AdminSigninFormFooter>
+        </S.AdminSigninForm>
+      </AuthContainer>
+
+      <S.AdminSigninBackground
+        style={{ backgroundColor: token.colorBgContainer }}
+      >
         <img src="/auth_bg.png" alt="" />
       </S.AdminSigninBackground>
     </S.AdminSignin>

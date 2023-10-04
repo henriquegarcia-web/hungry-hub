@@ -2,13 +2,18 @@
 import { useNavigate } from 'react-router-dom'
 
 import * as S from './styles'
+import { IoSunnyOutline, IoMoonOutline } from 'react-icons/io5'
 
 import { AuthContainer } from '@/components'
-import { Button, Input, ConfigProvider, theme, Form } from 'antd'
+import { Button, Input, theme, Form, Switch } from 'antd'
+
+const { useToken } = theme
 
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
+
+import { useAdmin } from '@/contexts/AdminContext'
 
 import { handleSignupAdmin } from '@/firebase/auth'
 
@@ -44,7 +49,11 @@ const signupSchema = Yup.object().shape({
 })
 
 const AdminSignup = () => {
+  const { token } = useToken()
+
   const navigate = useNavigate()
+
+  const { adminTheme, toogleThemeDark } = useAdmin()
 
   const { control, handleSubmit, reset, formState } = useForm({
     mode: 'all',
@@ -80,114 +89,125 @@ const AdminSignup = () => {
     }
   }
 
+  const handleChangeTheme = (checked: boolean) => {
+    toogleThemeDark(checked)
+  }
+
   return (
     <S.AdminSignup>
-      <ConfigProvider
-        theme={{
-          algorithm: theme.darkAlgorithm
-        }}
+      <S.SwitchTheme style={{ backgroundColor: token.colorBgContainer }}>
+        <S.SwitchThemeLabel style={{ color: token.colorText }}>
+          <IoSunnyOutline />
+          /
+          <IoMoonOutline />
+        </S.SwitchThemeLabel>
+        <Switch
+          size="small"
+          checked={adminTheme === 'dark'}
+          onChange={handleChangeTheme}
+        />
+      </S.SwitchTheme>
+
+      <AuthContainer title="Criar conta" adminTheme={adminTheme}>
+        <S.AdminSignupForm
+          layout="vertical"
+          onFinish={handleSubmit(handleSignup)}
+        >
+          <Controller
+            name="adminName"
+            control={control}
+            render={({ field }) => (
+              <Form.Item
+                validateStatus={errors.adminName?.message ? 'error' : undefined}
+                help={errors.adminName?.message || null}
+              >
+                <Input {...field} placeholder="Nome completo" />
+              </Form.Item>
+            )}
+          />
+
+          <Controller
+            name="adminPhone"
+            control={control}
+            render={({ field }) => (
+              <Form.Item
+                validateStatus={
+                  errors.adminPhone?.message ? 'error' : undefined
+                }
+                help={errors.adminPhone?.message || null}
+              >
+                <Input
+                  {...field}
+                  placeholder="Telefone"
+                  value={field.value}
+                  onChange={(e) => {
+                    let phoneValue = e.target.value.replace(/\D/g, '')
+                    phoneValue = phoneValue.slice(0, 11)
+                    const formatted = formatPhone(phoneValue)
+
+                    field.onChange(formatted)
+                  }}
+                />
+              </Form.Item>
+            )}
+          />
+          <Controller
+            name="adminEmail"
+            control={control}
+            render={({ field }) => (
+              <Form.Item
+                validateStatus={
+                  errors.adminEmail?.message ? 'error' : undefined
+                }
+                help={errors.adminEmail?.message || null}
+              >
+                <Input {...field} placeholder="E-mail" />
+              </Form.Item>
+            )}
+          />
+          <Controller
+            name="adminPassword"
+            control={control}
+            render={({ field }) => (
+              <Form.Item
+                validateStatus={
+                  errors.adminPassword?.message ? 'error' : undefined
+                }
+                help={errors.adminPassword?.message || null}
+              >
+                <Input.Password {...field} placeholder="Senha" />
+              </Form.Item>
+            )}
+          />
+          <Controller
+            name="adminPasswordConfirm"
+            control={control}
+            render={({ field }) => (
+              <Form.Item
+                validateStatus={
+                  errors.adminPasswordConfirm?.message ? 'error' : undefined
+                }
+                help={errors.adminPasswordConfirm?.message || null}
+              >
+                <Input.Password {...field} placeholder="Confirmar senha" />
+              </Form.Item>
+            )}
+          />
+          <S.AdminSignupFormNavigator>
+            Já possuí cadastro?
+            <b onClick={() => navigate('/admin/entrar')}>Entrar</b>
+          </S.AdminSignupFormNavigator>
+          <S.AdminSignupFormFooter>
+            <Button type="primary" htmlType="submit" disabled={!isValid}>
+              Cadastrar
+            </Button>
+          </S.AdminSignupFormFooter>
+        </S.AdminSignupForm>
+      </AuthContainer>
+
+      <S.AdminSignupBackground
+        style={{ backgroundColor: token.colorBgContainer }}
       >
-        <AuthContainer title="Criar conta">
-          <S.AdminSignupForm
-            layout="vertical"
-            onFinish={handleSubmit(handleSignup)}
-          >
-            <Controller
-              name="adminName"
-              control={control}
-              render={({ field }) => (
-                <Form.Item
-                  validateStatus={
-                    errors.adminName?.message ? 'error' : undefined
-                  }
-                  help={errors.adminName?.message || null}
-                >
-                  <Input {...field} placeholder="Nome completo" />
-                </Form.Item>
-              )}
-            />
-
-            <Controller
-              name="adminPhone"
-              control={control}
-              render={({ field }) => (
-                <Form.Item
-                  validateStatus={
-                    errors.adminPhone?.message ? 'error' : undefined
-                  }
-                  help={errors.adminPhone?.message || null}
-                >
-                  <Input
-                    {...field}
-                    placeholder="Telefone"
-                    value={field.value}
-                    onChange={(e) => {
-                      let phoneValue = e.target.value.replace(/\D/g, '')
-                      phoneValue = phoneValue.slice(0, 11)
-                      const formatted = formatPhone(phoneValue)
-
-                      field.onChange(formatted)
-                    }}
-                  />
-                </Form.Item>
-              )}
-            />
-            <Controller
-              name="adminEmail"
-              control={control}
-              render={({ field }) => (
-                <Form.Item
-                  validateStatus={
-                    errors.adminEmail?.message ? 'error' : undefined
-                  }
-                  help={errors.adminEmail?.message || null}
-                >
-                  <Input {...field} placeholder="E-mail" />
-                </Form.Item>
-              )}
-            />
-            <Controller
-              name="adminPassword"
-              control={control}
-              render={({ field }) => (
-                <Form.Item
-                  validateStatus={
-                    errors.adminPassword?.message ? 'error' : undefined
-                  }
-                  help={errors.adminPassword?.message || null}
-                >
-                  <Input.Password {...field} placeholder="Senha" />
-                </Form.Item>
-              )}
-            />
-            <Controller
-              name="adminPasswordConfirm"
-              control={control}
-              render={({ field }) => (
-                <Form.Item
-                  validateStatus={
-                    errors.adminPasswordConfirm?.message ? 'error' : undefined
-                  }
-                  help={errors.adminPasswordConfirm?.message || null}
-                >
-                  <Input.Password {...field} placeholder="Confirmar senha" />
-                </Form.Item>
-              )}
-            />
-            <S.AdminSignupFormNavigator>
-              Já possuí cadastro?
-              <b onClick={() => navigate('/admin/entrar')}>Entrar</b>
-            </S.AdminSignupFormNavigator>
-            <S.AdminSignupFormFooter>
-              <Button type="primary" htmlType="submit" disabled={!isValid}>
-                Cadastrar
-              </Button>
-            </S.AdminSignupFormFooter>
-          </S.AdminSignupForm>
-        </AuthContainer>
-      </ConfigProvider>
-
-      <S.AdminSignupBackground>
         <img src="/auth_bg.png" alt="" />
       </S.AdminSignupBackground>
     </S.AdminSignup>

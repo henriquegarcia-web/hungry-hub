@@ -22,7 +22,7 @@ export const AdminSignupBackground = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.25;
+    opacity: 0.15;
   }
 `
 
@@ -58,4 +58,40 @@ export const AdminSignupFormFooter = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
+`
+
+// =================================================== SWITCH THEME
+
+export const SwitchTheme = styled.div`
+  z-index: 10;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  width: fit-content;
+  height: fit-content;
+  padding: 8px 8px 8px 10px;
+  border-radius: 50px;
+`
+
+export const SwitchThemeLabel = styled.p`
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  width: fit-content;
+
+  font-size: 14px;
+
+  svg {
+    &:nth-of-type(1) {
+      font-size: 16px;
+    }
+
+    &:nth-of-type(2) {
+      font-size: 14px;
+    }
+  }
 `
