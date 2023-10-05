@@ -3,6 +3,8 @@ import firebase from '@/firebase/firebase'
 import { message } from 'antd'
 import moment from 'moment'
 
+import { ICompanyData } from '@/@types/Auth'
+
 // ============================================== VERIFY IF COMPANY EXISTS
 
 const verifyIfCompanyIdExists = async (companyId: string): Promise<boolean> => {
@@ -303,28 +305,42 @@ const handleActiveCompanyMenuTestMode = async (
 
 // ============================================== FIND MENU BY ID
 
-const handleFindMenuByCompanyId = async (companyId: string) => {
-  try {
-    const adminAccountsRef = firebase.database().ref('adminAccounts')
-    const adminAccountsSnapshot = await adminAccountsRef.once('value')
-    const adminAccountsData = adminAccountsSnapshot.val()
+const handleFindMenuByCompanyId = (
+  companyId: string,
+  callback: (menuData: ICompanyData | null) => void
+) => {
+  const adminAccountsRef = firebase.database().ref('adminAccounts')
 
-    for (const userId in adminAccountsData) {
-      const userData = adminAccountsData[userId]
+  const listener = (snapshot: any) => {
+    try {
+      const adminAccountsData = snapshot.val()
 
-      if (
-        userData.adminCompanyInfo &&
-        userData.adminCompanyInfo.companyId === companyId
-      ) {
-        return userData.adminCompanyInfo
+      for (const userId in adminAccountsData) {
+        const userData = adminAccountsData[userId]
+
+        if (
+          userData.adminCompanyInfo &&
+          userData.adminCompanyInfo.companyId === companyId
+        ) {
+          const menuData = userData.adminCompanyInfo
+          callback(menuData)
+          return
+        }
       }
-    }
 
-    return null
-  } catch (error) {
-    console.error(error)
-    return null
+      callback(null)
+    } catch (error) {
+      console.error(error)
+    }
   }
+
+  const offCallback = () => {
+    adminAccountsRef.off('value', listener)
+  }
+
+  adminAccountsRef.on('value', listener)
+
+  return offCallback
 }
 
 // ============================================================================

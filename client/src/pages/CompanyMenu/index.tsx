@@ -42,21 +42,24 @@ const CompanyMenu = ({ isTestMode = false }: ICompanyMenu) => {
     useState<IProduct | null>(null)
 
   const [menuData, setMenuData] = useState<ICompanyData | null>(null)
-  const [menuDataLoading, setMenuDataLoading] = useState<boolean>(false)
+  const [menuDataLoading, setMenuDataLoading] = useState<boolean>(true)
 
-  const getMenuData = useCallback(async () => {
+  useEffect(() => {
     if (!companyId) return
 
     setMenuDataLoading(true)
-    const menuDataResponse = await handleFindMenuByCompanyId(companyId)
 
-    setMenuData(menuDataResponse)
-    setMenuDataLoading(false)
+    const unsubscribe = handleFindMenuByCompanyId(companyId, (menuData) => {
+      setMenuData(menuData)
+      setMenuDataLoading(false)
+    })
+
+    if (unsubscribe) {
+      return () => {
+        unsubscribe()
+      }
+    }
   }, [companyId])
-
-  useEffect(() => {
-    getMenuData()
-  }, [getMenuData])
 
   const categories: ICategory[] = useMemo(() => {
     if (!menuData?.companyMenu) return []
@@ -304,12 +307,13 @@ const MainMenuList = ({ categories, showDrawerProduct }: IMainMenuList) => {
     <>
       {categories?.map((category) => {
         if (!category.active) return null
+        if (!category?.products) return null
 
         return (
           <S.MenuCategory key={category.id}>
             <S.MenuCategoryHeader>{category.name}</S.MenuCategoryHeader>
             <S.MenuCategoryWrapper>
-              {category.products.map((product) => {
+              {category?.products?.map((product) => {
                 if (!product.productActive) return null
 
                 return (
