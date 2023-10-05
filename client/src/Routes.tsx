@@ -76,6 +76,14 @@ const AppRoutes = () => {
           path="/obter-premium-cancelado"
           element={<PremiumStatusPage statusId="cancelado" />}
         />
+        <Route
+          path="/obter-premium-processando"
+          element={<PremiumStatusPage statusId="processando" />}
+        />
+        <Route
+          path="/obter-premium-falha"
+          element={<PremiumStatusPage statusId="falha" />}
+        />
 
         {/* =============================================================== */}
       </Routes>
