@@ -16,10 +16,6 @@ const createAdminAccount = async (adminData: IUserData): Promise<boolean> => {
 
     await adminAccountsRef.set(adminData)
 
-    // message.open({
-    //   type: 'success',
-    //   content: 'Credenciais salvas com sucesso'
-    // })
     return true
   } catch (error) {
     message.open({
@@ -125,8 +121,14 @@ const handleSignupAdmin = async ({
       if (!adminDataResponse) {
         message.open({
           type: 'error',
-          content: 'Falha ao realizar cadastro'
+          content: 'Falha ao realizar cadastro, faça novamente o seu cadastro.'
         })
+
+        const user = firebase.auth().currentUser
+        if (user) {
+          await user.delete()
+        }
+
         return false
       }
     }
@@ -207,7 +209,7 @@ const handleGetAdminData = (
 
 // ============================================== HANDLE DELETE ACCOUNT
 
-const handleDeleteAdminAccount = async () => {
+const handleDeleteAdminAccount = async (adminPassword: string) => {
   try {
     const user = firebase.auth().currentUser
 
@@ -215,6 +217,30 @@ const handleDeleteAdminAccount = async () => {
       message.open({
         type: 'error',
         content: 'Você precisa estar logado para excluir sua conta.'
+      })
+      return false
+    }
+
+    try {
+      if (!user.email) {
+        message.open({
+          type: 'error',
+          content:
+            'Erro na reautenticação. Verifique sua senha e tente novamente.'
+        })
+        return false
+      }
+
+      const credential = firebase.auth.EmailAuthProvider.credential(
+        user.email,
+        adminPassword
+      )
+      await user.reauthenticateWithCredential(credential)
+    } catch (reauthError) {
+      message.open({
+        type: 'error',
+        content:
+          'Erro na reautenticação. Verifique sua senha e tente novamente.'
       })
       return false
     }

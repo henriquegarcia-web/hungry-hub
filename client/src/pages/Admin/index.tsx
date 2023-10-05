@@ -101,6 +101,7 @@ const Admin = () => {
       <AdminHeader
         userData={userData}
         isAdminPremium={isAdminPremium}
+        showPremiumAnnouncement={showPremiumAnnouncement}
         adminTheme={adminTheme}
         viewId={viewId || ''}
         handleChangeTheme={handleChangeTheme}
@@ -118,6 +119,7 @@ export default Admin
 interface IAdminHeader {
   userData: IUserData | null
   isAdminPremium: boolean
+  showPremiumAnnouncement: boolean
   adminTheme: AdminTheme
   viewId: string
   handleChangeTheme: (checked: boolean) => void
@@ -127,6 +129,7 @@ interface IAdminHeader {
 const AdminHeader = ({
   userData,
   isAdminPremium,
+  showPremiumAnnouncement,
   adminTheme,
   viewId,
   handleChangeTheme,
@@ -284,6 +287,7 @@ const AdminHeader = ({
 
       <S.AdminHeaderMobile
         open={menuMobileIsOpen ? 1 : 0}
+        hasannouncement={showPremiumAnnouncement ? 1 : 0}
         style={{ backgroundColor: token.colorBgContainer }}
         ref={menuMobileRef}
       >

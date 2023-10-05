@@ -214,6 +214,6 @@ const premiumPlans = [
   }
 ]
 
-// O plano mensal é perfeito para aqueles que desejam flexibilidade.
+// O plano mensal é perfeito para aqueles que desejam flexibilidade. Desfrute de acesso total ao nosso cardápio online por um mês inteiro.
 // O plano anual é a escolha econômica para os que planejam a longo prazo. Com este plano, você terá acesso ilimitado ao nosso cardápio online por um ano inteiro.
 // O plano vitalício é a opção definitiva para aqueles que desejam uma experiência ininterrupta e duradoura. Com uma única taxa, você garante acesso vitalício ao nosso cardápio online, sem qualquer limitação.

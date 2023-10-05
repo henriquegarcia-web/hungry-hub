@@ -26,9 +26,10 @@ interface AdminAuthContextData {
   isAdminLogged: boolean
   companyHasAllDataFilledIn: boolean
   isAdminPremium: boolean
+  isDeletingAccount: boolean
 
   handleLogout: () => void
-  handleDeleteAccount: () => void
+  handleDeleteAccount: (adminPassword: string) => Promise<boolean>
 }
 
 // ===================================================================
@@ -42,6 +43,8 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const [userId, setUserId] = useState<string | null>(null)
   const [userData, setUserData] = useState<IUserData | null>(null)
+
+  const [isDeletingAccount, setIsDeletingAccount] = useState<boolean>(false)
 
   const isAdminLogged = useMemo(() => {
     return !!userId
@@ -90,12 +93,17 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUserData(null)
   }, [])
 
-  const handleDeleteAccount = useCallback(async () => {
-    const response = await handleDeleteAdminAccount()
-    if (!response) return
+  const handleDeleteAccount = useCallback(async (adminPassword: string) => {
+    setIsDeletingAccount(true)
+    const response = await handleDeleteAdminAccount(adminPassword)
+    setIsDeletingAccount(false)
 
-    setUserId(null)
-    setUserData(null)
+    if (response) {
+      setUserId(null)
+      setUserData(null)
+    }
+
+    return response
   }, [])
 
   // -----------------------------------------------------------------
@@ -143,6 +151,7 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAdminLogged,
       companyHasAllDataFilledIn,
       isAdminPremium,
+      isDeletingAccount,
       handleLogout,
       handleDeleteAccount
     }
@@ -152,6 +161,7 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     isAdminLogged,
     companyHasAllDataFilledIn,
     isAdminPremium,
+    isDeletingAccount,
     handleLogout,
     handleDeleteAccount
   ])

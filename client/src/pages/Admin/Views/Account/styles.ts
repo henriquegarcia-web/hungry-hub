@@ -1,5 +1,9 @@
 import styled from 'styled-components'
-import { View, adminViewInfosWrapper } from '@/utils/styles/globals'
+import {
+  View,
+  adminViewInfosWrapper,
+  responsiveMobile
+} from '@/utils/styles/globals'
 import { Form } from 'antd'
 
 export const Account = styled(View)`
@@ -54,10 +58,11 @@ export const AccountDetailsPlan = styled.div`
   color: rgba(0, 0, 0, 0.8);
 `
 
-export const AccountDelete = styled.div`
+export const AccountDeleteForm = styled.form`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  column-gap: 10px;
   padding: 15px;
   border-radius: 10px;
 
@@ -67,6 +72,31 @@ export const AccountDelete = styled.div`
     font-size: 14px;
     line-height: 14px;
     font-weight: 500;
+  }
+
+  @media screen and (max-width: ${responsiveMobile}) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    row-gap: 15px;
+
+    p {
+      width: 100%;
+    }
+  }
+`
+
+export const AccountDeleteFormInputs = styled.div`
+  display: flex;
+  column-gap: 10px;
+
+  @media screen and (max-width: ${responsiveMobile}) {
+    width: 100%;
+
+    .ant-input-password {
+      display: flex;
+      flex: 1;
+    }
   }
 `
 

@@ -2,7 +2,7 @@ import * as S from './styles'
 import { LiaEnvelope, LiaUserLockSolid } from 'react-icons/lia'
 
 import { PremiumStatus } from '@/components'
-import { Button, Form, Input, Popconfirm, theme } from 'antd'
+import { Button, Form, Input, theme } from 'antd'
 
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -17,8 +17,6 @@ import {
 const Account = () => {
   const { token } = theme.useToken()
 
-  const { handleDeleteAccount } = useAdminAuth()
-
   return (
     <S.Account>
       <S.AccountWrapper>
@@ -31,37 +29,92 @@ const Account = () => {
             <PremiumStatus />
           </S.AccountDetailsPlan>
         </S.AccountDetails>
+
         {/* <AccountContainer
           headerIcon={<LiaEnvelope />}
           headerLabel="Editar e-mail"
         >
           <AccountEmailChange />
         </AccountContainer> */}
+
         <AccountContainer
           headerIcon={<LiaUserLockSolid />}
           headerLabel="Trocar senha"
         >
           <AccountPasswordChange />
         </AccountContainer>
-        <S.AccountDelete style={{ backgroundColor: token.colorBgContainer }}>
-          <p style={{ color: token.colorTextSecondary }}>Deletar conta</p>
-          <Popconfirm
-            placement="top"
-            title={'Tem certeza de que deseja deletar sua conta?'}
-            description={'Essa ação não pode ser desfeita.'}
-            onConfirm={handleDeleteAccount}
-            okText="Sim"
-            cancelText="Não"
-          >
-            <Button type="primary">Deletar</Button>
-          </Popconfirm>
-        </S.AccountDelete>
+
+        <DeleteAccountForm />
       </S.AccountWrapper>
     </S.Account>
   )
 }
 
 export default Account
+
+// ========================================== ACCOUNT DELETE
+
+interface IDeleteAccountForm {
+  adminPassword: string
+}
+
+const deleteAccountSchema = Yup.object().shape({
+  adminPassword: Yup.string().required()
+})
+
+const DeleteAccountForm = () => {
+  const { token } = theme.useToken()
+
+  const { handleDeleteAccount, isDeletingAccount } = useAdminAuth()
+
+  const { control, handleSubmit, reset, formState } = useForm({
+    mode: 'onBlur',
+    resolver: yupResolver(deleteAccountSchema)
+  })
+
+  const { isValid } = formState
+
+  const handleDelete = async (data: IDeleteAccountForm) => {
+    const deleteAccountResponse = await handleDeleteAccount(data.adminPassword)
+
+    if (deleteAccountResponse) {
+      reset()
+    }
+  }
+
+  return (
+    <S.AccountDeleteForm
+      style={{ backgroundColor: token.colorBgContainer }}
+      onSubmit={handleSubmit(handleDelete)}
+    >
+      <p style={{ color: token.colorTextSecondary }}>Deletar conta</p>
+
+      <S.AccountDeleteFormInputs>
+        <Controller
+          name="adminPassword"
+          control={control}
+          rules={{ required: 'Este campo é obrigatório' }}
+          render={({ field }) => (
+            <Input.Password
+              {...field}
+              placeholder="Digite sua senha"
+              style={{ width: 'fit-content', marginLeft: 'auto' }}
+            />
+          )}
+        />
+
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={isDeletingAccount}
+          disabled={!isValid}
+        >
+          Deletar
+        </Button>
+      </S.AccountDeleteFormInputs>
+    </S.AccountDeleteForm>
+  )
+}
 
 // ========================================== ACCOUNT CONTAINER BASE
 

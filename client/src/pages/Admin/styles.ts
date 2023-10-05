@@ -19,6 +19,7 @@ interface IPremiumAnnouncement {
 
 interface IHeaderMobile {
   open: number
+  hasannouncement: number
 }
 
 // ========================================== ADMIN
@@ -301,7 +302,8 @@ export const AdminHeaderMobile = styled.div<IHeaderMobile>`
   top: ${adminHeaderHeight};
   right: ${({ open }) => (open ? '0' : '-260px')};
   width: 260px;
-  height: calc(100vh - ${adminHeaderHeight});
+  height: ${({ hasannouncement }) =>
+    hasannouncement ? 'calc(100vh - 95px)' : 'calc(100vh - 45px)'};
   display: none;
   flex-direction: column;
   row-gap: 15px;
