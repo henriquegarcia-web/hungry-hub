@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import moment from 'moment'
 
 // ====================== TYPES ====================== //
@@ -12,6 +10,8 @@ type ISubscription = {
   planEndDate: string
   planDuration: string
 }
+
+export type AdminTheme = 'default' | 'dark'
 
 // ==================== INTERFACES =================== //
 
@@ -91,8 +91,6 @@ export interface ICompanyData {
   companySchedules?: ICompanySchedule[]
   companyMenu?: ICategory[]
 }
-
-export type AdminTheme = 'default' | 'dark'
 
 export interface IAdminPreferences {
   adminTheme: AdminTheme
