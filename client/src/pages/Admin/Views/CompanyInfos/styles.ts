@@ -61,8 +61,6 @@ export const InfoContainer = styled.div`
   overflow: hidden;
 
   border-radius: 10px;
-
-  border: 1px solid lightgray;
 `
 
 export const InfoContainerHeader = styled.div`
@@ -70,8 +68,6 @@ export const InfoContainerHeader = styled.div`
   align-items: center;
   column-gap: 8px;
   padding: 15px;
-
-  border-bottom: 1px solid lightgrey;
 `
 
 export const InfoContainerHeaderIcon = styled.div`

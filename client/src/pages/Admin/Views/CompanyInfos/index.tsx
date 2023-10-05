@@ -99,7 +99,10 @@ const CompanyBaseControls = ({ userData }: ICompanyBaseControls) => {
   return (
     <S.CompanyBaseControls>
       <S.CompanyInfosActiveCompany
-        style={{ backgroundColor: token.colorBgContainer }}
+        style={{
+          backgroundColor: token.colorBgContainer,
+          border: `1px solid ${token.colorBorder}`
+        }}
       >
         <p style={{ color: token.colorTextSecondary }}>
           Ativar cardápio para ser exibido
@@ -111,7 +114,10 @@ const CompanyBaseControls = ({ userData }: ICompanyBaseControls) => {
         />
       </S.CompanyInfosActiveCompany>
       <S.CompanyInfosActiveCompany
-        style={{ backgroundColor: token.colorBgContainer }}
+        style={{
+          backgroundColor: token.colorBgContainer,
+          border: `1px solid ${token.colorBorder}`
+        }}
       >
         <p style={{ color: token.colorTextSecondary }}>
           Ativar cardápio para ser exibido em <b>modo teste</b>
@@ -146,9 +152,12 @@ const InfoContainer = ({
   const { token } = theme.useToken()
 
   return (
-    <S.InfoContainer>
+    <S.InfoContainer style={{ border: `1px solid ${token.colorBorder}` }}>
       <S.InfoContainerHeader
-        style={{ backgroundColor: token.colorBgContainer }}
+        style={{
+          backgroundColor: token.colorBgContainer,
+          borderBottom: `1px solid ${token.colorBorder}`
+        }}
       >
         <S.InfoContainerHeaderIcon style={{ color: token.colorTextHeading }}>
           {headerIcon}

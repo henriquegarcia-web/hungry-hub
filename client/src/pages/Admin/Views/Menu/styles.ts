@@ -56,8 +56,6 @@ export const CreateCategory = styled.div`
   overflow: hidden;
 
   border-radius: 10px;
-
-  border: 1px solid lightgray;
 `
 
 export const CreateCategoryHeader = styled.div`
@@ -67,8 +65,6 @@ export const CreateCategoryHeader = styled.div`
   font-size: 16px;
   line-height: 16px;
   font-weight: 500;
-
-  border-bottom: 1px solid lightgrey;
 `
 
 export const CreateCategoryWrapper = styled.div`
@@ -116,8 +112,6 @@ export const ProductsListLoading = styled.div`
   align-items: center;
   border-radius: 10px;
   height: 120px;
-
-  border: 1px solid lightgray;
 `
 
 export const ProductsListEmptyData = styled.div`
@@ -134,7 +128,6 @@ export const ProductsListEmptyData = styled.div`
   text-align: center;
 
   color: rgba(0, 0, 0, 0.25);
-  border: 1px solid lightgray;
 `
 
 export const CategoryWrapper = styled.div`
@@ -145,8 +138,6 @@ export const CategoryWrapper = styled.div`
   overflow: hidden;
 
   border-radius: 10px;
-
-  border: 1px solid lightgray;
 `
 
 export const CategoryWrapperHeader = styled.div`
@@ -155,8 +146,6 @@ export const CategoryWrapperHeader = styled.div`
   align-items: center;
   column-gap: 10px;
   padding: 12px;
-
-  border-bottom: 1px solid lightgrey;
 `
 
 export const CategoryTitle = styled.div`

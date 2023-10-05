@@ -171,11 +171,12 @@ const CreateCategory = ({}: ICreateCategory) => {
   )
 
   return (
-    <S.CreateCategory>
+    <S.CreateCategory style={{ border: `1px solid ${token.colorBorder}` }}>
       <S.CreateCategoryHeader
         style={{
           backgroundColor: token.colorBgContainer,
-          color: token.colorTextHeading
+          color: token.colorTextHeading,
+          borderBottom: `1px solid ${token.colorBorder}`
         }}
       >
         Categorias do cardápio
@@ -279,11 +280,16 @@ const CategoriesList = ({}: ICategoriesList) => {
   }
 
   const emptyDataComponent = !categories ? (
-    <S.ProductsListLoading>
+    <S.ProductsListLoading style={{ border: `1px solid ${token.colorBorder}` }}>
       <Spin />
     </S.ProductsListLoading>
   ) : (
-    <S.ProductsListEmptyData>
+    <S.ProductsListEmptyData
+      style={{
+        color: token.colorTextPlaceholder,
+        border: `1px solid ${token.colorBorder}`
+      }}
+    >
       {Empty.PRESENTED_IMAGE_SIMPLE}
       Nenhum produto criado
     </S.ProductsListEmptyData>
@@ -293,10 +299,14 @@ const CategoriesList = ({}: ICategoriesList) => {
     <S.CategoriesList>
       {categories?.length !== 0
         ? categories?.map((category: ICategory) => (
-            <S.CategoryWrapper key={category.id}>
+            <S.CategoryWrapper
+              key={category.id}
+              style={{ border: `1px solid ${token.colorBorder}` }}
+            >
               <S.CategoryWrapperHeader
                 style={{
-                  backgroundColor: token.colorBgContainer
+                  backgroundColor: token.colorBgContainer,
+                  borderBottom: `1px solid ${token.colorBorder}`
                 }}
               >
                 <S.CategoryTitle
@@ -333,7 +343,9 @@ const CategoriesList = ({}: ICategoriesList) => {
                   />
                 ))}
               </S.CategoryWrapperContent>
-              <S.CategoryWrapperFooter>
+              <S.CategoryWrapperFooter
+                style={{ borderTop: `1px solid ${token.colorBorder}` }}
+              >
                 <Button
                   type="primary"
                   onClick={() => handleOpenCreateProductModal(category)}
@@ -373,7 +385,7 @@ const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
   }
 
   return (
-    <S.CategoryProduct>
+    <S.CategoryProduct style={{ border: `1px solid ${token.colorBorder}` }}>
       <S.ProductImage
         empty={!product.productImage ? 1 : 0}
         style={{

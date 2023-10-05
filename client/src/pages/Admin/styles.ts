@@ -142,6 +142,10 @@ export const AdminHeaderPremium = styled.div`
     }
   }
 
+  @media screen and (max-width: ${responsiveDesktop}) {
+    margin-left: auto;
+  }
+
   @media screen and (max-width: ${responsiveTablet}) {
     display: none;
   }
@@ -367,7 +371,27 @@ export const AdminLoadingView = styled(View)`
 
 export const AdminNotFoundView = styled(View)`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  row-gap: 12px;
+
   height: calc(100vh - ${adminHeaderHeight});
+
+  img {
+    width: 140px;
+    margin-bottom: 20px;
+  }
+
+  b {
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 300;
+  }
 `

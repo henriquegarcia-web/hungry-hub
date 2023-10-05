@@ -43,6 +43,14 @@ const Admin = () => {
 
   // ------------------------------------------------------------------
 
+  const viewNotFound = (
+    <S.AdminNotFoundView>
+      <img src="/view_not_found.svg" alt="" />
+      <b style={{ color: token.colorText }}>Ooops!</b>
+      <p style={{ color: token.colorText }}>Essa tela não foi encontrada.</p>
+    </S.AdminNotFoundView>
+  )
+
   const viewToRender = useMemo(() => {
     if (userData === null) {
       return (
@@ -62,12 +70,9 @@ const Admin = () => {
         (menuItem) => menuItem.menuId === viewId
       )
 
-      return activeMenuItem ? (
-        activeMenuItem.menuRender
-      ) : (
-        <S.AdminNotFoundView>Tela não encontrada</S.AdminNotFoundView>
-      )
+      return activeMenuItem ? activeMenuItem.menuRender : viewNotFound
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData, viewId, navigate])
 
   return (
