@@ -16,7 +16,7 @@ app.use(express.json())
 app.use(bodyParser.json())
 
 const [monthly, annual] = [
-  'price_1NxefkHkYVVmWVJMd2PjzGKU',
+  'price_1NxxNfHkYVVmWVJM6Ou14beM',
   'price_1NxegnHkYVVmWVJMVkBKZ2Id'
 ]
 
@@ -24,7 +24,7 @@ const lifetime = 'price_1NxehFHkYVVmWVJMeWCVFKP4'
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://agendi-fy-pro-default-rtdb.firebaseio.com'
+  databaseURL: 'https://hungryhub-br-default-rtdb.firebaseio.com'
 })
 
 app.use(
@@ -104,7 +104,7 @@ app.post('/api/v1/payment-success', async (req, res) => {
 
         let planType = ''
         if (subscription.plan.amount === 2990) planType = 'monthly_plan'
-        else if (subscription.plan.amount === 26780) planType = 'annual_plan'
+        else if (subscription.plan.amount === 29990) planType = 'annual_plan'
 
         const startDate = moment
           .unix(subscription.current_period_start)

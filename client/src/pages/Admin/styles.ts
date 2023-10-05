@@ -4,6 +4,7 @@ import {
   Window,
   adminHeaderHeight,
   responsiveDesktop,
+  responsiveMobile,
   responsiveTablet
 } from '@/utils/styles/globals'
 
@@ -80,6 +81,49 @@ export const AdminHeaderNavigation = styled.nav`
   }
 `
 
+export const AdminHeaderPremiumStatus = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 100px;
+  padding: 5px 12px 5px 5px;
+  margin: auto 0;
+
+  background-color: #fff6e6;
+
+  .ant-btn-primary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .ant-btn-icon {
+      margin-bottom: -1px;
+      font-size: 16px;
+    }
+  }
+
+  p {
+    display: flex;
+    flex: 1;
+
+    font-size: 13px;
+    line-height: 14px;
+    font-weight: 600;
+
+    color: #ff7a00;
+  }
+
+  @media screen and (max-width: ${responsiveDesktop}) {
+    margin-left: auto;
+  }
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    display: none;
+  }
+`
+
 export const AdminHeaderPremium = styled.div`
   display: flex;
   align-items: center;
@@ -111,6 +155,14 @@ export const AdminHeaderMenu = styled.div`
   height: 100%;
   padding: 0 15px;
   margin-left: auto;
+
+  @media screen and (max-width: ${responsiveDesktop}) {
+    margin-left: 0;
+  }
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    margin-left: auto;
+  }
 `
 
 export const SwitchTheme = styled.div`
@@ -208,6 +260,45 @@ export const AdminHeaderMobile = styled.div<IHeaderMobile>`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
   @media screen and (max-width: ${responsiveDesktop}) {
+    display: flex;
+  }
+`
+
+export const AdminHeaderPremiumStatusMobile = styled.div`
+  display: none;
+  align-items: center;
+  column-gap: 8px;
+  width: 100%;
+  height: fit-content;
+  border-radius: 100px;
+  padding: 5px;
+
+  background-color: #fff6e6;
+
+  .ant-btn-primary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .ant-btn-icon {
+      margin-bottom: -1px;
+      font-size: 16px;
+    }
+  }
+
+  p {
+    display: flex;
+    flex: 1;
+
+    font-size: 13px;
+    line-height: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+
+    color: #ff7a00;
+  }
+
+  @media screen and (max-width: ${responsiveTablet}) {
     display: flex;
   }
 `

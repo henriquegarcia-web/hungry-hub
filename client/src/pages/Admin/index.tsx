@@ -28,6 +28,7 @@ import type { MenuProps } from 'antd'
 const Admin = () => {
   const { token } = theme.useToken()
 
+  const navigate = useNavigate()
   const params = useParams()
   const { viewId } = params
 
@@ -50,6 +51,13 @@ const Admin = () => {
         </S.AdminLoadingView>
       )
     } else {
+      console.log(viewId)
+
+      if (!viewId) {
+        navigate('/admin/estabelecimento')
+        return
+      }
+
       const activeMenuItem = menusData.find(
         (menuItem) => menuItem.menuId === viewId
       )
@@ -60,7 +68,7 @@ const Admin = () => {
         <S.AdminNotFoundView>Tela não encontrada</S.AdminNotFoundView>
       )
     }
-  }, [userData, viewId])
+  }, [userData, viewId, navigate])
 
   return (
     <S.Admin
@@ -164,7 +172,17 @@ const AdminHeader = ({
             style={{ border: 'none', width: '100%', fontSize: 13 }}
           />
         </S.AdminHeaderNavigation>
-        {!isAdminPremium && (
+        {isAdminPremium ? (
+          <S.AdminHeaderPremiumStatus>
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<IoDiamondOutline />}
+              size="small"
+            />
+            <p>Você é Premium</p>
+          </S.AdminHeaderPremiumStatus>
+        ) : (
           <S.AdminHeaderPremium>
             <Button
               type="primary"
@@ -243,7 +261,17 @@ const AdminHeader = ({
         style={{ backgroundColor: token.colorBgContainer }}
         ref={menuMobileRef}
       >
-        {!isAdminPremium && (
+        {isAdminPremium ? (
+          <S.AdminHeaderPremiumStatusMobile>
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<IoDiamondOutline />}
+              size="small"
+            />
+            <p>Você é Premium</p>
+          </S.AdminHeaderPremiumStatusMobile>
+        ) : (
           <S.AdminHeaderPremiumMobile>
             <Button
               type="primary"

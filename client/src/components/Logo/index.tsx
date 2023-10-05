@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useMemo } from 'react'
 
 import * as S from './styles'
@@ -23,7 +24,11 @@ const Logo = ({ type }: ILogo) => {
     }
   }, [type])
 
-  return <S.Logo>{logoToRender}</S.Logo>
+  return (
+    <Link to="/admin">
+      <S.Logo>{logoToRender}</S.Logo>
+    </Link>
+  )
 }
 
 export default Logo

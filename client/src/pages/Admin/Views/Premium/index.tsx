@@ -1,14 +1,46 @@
 import * as S from './styles'
 import { BsCheck } from 'react-icons/bs'
 import { IoDiamondOutline } from 'react-icons/io5'
-import { Badge, Button, theme } from 'antd'
+
+import { Badge, Button, message, theme } from 'antd'
+
+import api from '@/api'
+import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 import { IPremiumPlan } from '@/@types/Checkout'
 
 const Premium = () => {
   const { token } = theme.useToken()
 
-  const handleCheckout = () => {}
+  const { userData } = useAdminAuth()
+
+  const handleCheckout = async (planId: string) => {
+    try {
+      if (!userData) {
+        message.open({
+          type: 'error',
+          content:
+            'Não é possível acessar o checkout. Tente novamente mais tarde.'
+        })
+      }
+
+      const response = await api.post(
+        '/api/v1/create-subscription-checkout-session',
+        {
+          plan: planId,
+          custumerId: userData?.adminId,
+          custumerEmail: userData?.adminEmail
+        }
+      )
+
+      if (response.status === 200) {
+        const { session } = response.data
+        window.location = session.url
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <S.Premium>
@@ -37,7 +69,7 @@ export default Premium
 
 interface IPlan {
   plan: IPremiumPlan
-  handleCheckout: () => void
+  handleCheckout: (planId: string) => void
 }
 
 const Plan = ({ plan, handleCheckout }: IPlan) => {
@@ -64,7 +96,7 @@ const Plan = ({ plan, handleCheckout }: IPlan) => {
 
 interface IPlan {
   plan: IPremiumPlan
-  handleCheckout: () => void
+  handleCheckout: (planId: string) => void
 }
 
 const PlanContent = ({ plan, handleCheckout }: IPlan) => {
@@ -102,7 +134,7 @@ const PlanContent = ({ plan, handleCheckout }: IPlan) => {
           <Button
             style={{ fontSize: 13 }}
             type={plan.planLimited ? 'primary' : 'dashed'}
-            onClick={handleCheckout}
+            onClick={() => handleCheckout(plan.planId)}
           >
             Selecionar Plano
           </Button>

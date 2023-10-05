@@ -8,7 +8,9 @@ import {
 } from 'react-icons/lia'
 
 import { HeaderMinified } from '@/components'
-import { Button, theme } from 'antd'
+import { Button, message, theme } from 'antd'
+
+import api from '@/api'
 
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 import { useAdmin } from '@/contexts/AdminContext'
@@ -29,6 +31,31 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
 
   const handleChangeTheme = (checked: boolean) => {
     toogleThemeDark(checked)
+  }
+
+  // ------------------------------------------------------------------
+
+  const handlePaymentSuccess = async () => {
+    if (!userData?.adminSubscription) {
+      message.open({
+        type: 'error',
+        content: 'Falha ao redirecionar para o dashboard'
+      })
+      return
+    }
+
+    try {
+      const response = await api.post('/api/v1/payment-success', {
+        sessionId: userData.adminSubscription.sessionId,
+        firebaseId: userData.adminId
+      })
+
+      if (response.status === 200) {
+        navigate('/admin')
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -53,7 +80,7 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
               {premiumStatus.success.subMessage}
             </p>
           )}
-          <Button onClick={() => navigate('/admin')}>
+          <Button onClick={handlePaymentSuccess}>
             Retornar para a plataforma
           </Button>
         </S.PremiumStatusContainer>
