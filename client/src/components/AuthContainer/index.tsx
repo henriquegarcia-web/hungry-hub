@@ -3,11 +3,11 @@ import * as S from './styles'
 
 import { theme } from 'antd'
 
-import { ThemeProps } from '@/contexts/AdminContext'
+import { AdminTheme } from '@/@types/Auth'
 
 interface IAuthContainer {
   title: string
-  adminTheme: ThemeProps
+  adminTheme: AdminTheme
   children: React.ReactNode
 }
 
@@ -24,7 +24,7 @@ const AuthContainer = ({ title, adminTheme, children }: IAuthContainer) => {
         <Logo
           type={adminTheme === 'default' ? 'large_default' : 'large_dark'}
         />
-        <span>{title}</span>
+        <span style={{ color: token.colorTextSecondary }}>{title}</span>
       </S.AuthContainerHeader>
       <S.AuthContainerContent>{children}</S.AuthContainerContent>
     </S.AuthContainer>

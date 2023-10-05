@@ -48,7 +48,7 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
   const [adminTempTheme, setAdminTempTheme] = useState<AdminTheme>('default')
 
   const adminTheme: AdminTheme = useMemo(() => {
-    if (!isAdminLogged) return adminTempTheme
+    if (!isAdminLogged || !userData) return adminTempTheme
 
     return userData?.adminPreferences?.adminTheme || adminTempTheme
   }, [isAdminLogged, userData, adminTempTheme])

@@ -17,14 +17,13 @@ import useClickOutside from '@/hooks/useClickOutside'
 
 import { IMenuPrivate, privateMenusData } from '@/data/menus'
 
-import { IUserData } from '@/@types/Auth'
-import { ThemeProps } from '@/contexts/AdminContext'
+import { IUserData, AdminTheme } from '@/@types/Auth'
 import type { MenuProps } from 'antd'
 
 interface IHeaderMinified {
   isAdminLogged: boolean
   userData: IUserData | null
-  adminTheme: ThemeProps
+  adminTheme: AdminTheme
   handleChangeTheme: (checked: boolean) => void
   handleLogout: () => void
 }

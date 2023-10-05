@@ -14,13 +14,13 @@ import { Logo } from '@/components'
 import { Avatar, Button, Dropdown, Menu, Spin, Switch, theme } from 'antd'
 
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
-import { ThemeProps, useAdmin } from '@/contexts/AdminContext'
+import { useAdmin } from '@/contexts/AdminContext'
 
 import { formatUsername } from '@/utils/functions/formatUsername'
 import useClickOutside from '@/hooks/useClickOutside'
 
 import { IMenu, IMenuPrivate, menusData, privateMenusData } from '@/data/menus'
-import { IUserData } from '@/@types/Auth'
+import { IUserData, AdminTheme } from '@/@types/Auth'
 import type { MenuProps } from 'antd'
 
 // ========================================== ADMIN
@@ -118,7 +118,7 @@ export default Admin
 interface IAdminHeader {
   userData: IUserData | null
   isAdminPremium: boolean
-  adminTheme: ThemeProps
+  adminTheme: AdminTheme
   viewId: string
   handleChangeTheme: (checked: boolean) => void
   handleLogout: () => void
