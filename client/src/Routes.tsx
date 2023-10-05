@@ -6,7 +6,8 @@ import {
   AdminSignupPage,
   CompanyMenuPage,
   LandingPage,
-  NotFoundPage
+  NotFoundPage,
+  PremiumStatusPage
 } from './pages'
 
 import { useAdminAuth } from './contexts/AdminAuthContext'
@@ -20,7 +21,7 @@ const AppRoutes = () => {
         {/* =============================================================== */}
 
         <Route path="/" element={<LandingPage />} />
-        <Route path="/*" element={<Navigate to="/" />} />
+        {/* <Route path="/*" element={<Navigate to="/" />} /> */}
 
         {/* =============================================================== */}
 
@@ -56,21 +57,25 @@ const AppRoutes = () => {
             </PrivateAdminRoute>
           }
         />
-
-        {/* =============================================================== */}
-
-        {/* <Route
-          path="/admin/checkout"
+        <Route
+          path="/admin/:viewId"
           element={
             <PrivateAdminRoute isAuthenticated={isAdminLogged}>
-              <CheckoutPage />
+              <AdminPage />
             </PrivateAdminRoute>
           }
         />
+
+        {/* =============================================================== */}
+
         <Route
-          path="/admin/checkout-status/:statusId"
-          element={<CheckoutStatusPage />}
-        /> */}
+          path="/obter-premium-sucesso"
+          element={<PremiumStatusPage statusId="sucesso" />}
+        />
+        <Route
+          path="/obter-premium-cancelado"
+          element={<PremiumStatusPage statusId="cancelado" />}
+        />
 
         {/* =============================================================== */}
       </Routes>
@@ -97,7 +102,7 @@ const PrivateAdminRoute = ({ isAuthenticated, children }: RouteProps) => {
 
 const PublicRoute = ({ isAuthenticated, children }: RouteProps) => {
   if (isAuthenticated) {
-    return <Navigate to="/admin" replace />
+    return <Navigate to="/admin/estabelecimento" />
   }
 
   return children

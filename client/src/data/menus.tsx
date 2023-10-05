@@ -2,7 +2,7 @@ import {
   IoStorefrontOutline,
   IoRestaurantOutline,
   IoMegaphoneOutline,
-  IoPieChartOutline,
+  // IoPieChartOutline,
   IoPersonOutline,
   IoDiamondOutline,
   IoExitOutline
@@ -11,7 +11,7 @@ import {
 import {
   CompanyInfosAdminView,
   MenuAdminView,
-  ReportsAdminView,
+  // ReportsAdminView,
   AccountAdminView,
   DisclosureAdminView,
   PremiumAdminView
@@ -19,7 +19,7 @@ import {
 
 const menusData = [
   {
-    menuId: 'menu_company_infos',
+    menuId: 'estabelecimento',
     menuLabel: 'Estabelecimento',
     menuIcon: <IoStorefrontOutline />,
     menuRender: <CompanyInfosAdminView />,
@@ -27,7 +27,7 @@ const menusData = [
     menuHidden: false
   },
   {
-    menuId: 'menu_menu',
+    menuId: 'cardapio',
     menuLabel: 'Cardápio',
     menuIcon: <IoRestaurantOutline />,
     menuRender: <MenuAdminView />,
@@ -35,7 +35,7 @@ const menusData = [
     menuHidden: false
   },
   {
-    menuId: 'menu_disclosure',
+    menuId: 'divulgacao',
     menuLabel: 'Divulgação',
     menuIcon: <IoMegaphoneOutline />,
     menuRender: <DisclosureAdminView />,
@@ -51,7 +51,7 @@ const menusData = [
   //   menuHidden: false
   // },
   {
-    menuId: 'menu_account',
+    menuId: 'minha-conta',
     menuLabel: 'Minha conta',
     menuIcon: <IoPersonOutline />,
     menuRender: <AccountAdminView />,
@@ -59,7 +59,7 @@ const menusData = [
     menuHidden: true
   },
   {
-    menuId: 'menu_premium',
+    menuId: 'obter-premium',
     menuLabel: 'Obter Premium',
     menuIcon: <IoDiamondOutline />,
     menuRender: <PremiumAdminView />,
@@ -70,14 +70,14 @@ const menusData = [
 
 const privateMenusData = [
   {
-    menuId: 'menu_account',
+    menuId: 'minha-conta',
     menuLabel: 'Minha conta',
     menuIcon: <IoPersonOutline />,
     menuDisabled: false,
     menuDanger: false
   },
   {
-    menuId: 'menu_exit',
+    menuId: 'sair',
     menuLabel: 'Sair',
     menuIcon: <IoExitOutline />,
     menuDisabled: false,

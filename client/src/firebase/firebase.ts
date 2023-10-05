@@ -18,4 +18,8 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig)
 }
 
+const isAdminLogged = firebase.auth().currentUser
+
+export { isAdminLogged }
+
 export default firebase

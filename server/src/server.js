@@ -47,8 +47,8 @@ const stripeSession = async (plan, custumerEmail) => {
           quantity: 1
         }
       ],
-      success_url: `${process.env.HOST}/admin/checkout-status/success`,
-      cancel_url: `${process.env.HOST}/admin/checkout-status/cancel`
+      success_url: `${process.env.HOST}/obter-premium-sucesso`,
+      cancel_url: `${process.env.HOST}/obter-premium-cancelado`
     })
 
     return session

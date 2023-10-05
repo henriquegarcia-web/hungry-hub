@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useState, useMemo, useRef } from 'react'
 
 import * as S from './styles'
 import {
@@ -12,8 +13,6 @@ import {
 import { Logo } from '@/components'
 import { Avatar, Button, Dropdown, Menu, Spin, Switch, theme } from 'antd'
 
-import type { MenuProps } from 'antd'
-
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 import { ThemeProps, useAdmin } from '@/contexts/AdminContext'
 
@@ -22,6 +21,7 @@ import useClickOutside from '@/hooks/useClickOutside'
 
 import { IMenu, IMenuPrivate, menusData, privateMenusData } from '@/data/menus'
 import { IUserData } from '@/@types/Auth'
+import type { MenuProps } from 'antd'
 
 const { useToken } = theme
 
@@ -29,25 +29,14 @@ const { useToken } = theme
 
 const Admin = () => {
   const { token } = useToken()
-  const { userData, handleLogout, companyHasAllDataFilledIn, isAdminPremium } =
-    useAdminAuth()
+
+  const params = useParams()
+  const { viewId } = params
+
+  const { userData, handleLogout, isAdminPremium } = useAdminAuth()
   const { adminTheme, toogleThemeDark } = useAdmin()
 
   // ------------------------------------------------------------------
-
-  const [activeMenu, setActiveMenu] = useState('')
-
-  const handleSelectMenu = (key: string) => {
-    setActiveMenu(key)
-  }
-
-  const handleSelectPrivateMenu = ({ key }: { key: string }) => {
-    if (key === 'menu_exit') {
-      handleLogout()
-      return
-    }
-    handleSelectMenu(key)
-  }
 
   const handleChangeTheme = (checked: boolean) => {
     toogleThemeDark(checked)
@@ -55,35 +44,25 @@ const Admin = () => {
 
   // ------------------------------------------------------------------
 
-  useEffect(() => {
-    if (activeMenu === '' && !!userData) {
-      if (companyHasAllDataFilledIn) {
-        setActiveMenu('menu_menu')
-      } else {
-        setActiveMenu('menu_company_infos')
-      }
+  const viewToRender = useMemo(() => {
+    if (userData === null) {
+      return (
+        <S.AdminLoadingView>
+          <Spin />
+        </S.AdminLoadingView>
+      )
+    } else {
+      const activeMenuItem = menusData.find(
+        (menuItem) => menuItem.menuId === viewId
+      )
+
+      return activeMenuItem ? (
+        activeMenuItem.menuRender
+      ) : (
+        <S.AdminNotFoundView>Tela não encontrada</S.AdminNotFoundView>
+      )
     }
-  }, [userData, activeMenu, companyHasAllDataFilledIn])
-
-  let viewToRender
-
-  if (userData === null) {
-    viewToRender = (
-      <S.AdminLoadingView>
-        <Spin />
-      </S.AdminLoadingView>
-    )
-  } else {
-    const activeMenuItem = menusData.find(
-      (menuItem) => menuItem.menuId === activeMenu
-    )
-
-    viewToRender = activeMenuItem ? (
-      activeMenuItem.menuRender
-    ) : (
-      <S.AdminNotFoundView>Tela não encontrada</S.AdminNotFoundView>
-    )
-  }
+  }, [userData, viewId])
 
   return (
     <S.Admin
@@ -95,9 +74,7 @@ const Admin = () => {
         userData={userData}
         isAdminPremium={isAdminPremium}
         adminTheme={adminTheme}
-        activeMenu={activeMenu}
-        handleSelectMenu={handleSelectMenu}
-        handleSelectPrivateMenu={handleSelectPrivateMenu}
+        viewId={viewId || ''}
         handleChangeTheme={handleChangeTheme}
         handleLogout={handleLogout}
       />
@@ -114,9 +91,7 @@ interface IAdminHeader {
   userData: IUserData | null
   isAdminPremium: boolean
   adminTheme: ThemeProps
-  activeMenu: string
-  handleSelectMenu: (key: string) => void
-  handleSelectPrivateMenu: MenuProps['onClick']
+  viewId: string
   handleChangeTheme: (checked: boolean) => void
   handleLogout: () => void
 }
@@ -125,13 +100,13 @@ const AdminHeader = ({
   userData,
   isAdminPremium,
   adminTheme,
-  activeMenu,
-  handleSelectMenu,
-  handleSelectPrivateMenu,
+  viewId,
   handleChangeTheme,
   handleLogout
 }: IAdminHeader) => {
   const { token } = useToken()
+
+  const navigate = useNavigate()
 
   const [menuMobileIsOpen, setMenuMobileIsOpen] = useState<boolean>(false)
 
@@ -184,8 +159,8 @@ const AdminHeader = ({
         </S.AdminHeaderLogo>
         <S.AdminHeaderNavigation>
           <Menu
-            onClick={(e) => handleSelectMenu(e.key)}
-            selectedKeys={[activeMenu]}
+            onClick={(e) => navigate(`/admin/${e.key}`)}
+            selectedKeys={[viewId]}
             mode="horizontal"
             items={formattedMenus}
             style={{ border: 'none', width: '100%', fontSize: 13 }}
@@ -197,7 +172,7 @@ const AdminHeader = ({
               type="primary"
               shape="round"
               icon={<IoDiamondOutline />}
-              onClick={() => handleSelectMenu('menu_premium')}
+              onClick={() => navigate('/admin/obter-premium')}
             >
               Obter Premium
             </Button>
@@ -223,7 +198,13 @@ const AdminHeader = ({
           <Dropdown
             menu={{
               items: formattedPrivateMenus,
-              onClick: handleSelectPrivateMenu
+              onClick: (e) => {
+                if (e.key === 'sair') {
+                  handleLogout()
+                  return
+                }
+                navigate(`/admin/${e.key}`)
+              }
             }}
           >
             <S.UserMenu>
@@ -271,7 +252,7 @@ const AdminHeader = ({
               shape="round"
               icon={<IoDiamondOutline />}
               onClick={() => {
-                handleSelectMenu('menu_premium')
+                navigate('/admin/obter-premium')
                 setMenuMobileIsOpen(false)
               }}
             >
@@ -282,7 +263,7 @@ const AdminHeader = ({
         <S.UserMenuMobile
           style={{ borderColor: token.colorBgContainerDisabled }}
           onClick={() => {
-            handleSelectMenu('menu_account')
+            navigate('/admin/minha-conta')
             setMenuMobileIsOpen(false)
           }}
         >
@@ -302,10 +283,10 @@ const AdminHeader = ({
         </S.UserMenuMobile>
         <Menu
           onClick={(e) => {
-            handleSelectMenu(e.key)
+            navigate(`/admin/${e.key}`)
             setMenuMobileIsOpen(false)
           }}
-          selectedKeys={[activeMenu]}
+          selectedKeys={[viewId]}
           mode="vertical"
           items={formattedMenus}
           style={{ border: 'none', width: '100%', fontSize: 13 }}
@@ -313,7 +294,7 @@ const AdminHeader = ({
         <S.AdminHeaderPrivateMenu>
           <Button
             onClick={() => {
-              handleSelectMenu('menu_account')
+              navigate('/admin/minha-conta')
               setMenuMobileIsOpen(false)
             }}
           >

@@ -99,7 +99,13 @@ const CompanyMenu = ({ isTestMode = false }: ICompanyMenu) => {
             <Spin />
             <p>Carregando o cardápio ...</p>
           </S.CompanyMenuLoading>
-        ) : menuData && menuData.companyActive ? (
+        ) : !isTestMode && menuData && menuData.companyActive ? (
+          <Menu
+            menuData={menuData}
+            categories={categories}
+            showDrawerProduct={showDrawerProduct}
+          />
+        ) : isTestMode && menuData && menuData.companyActiveTestMode ? (
           <Menu
             menuData={menuData}
             categories={categories}

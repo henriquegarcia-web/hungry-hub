@@ -38,7 +38,7 @@ const AdminSignin = () => {
 
     if (signupAdminResponse) {
       reset()
-      navigate('/admin')
+      navigate('/admin/estabelecimento')
     }
   }
 

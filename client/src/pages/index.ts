@@ -4,6 +4,7 @@ import AdminSignup from './AdminSignup'
 import CompanyMenu from './CompanyMenu'
 import Landing from './Landing'
 import NotFound from './NotFound'
+import PremiumStatus from './PremiumStatus'
 
 export {
   Admin as AdminPage,
@@ -11,5 +12,6 @@ export {
   AdminSignup as AdminSignupPage,
   CompanyMenu as CompanyMenuPage,
   Landing as LandingPage,
-  NotFound as NotFoundPage
+  NotFound as NotFoundPage,
+  PremiumStatus as PremiumStatusPage
 }
