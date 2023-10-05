@@ -4,13 +4,17 @@ import {
   Window,
   adminHeaderHeight,
   responsiveDesktop,
-  responsiveMobile,
   responsiveTablet
 } from '@/utils/styles/globals'
 
 interface IAdmin {
   color: string
   background: string
+  hasannouncement: number
+}
+
+interface IPremiumAnnouncement {
+  opened: number
 }
 
 interface IHeaderMobile {
@@ -22,6 +26,9 @@ interface IHeaderMobile {
 export const Admin = styled(Window)<IAdmin>`
   display: flex;
   flex-direction: column;
+  transition: 0.3s;
+
+  padding-top: ${({ hasannouncement }) => (hasannouncement ? '50px' : '0px')};
 
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
@@ -39,6 +46,46 @@ export const AdminContent = styled.section`
   width: 100%;
   height: fit-content;
   padding-top: ${adminHeaderHeight};
+`
+
+export const PremiumAnnouncement = styled.div<IPremiumAnnouncement>`
+  z-index: 1001;
+  position: fixed;
+  top: ${({ opened }) => (opened ? '0px' : '-100%')};
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 15px;
+  width: 100%;
+  height: 50px;
+  padding: 0 15px;
+  transition: 0.3s;
+
+  p {
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: 400;
+
+    color: white;
+  }
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+
+    background-color: transparent;
+
+    svg {
+      font-size: 22px;
+
+      color: white;
+    }
+  }
 `
 
 // ========================================== ADMIN MENU
@@ -75,6 +122,7 @@ export const AdminHeaderNavigation = styled.nav`
   display: flex;
   flex: 1;
   width: fit-content;
+  height: 100%;
 
   @media screen and (max-width: ${responsiveDesktop}) {
     display: none;

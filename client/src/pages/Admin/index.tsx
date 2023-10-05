@@ -33,7 +33,12 @@ const Admin = () => {
   const { viewId } = params
 
   const { userData, handleLogout, isAdminPremium } = useAdminAuth()
-  const { adminTheme, toogleThemeDark } = useAdmin()
+  const {
+    adminTheme,
+    toogleThemeDark,
+    showPremiumAnnouncement,
+    handleClosePremiumAnnouncement
+  } = useAdmin()
 
   // ------------------------------------------------------------------
 
@@ -59,8 +64,6 @@ const Admin = () => {
         </S.AdminLoadingView>
       )
     } else {
-      console.log(viewId)
-
       if (!viewId) {
         navigate('/admin/estabelecimento')
         return
@@ -80,7 +83,21 @@ const Admin = () => {
       style={{ backgroundColor: token.colorBgElevated }}
       color={token.colorText}
       background={token.colorBgContainer}
+      hasannouncement={showPremiumAnnouncement ? 1 : 0}
     >
+      <S.PremiumAnnouncement
+        opened={showPremiumAnnouncement ? 1 : 0}
+        style={{ backgroundColor: token.colorPrimary }}
+      >
+        <p>
+          Aproveite os benefícios do <b>Premium</b> com o{' '}
+          <b>Acesso Vitalício</b>! Promoção por <b>tempo limitado</b>.
+        </p>
+        <button onClick={handleClosePremiumAnnouncement}>
+          <IoCloseOutline />
+        </button>
+      </S.PremiumAnnouncement>
+
       <AdminHeader
         userData={userData}
         isAdminPremium={isAdminPremium}
@@ -163,7 +180,7 @@ const AdminHeader = ({
   })
 
   return (
-    <S.AdminHeader>
+    <S.AdminHeader style={{ backgroundColor: token.colorBgContainer }}>
       <S.AdminHeaderWrapper style={{ backgroundColor: token.colorBgContainer }}>
         <S.AdminHeaderLogo style={{ backgroundColor: token.colorBgContainer }}>
           <Logo type={adminTheme === 'default' ? 'default' : 'dark'} />
@@ -174,7 +191,11 @@ const AdminHeader = ({
             selectedKeys={[viewId]}
             mode="horizontal"
             items={formattedMenus}
-            style={{ border: 'none', width: '100%', fontSize: 13 }}
+            style={{
+              border: 'none',
+              width: '100%',
+              fontSize: 13
+            }}
           />
         </S.AdminHeaderNavigation>
         {isAdminPremium ? (

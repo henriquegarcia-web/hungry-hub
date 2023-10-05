@@ -6,7 +6,8 @@ import React, {
   useContext,
   useMemo,
   useCallback,
-  useState
+  useState,
+  useEffect
 } from 'react'
 
 import { useAdminAuth } from './AdminAuthContext'
@@ -22,6 +23,8 @@ import { AdminTheme } from '@/@types/Auth'
 interface AdminContextData {
   adminTheme: ThemeProps
   adminTempTheme: ThemeProps
+  showPremiumAnnouncement: boolean
+  handleClosePremiumAnnouncement: () => void
   handleActiveMenu: (checked: boolean) => void
   handleActiveMenuTestMode: (checked: boolean) => void
   toogleThemeDark: (activeThemeDark: boolean) => Promise<void>
@@ -40,6 +43,8 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
   // =================================================================
 
+  const [showPremiumAnnouncement, setShowPremiumAnnouncement] = useState(false)
+
   const [adminTempTheme, setAdminTempTheme] = useState<AdminTheme>('default')
 
   const adminTheme: AdminTheme = useMemo(() => {
@@ -47,6 +52,21 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
     return userData?.adminPreferences?.adminTheme || adminTempTheme
   }, [isAdminLogged, userData, adminTempTheme])
+
+  // =================================================================
+
+  useEffect(() => {
+    if (!isAdminPremium) {
+      setShowPremiumAnnouncement(true)
+      return
+    }
+
+    setShowPremiumAnnouncement(false)
+  }, [isAdminPremium])
+
+  const handleClosePremiumAnnouncement = () => {
+    setShowPremiumAnnouncement(false)
+  }
 
   // =================================================================
 
@@ -116,12 +136,20 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     return {
       adminTheme,
       adminTempTheme,
+      showPremiumAnnouncement,
       toogleThemeDark,
       toogleTempThemeDark,
       handleActiveMenu,
-      handleActiveMenuTestMode
+      handleActiveMenuTestMode,
+      handleClosePremiumAnnouncement
     }
-  }, [adminTheme, adminTempTheme, handleActiveMenu, handleActiveMenuTestMode])
+  }, [
+    adminTheme,
+    adminTempTheme,
+    showPremiumAnnouncement,
+    handleActiveMenu,
+    handleActiveMenuTestMode
+  ])
 
   return (
     <AdminContext.Provider value={AdminContextValues}>
