@@ -32,9 +32,16 @@ export const HeaderMinifiedWrapper = styled.div`
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 `
 
+export const HeaderMinifiedAuth = styled.div`
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  height: 100%;
+  margin-left: auto;
+`
+
 export const HeaderMinifiedLogo = styled.div`
   display: flex;
-
   width: fit-content;
   height: 100%;
 `

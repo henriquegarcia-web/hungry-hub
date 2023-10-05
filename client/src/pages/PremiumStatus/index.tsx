@@ -22,7 +22,7 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
 
   const navigate = useNavigate()
 
-  const { userData, handleLogout } = useAdminAuth()
+  const { isAdminLogged, userData, handleLogout } = useAdminAuth()
   const { adminTheme, toogleThemeDark } = useAdmin()
 
   // ------------------------------------------------------------------
@@ -34,6 +34,7 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
   return (
     <S.PremiumStatus style={{ backgroundColor: token.colorBgElevated }}>
       <HeaderMinified
+        isAdminLogged={isAdminLogged}
         userData={userData}
         adminTheme={adminTheme}
         handleChangeTheme={handleChangeTheme}

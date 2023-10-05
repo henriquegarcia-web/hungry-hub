@@ -51,7 +51,7 @@ const AdminSignup = () => {
 
   const navigate = useNavigate()
 
-  const { adminTheme, toogleThemeDark } = useAdmin()
+  const { adminTempTheme, toogleTempThemeDark } = useAdmin()
 
   const { control, handleSubmit, reset, formState } = useForm({
     mode: 'all',
@@ -88,7 +88,7 @@ const AdminSignup = () => {
   }
 
   const handleChangeTheme = (checked: boolean) => {
-    toogleThemeDark(checked)
+    toogleTempThemeDark(checked)
   }
 
   return (
@@ -101,12 +101,12 @@ const AdminSignup = () => {
         </S.SwitchThemeLabel>
         <Switch
           size="small"
-          checked={adminTheme === 'dark'}
+          checked={adminTempTheme === 'dark'}
           onChange={handleChangeTheme}
         />
       </S.SwitchTheme>
 
-      <AuthContainer title="Criar conta" adminTheme={adminTheme}>
+      <AuthContainer title="Criar conta" adminTheme={adminTempTheme}>
         <S.AdminSignupForm
           layout="vertical"
           onFinish={handleSubmit(handleSignup)}

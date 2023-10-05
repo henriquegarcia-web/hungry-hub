@@ -22,6 +22,7 @@ import { ThemeProps } from '@/contexts/AdminContext'
 import type { MenuProps } from 'antd'
 
 interface IHeaderMinified {
+  isAdminLogged: boolean
   userData: IUserData | null
   adminTheme: ThemeProps
   handleChangeTheme: (checked: boolean) => void
@@ -29,6 +30,7 @@ interface IHeaderMinified {
 }
 
 const HeaderMinified = ({
+  isAdminLogged,
   userData,
   adminTheme,
   handleChangeTheme,
@@ -77,110 +79,125 @@ const HeaderMinified = ({
           <Logo type={adminTheme === 'default' ? 'default' : 'dark'} />
         </S.HeaderMinifiedLogo>
 
-        <S.HeaderMinifiedMenu
-          style={{ backgroundColor: token.colorBgContainer }}
-        >
-          <S.SwitchTheme>
-            <S.SwitchThemeLabel style={{ color: token.colorText }}>
-              <IoSunnyOutline />
-              /
-              <IoMoonOutline />
-            </S.SwitchThemeLabel>
-            <Switch
-              size="small"
-              checked={adminTheme === 'dark'}
-              onChange={handleChangeTheme}
-            />
-          </S.SwitchTheme>
-        </S.HeaderMinifiedMenu>
-        <S.HeaderMinifiedUserMenu
-          style={{ backgroundColor: token.colorBgContainer }}
-        >
-          <Dropdown
-            menu={{
-              items: formattedPrivateMenus,
-              onClick: (e) => {
-                if (e.key === 'sair') {
-                  handleLogout()
-                  return
-                }
-                navigate(`/admin/${e.key}`)
-              }
-            }}
-          >
-            <S.UserMenu>
-              <S.UserMenuName style={{ color: token.colorText }}>
-                {!userData ? 'Carregando...' : userData?.adminName}
-              </S.UserMenuName>
-              <Avatar
-                size={30}
-                style={{
-                  fontSize: 12,
-                  backgroundColor: '#fde3cf',
-                  color: '#f56a00'
+        {isAdminLogged ? (
+          <>
+            <S.HeaderMinifiedMenu
+              style={{ backgroundColor: token.colorBgContainer }}
+            >
+              <S.SwitchTheme>
+                <S.SwitchThemeLabel style={{ color: token.colorText }}>
+                  <IoSunnyOutline />
+                  /
+                  <IoMoonOutline />
+                </S.SwitchThemeLabel>
+                <Switch
+                  size="small"
+                  checked={adminTheme === 'dark'}
+                  onChange={handleChangeTheme}
+                />
+              </S.SwitchTheme>
+            </S.HeaderMinifiedMenu>
+            <S.HeaderMinifiedUserMenu
+              style={{ backgroundColor: token.colorBgContainer }}
+            >
+              <Dropdown
+                menu={{
+                  items: formattedPrivateMenus,
+                  onClick: (e) => {
+                    if (e.key === 'sair') {
+                      handleLogout()
+                      return
+                    }
+                    navigate(`/admin/${e.key}`)
+                  }
                 }}
               >
-                {!userData ? (
-                  <Spin size="small" style={{ marginTop: '-4px' }} />
-                ) : (
-                  formatUsername(userData?.adminName)
-                )}
-              </Avatar>
-            </S.UserMenu>
-          </Dropdown>
-        </S.HeaderMinifiedUserMenu>
+                <S.UserMenu>
+                  <S.UserMenuName style={{ color: token.colorText }}>
+                    {!userData ? 'Carregando...' : userData?.adminName}
+                  </S.UserMenuName>
+                  <Avatar
+                    size={30}
+                    style={{
+                      fontSize: 12,
+                      backgroundColor: '#fde3cf',
+                      color: '#f56a00'
+                    }}
+                  >
+                    {!userData ? (
+                      <Spin size="small" style={{ marginTop: '-4px' }} />
+                    ) : (
+                      formatUsername(userData?.adminName)
+                    )}
+                  </Avatar>
+                </S.UserMenu>
+              </Dropdown>
+            </S.HeaderMinifiedUserMenu>
+          </>
+        ) : (
+          <S.HeaderMinifiedAuth>
+            <Button type="primary" onClick={() => navigate('/admin/entrar')}>
+              Entrar
+            </Button>
+          </S.HeaderMinifiedAuth>
+        )}
 
         {/* ============================== HEADER MOBILE ============================== */}
 
-        <S.HeaderMinifiedMobileToggle onClick={toggleMenuMobile}>
-          {menuMobileIsOpen ? (
-            <IoCloseOutline style={{ color: token.colorTextHeading }} />
-          ) : (
-            <IoMenuOutline style={{ color: token.colorTextHeading }} />
-          )}
-        </S.HeaderMinifiedMobileToggle>
+        {isAdminLogged && (
+          <S.HeaderMinifiedMobileToggle onClick={toggleMenuMobile}>
+            {menuMobileIsOpen ? (
+              <IoCloseOutline style={{ color: token.colorTextHeading }} />
+            ) : (
+              <IoMenuOutline style={{ color: token.colorTextHeading }} />
+            )}
+          </S.HeaderMinifiedMobileToggle>
+        )}
       </S.HeaderMinifiedWrapper>
 
-      <S.HeaderMinifiedMobile
-        open={menuMobileIsOpen ? 1 : 0}
-        style={{ backgroundColor: token.colorBgContainer }}
-        ref={menuMobileRef}
-      >
-        <S.UserMenuMobile
-          style={{ borderColor: token.colorBgContainerDisabled }}
-          onClick={() => {
-            navigate('/admin/minha-conta')
-            setMenuMobileIsOpen(false)
-          }}
+      {isAdminLogged && (
+        <S.HeaderMinifiedMobile
+          open={menuMobileIsOpen ? 1 : 0}
+          style={{ backgroundColor: token.colorBgContainer }}
+          ref={menuMobileRef}
         >
-          <S.UserMenuName style={{ color: token.colorText }}>
-            {userData?.adminName}
-          </S.UserMenuName>
-          <Avatar
-            size={30}
-            style={{
-              fontSize: 12,
-              backgroundColor: '#fde3cf',
-              color: '#f56a00'
-            }}
-          >
-            {formatUsername(userData?.adminName || '')}
-          </Avatar>
-        </S.UserMenuMobile>
-        <S.HeaderMinifiedPrivateMenu>
-          <Button
+          <S.UserMenuMobile
+            style={{ borderColor: token.colorBgContainerDisabled }}
             onClick={() => {
               navigate('/admin/minha-conta')
               setMenuMobileIsOpen(false)
             }}
           >
-            Minha conta
-          </Button>
-          <Button danger onClick={handleLogout}>
-            Sair
-          </Button>
-        </S.HeaderMinifiedPrivateMenu>
-      </S.HeaderMinifiedMobile>
+            <S.UserMenuName style={{ color: token.colorText }}>
+              {userData?.adminName}
+            </S.UserMenuName>
+            <Avatar
+              size={30}
+              style={{
+                fontSize: 12,
+                backgroundColor: '#fde3cf',
+                color: '#f56a00'
+              }}
+            >
+              {formatUsername(userData?.adminName || '')}
+            </Avatar>
+          </S.UserMenuMobile>
+
+          <S.HeaderMinifiedPrivateMenu>
+            <Button
+              onClick={() => {
+                navigate('/admin/minha-conta')
+                setMenuMobileIsOpen(false)
+              }}
+            >
+              Minha conta
+            </Button>
+            <Button danger onClick={handleLogout}>
+              Sair
+            </Button>
+          </S.HeaderMinifiedPrivateMenu>
+        </S.HeaderMinifiedMobile>
+      )}
     </S.HeaderMinified>
   )
 }

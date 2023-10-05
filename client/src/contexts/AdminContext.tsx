@@ -5,8 +5,8 @@ import React, {
   createContext,
   useContext,
   useMemo,
-  useState,
-  useCallback
+  useCallback,
+  useState
 } from 'react'
 
 import { useAdminAuth } from './AdminAuthContext'
@@ -14,14 +14,18 @@ import {
   handleActiveCompanyMenu,
   handleActiveCompanyMenuTestMode
 } from '@/firebase/company'
+import { handleChangeAdminTheme } from '@/firebase/auth'
 
 export type ThemeProps = 'default' | 'dark'
+import { AdminTheme } from '@/@types/Auth'
 
 interface AdminContextData {
   adminTheme: ThemeProps
+  adminTempTheme: ThemeProps
   handleActiveMenu: (checked: boolean) => void
   handleActiveMenuTestMode: (checked: boolean) => void
-  toogleThemeDark: (activeThemeDark: boolean) => void
+  toogleThemeDark: (activeThemeDark: boolean) => Promise<void>
+  toogleTempThemeDark: (activeThemeDark: boolean) => void
 }
 
 // ===================================================================
@@ -31,11 +35,18 @@ export const AdminContext = createContext<AdminContextData>(
 )
 
 const AdminProvider = ({ children }: { children: React.ReactNode }) => {
-  const { isAdminPremium, companyHasAllDataFilledIn } = useAdminAuth()
+  const { userData, isAdminLogged, isAdminPremium, companyHasAllDataFilledIn } =
+    useAdminAuth()
 
   // =================================================================
 
-  const [adminTheme, setAdminTheme] = useState<ThemeProps>('default')
+  const [adminTempTheme, setAdminTempTheme] = useState<AdminTheme>('default')
+
+  const adminTheme: AdminTheme = useMemo(() => {
+    if (!isAdminLogged) return adminTempTheme
+
+    return userData?.adminPreferences?.adminTheme || adminTempTheme
+  }, [isAdminLogged, userData, adminTempTheme])
 
   // =================================================================
 
@@ -81,11 +92,19 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
   // ------------------------------------------------------------------
 
-  const toogleThemeDark = (activeThemeDark: boolean) => {
+  const toogleThemeDark = async (activeThemeDark: boolean) => {
     if (activeThemeDark) {
-      setAdminTheme('dark')
+      await handleChangeAdminTheme('dark')
     } else {
-      setAdminTheme('default')
+      await handleChangeAdminTheme('default')
+    }
+  }
+
+  const toogleTempThemeDark = (activeThemeDark: boolean) => {
+    if (activeThemeDark) {
+      setAdminTempTheme('dark')
+    } else {
+      setAdminTempTheme('default')
     }
   }
 
@@ -96,11 +115,13 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
   const AdminContextValues = useMemo(() => {
     return {
       adminTheme,
+      adminTempTheme,
       toogleThemeDark,
+      toogleTempThemeDark,
       handleActiveMenu,
       handleActiveMenuTestMode
     }
-  }, [adminTheme, handleActiveMenu, handleActiveMenuTestMode])
+  }, [adminTheme, adminTempTheme, handleActiveMenu, handleActiveMenuTestMode])
 
   return (
     <AdminContext.Provider value={AdminContextValues}>

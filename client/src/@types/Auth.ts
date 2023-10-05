@@ -92,6 +92,12 @@ export interface ICompanyData {
   companyMenu?: ICategory[]
 }
 
+export type AdminTheme = 'default' | 'dark'
+
+export interface IAdminPreferences {
+  adminTheme: AdminTheme
+}
+
 export interface IUserData {
   adminId: string
   adminName: string
@@ -100,6 +106,7 @@ export interface IUserData {
   adminRegisteredAt: number
   adminSubscription?: ISubscription
   adminCompanyInfo?: ICompanyData
+  adminPreferences: IAdminPreferences
 }
 
 // export interface ISigninAdmin extends ISigninUser {}
