@@ -27,24 +27,27 @@ export const DisclosureContainer = styled.div`
 export const DisclosurePremiumAlert = styled.div`
   display: flex;
   align-items: center;
-  column-gap: 4px;
+  column-gap: 5px;
   width: 100%;
   padding: 12px;
   border-radius: 10px;
-
-  /* border: 1px solid lightgrey; */
 
   svg {
     font-size: 22px;
   }
 
-  p {
-    font-size: 14px;
-    line-height: 14px;
-    font-weight: 500;
+  span {
+    display: flex;
+    flex: 1;
 
-    b {
-      font-weight: 800;
+    p {
+      font-size: 13px;
+      line-height: 16px;
+      font-weight: 500;
+
+      b {
+        font-weight: 800;
+      }
     }
   }
 `

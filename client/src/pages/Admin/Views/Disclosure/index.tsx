@@ -18,24 +18,44 @@ import { useAdminAuth } from '@/contexts/AdminAuthContext'
 const Disclosure = () => {
   const { token } = theme.useToken()
 
-  const { userData, isAdminPremium } = useAdminAuth()
+  const { userData, isAdminPremium, companyHasAllDataFilledIn } = useAdminAuth()
 
   const [isQrCodeModalOpen, setIsQrCodeModalOpen] = useState<boolean>(false)
   const [qrCodeLink, setQrCodeLink] = useState<string | null>(null)
   const [backgroundColor, setBackgroundColor] = useState<string>('#FFFFFF')
   const [lineColor, setLineColor] = useState<string>('#000000')
 
-  const disclosureLinks = useMemo(() => {
+  const disclosureValidations = useMemo(() => {
     const companyId = userData?.adminCompanyInfo?.companyId
     const companyActive = userData?.adminCompanyInfo?.companyActive
     const companyActiveTestMode =
       userData?.adminCompanyInfo?.companyActiveTestMode
     const companyContacts = userData?.adminCompanyInfo?.companyContacts
 
+    const mainValidation =
+      companyHasAllDataFilledIn && companyActive && isAdminPremium
+    const testValidation = companyHasAllDataFilledIn && companyActiveTestMode
+
+    const testLinksDisable =
+      !companyHasAllDataFilledIn || !companyActiveTestMode
+
+    return {
+      companyId,
+      companyActive,
+      companyActiveTestMode,
+      companyContacts,
+      mainValidation,
+      testValidation,
+      testLinksDisable
+    }
+  }, [userData, isAdminPremium, companyHasAllDataFilledIn])
+
+  const disclosureLinks = useMemo(() => {
+    const { companyId, testValidation, companyContacts, mainValidation } =
+      disclosureValidations
+
     const shareUrl = `https://www.hungryhub.com.br/${companyId}`
     const shareTestUrl = `https://www.hungryhub.com.br/teste/${companyId}`
-
-    const mainValidation = !!companyId && companyActive && isAdminPremium
 
     return {
       mainLink: {
@@ -43,7 +63,7 @@ const Disclosure = () => {
         link: shareUrl
       },
       testLink: {
-        enable: !!companyId && companyActiveTestMode,
+        enable: testValidation,
         link: shareTestUrl
       },
       qrCodeLink: {
@@ -51,7 +71,7 @@ const Disclosure = () => {
         link: shareUrl
       },
       qrCodeTestLink: {
-        enable: !!companyId && companyActiveTestMode,
+        enable: testValidation,
         link: shareTestUrl
       },
       whatsappLink: {
@@ -63,7 +83,7 @@ const Disclosure = () => {
         link: shareUrl
       }
     }
-  }, [userData, isAdminPremium])
+  }, [disclosureValidations])
 
   const handleCopyMainLink = () => {
     const clipboard = new ClipboardJS('.main_link')
@@ -153,7 +173,7 @@ const Disclosure = () => {
   return (
     <S.Disclosure>
       <S.DisclosureContainer>
-        {!isAdminPremium && (
+        {disclosureValidations.testLinksDisable && (
           <S.DisclosurePremiumAlert
             style={{
               backgroundColor: token.colorBgContainer,
@@ -161,9 +181,20 @@ const Disclosure = () => {
             }}
           >
             <LiaExclamationCircleSolid style={{ color: token.colorPrimary }} />
-            <p style={{ color: token.colorPrimary }}>
-              Você precisa ser <b>premium</b> para gerar links personalizados
-            </p>
+            <span>
+              <p style={{ color: token.colorPrimary }}>
+                {!companyHasAllDataFilledIn ? (
+                  <>
+                    Você precisa preencher os dados obrigatórios da empresa para
+                    gerar links de teste
+                  </>
+                ) : (
+                  <>
+                    Ative o cardápio de teste na aba <b>estabelecimento</b>
+                  </>
+                )}
+              </p>
+            </span>
           </S.DisclosurePremiumAlert>
         )}
 
@@ -208,6 +239,22 @@ const Disclosure = () => {
             </S.DisclosureMethod>
           </S.DisclosureMethodWrapper>
         </S.DisclosureWrapper>
+
+        {!isAdminPremium && (
+          <S.DisclosurePremiumAlert
+            style={{
+              backgroundColor: token.colorBgContainer,
+              border: `1px solid ${token.colorPrimary}`
+            }}
+          >
+            <LiaExclamationCircleSolid style={{ color: token.colorPrimary }} />
+            <span>
+              <p style={{ color: token.colorPrimary }}>
+                Você precisa ser <b>premium</b> para gerar links personalizados
+              </p>
+            </span>
+          </S.DisclosurePremiumAlert>
+        )}
 
         <S.DisclosureWrapper>
           {/* =========================================== LINK MENU */}
