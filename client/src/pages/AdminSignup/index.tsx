@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 import * as S from './styles'
 import { IoSunnyOutline, IoMoonOutline } from 'react-icons/io5'
@@ -53,6 +54,8 @@ const AdminSignup = () => {
 
   const { adminTempTheme, toogleTempThemeDark } = useAdmin()
 
+  const [signupIsLoading, setSignupIsLoading] = useState(false)
+
   const { control, handleSubmit, reset, formState } = useForm({
     mode: 'all',
     resolver: yupResolver(signupSchema)
@@ -74,12 +77,16 @@ const AdminSignup = () => {
   const handleSignup = async (data: ISignupForm) => {
     const cleanedPhoneValue = data.adminPhone.replace(/[^\d]/g, '')
 
+    setSignupIsLoading(true)
+
     const signupAdminResponse = await handleSignupAdmin({
       adminName: data.adminName,
       adminPhone: cleanedPhoneValue,
       adminEmail: data.adminEmail,
       adminPassword: data.adminPassword
     })
+
+    setSignupIsLoading(false)
 
     if (signupAdminResponse) {
       reset()
@@ -196,7 +203,12 @@ const AdminSignup = () => {
             <b onClick={() => navigate('/admin/entrar')}>Entrar</b>
           </S.AdminSignupFormNavigator>
           <S.AdminSignupFormFooter>
-            <Button type="primary" htmlType="submit" disabled={!isValid}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={signupIsLoading}
+              disabled={!isValid}
+            >
               Cadastrar
             </Button>
           </S.AdminSignupFormFooter>

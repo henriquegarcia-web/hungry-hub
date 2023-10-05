@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 import * as S from './styles'
 import { IoSunnyOutline, IoMoonOutline } from 'react-icons/io5'
@@ -8,9 +9,8 @@ import { Button, Input, Switch, theme } from 'antd'
 
 import { Controller, useForm } from 'react-hook-form'
 
-import { useAdmin } from '@/contexts/AdminContext'
-
 import { handleSigninAdmin } from '@/firebase/auth'
+import { useAdmin } from '@/contexts/AdminContext'
 
 interface ISigninForm {
   adminEmail: string
@@ -24,15 +24,21 @@ const AdminSignin = () => {
 
   const { adminTempTheme, toogleTempThemeDark } = useAdmin()
 
+  const [signinIsLoading, setSigninIsLoading] = useState(false)
+
   const { control, handleSubmit, reset, formState } = useForm<ISigninForm>()
 
   const { isValid } = formState
 
   const handleSignin = async (data: ISigninForm) => {
+    setSigninIsLoading(true)
+
     const signupAdminResponse = await handleSigninAdmin({
       adminEmail: data.adminEmail,
       adminPassword: data.adminPassword
     })
+
+    setSigninIsLoading(false)
 
     if (signupAdminResponse) {
       reset()
@@ -83,7 +89,12 @@ const AdminSignin = () => {
             <b onClick={() => navigate('/admin/cadastrar')}>Criar conta</b>
           </S.AdminSigninFormNavigator>
           <S.AdminSigninFormFooter>
-            <Button type="primary" htmlType="submit" disabled={!isValid}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={signinIsLoading}
+              disabled={!isValid}
+            >
               Entrar
             </Button>
           </S.AdminSigninFormFooter>

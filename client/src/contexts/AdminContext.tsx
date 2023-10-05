@@ -53,6 +53,10 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     return userData?.adminPreferences?.adminTheme || adminTempTheme
   }, [isAdminLogged, userData, adminTempTheme])
 
+  useEffect(() => {
+    setAdminTempTheme(adminTheme)
+  }, [adminTheme])
+
   // =================================================================
 
   useEffect(() => {
