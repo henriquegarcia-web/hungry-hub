@@ -30,7 +30,6 @@ import {
   TimePicker,
   Tooltip,
   Upload,
-  message,
   theme
 } from 'antd'
 import moment from 'moment'
@@ -44,11 +43,7 @@ import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 
-import {
-  beforeUpload,
-  getBase64,
-  onPreview
-} from '@/utils/functions/imageUpload'
+import { beforeUpload, onPreview } from '@/utils/functions/imageUpload'
 
 import { useAdmin } from '@/contexts/AdminContext'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
@@ -67,30 +62,12 @@ import {
 import { IUserData } from '@/@types/Auth'
 
 const CompanyInfos = () => {
-  const { token } = useToken()
   const { userData } = useAdminAuth()
-
-  const { handleActiveMenu } = useAdmin()
-
-  const onChange = (checked: boolean) => {
-    handleActiveMenu(checked)
-  }
 
   return (
     <S.CompanyInfos>
       <S.CompanyInfosWrapper>
-        <S.CompanyInfosActiveCompany
-          style={{ backgroundColor: token.colorBgContainer }}
-        >
-          <p style={{ color: token.colorTextSecondary }}>
-            Ativar cardápio para ser exibido
-          </p>
-          <Switch
-            size="small"
-            checked={userData?.adminCompanyInfo?.companyActive || false}
-            onChange={onChange}
-          />
-        </S.CompanyInfosActiveCompany>
+        <CompanyBaseControls userData={userData} />
         <MainInfosContainer userData={userData} />
         <LocationContainer userData={userData} />
         <ContactContainer userData={userData} />
@@ -101,6 +78,55 @@ const CompanyInfos = () => {
 }
 
 export default CompanyInfos
+
+// ========================================== COMPANY BASE CONTROLS
+
+interface ICompanyBaseControls {
+  userData: IUserData | null
+}
+
+const CompanyBaseControls = ({ userData }: ICompanyBaseControls) => {
+  const { token } = useToken()
+
+  const { handleActiveMenu, handleActiveMenuTestMode } = useAdmin()
+
+  const onChangeActiveMenu = (checked: boolean) => {
+    handleActiveMenu(checked)
+  }
+
+  const onChangeActiveMenuTestMode = (checked: boolean) => {
+    handleActiveMenuTestMode(checked)
+  }
+
+  return (
+    <S.CompanyBaseControls>
+      <S.CompanyInfosActiveCompany
+        style={{ backgroundColor: token.colorBgContainer }}
+      >
+        <p style={{ color: token.colorTextSecondary }}>
+          Ativar cardápio para ser exibido
+        </p>
+        <Switch
+          size="small"
+          checked={userData?.adminCompanyInfo?.companyActive || false}
+          onChange={onChangeActiveMenu}
+        />
+      </S.CompanyInfosActiveCompany>
+      <S.CompanyInfosActiveCompany
+        style={{ backgroundColor: token.colorBgContainer }}
+      >
+        <p style={{ color: token.colorTextSecondary }}>
+          Ativar cardápio para ser exibido em <b>modo teste</b>
+        </p>
+        <Switch
+          size="small"
+          checked={userData?.adminCompanyInfo?.companyActiveTestMode || false}
+          onChange={onChangeActiveMenuTestMode}
+        />
+      </S.CompanyInfosActiveCompany>
+    </S.CompanyBaseControls>
+  )
+}
 
 // ========================================== INFO CONTAINER BASE
 

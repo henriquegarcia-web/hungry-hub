@@ -25,7 +25,7 @@ interface AdminAuthContextData {
   userData: IUserData | null
   isAdminLogged: boolean
   companyHasAllDataFilledIn: boolean
-  // isAdminPremium: boolean
+  isAdminPremium: boolean
 
   handleLogout: () => void
   handleDeleteAccount: () => void
@@ -47,6 +47,15 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     return !!userId
   }, [userId])
 
+  const isAdminPremium = useMemo(() => {
+    return (
+      !!userData &&
+      (userData.adminSubscription?.planType === 'monthly_plan' ||
+        userData.adminSubscription?.planType === 'annual_plan' ||
+        userData.adminSubscription?.planType === 'lifetime_plan')
+    )
+  }, [userData])
+
   const companyHasAllDataFilledIn = useMemo(() => {
     if (!userData || !userData.adminCompanyInfo) {
       return false
@@ -54,8 +63,6 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const companyInfo = userData.adminCompanyInfo
 
-    // const isLogoEmpty = !companyInfo.companyLogo
-    // const isBannerEmpty = !companyInfo.companyBanner
     const isNameEmpty = !companyInfo.companyName
     const isIdEmpty = !companyInfo.companyId
     const isDescriptionEmpty = !companyInfo.companyDescription
@@ -65,8 +72,6 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     const hasLocation = companyInfo.companyLocation
 
     return (
-      // !isLogoEmpty &&
-      // !isBannerEmpty &&
       !isNameEmpty &&
       !isIdEmpty &&
       !isDescriptionEmpty &&
@@ -74,15 +79,6 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
       !!hasLocation
     )
   }, [userData])
-
-  // const isAdminPremium = useMemo(() => {
-  //   return (
-  //     !!userData &&
-  //     (userData.adminSubscription?.planType === 'monthly_plan' ||
-  //       userData.adminSubscription?.planType === 'annual_plan')
-  //   )
-  //
-  // }, [userData])
 
   // -----------------------------------------------------------------
 
@@ -146,6 +142,7 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
       userData,
       isAdminLogged,
       companyHasAllDataFilledIn,
+      isAdminPremium,
       handleLogout,
       handleDeleteAccount
     }
@@ -154,6 +151,7 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     userData,
     isAdminLogged,
     companyHasAllDataFilledIn,
+    isAdminPremium,
     handleLogout,
     handleDeleteAccount
   ])

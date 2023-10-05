@@ -265,6 +265,42 @@ const handleActiveCompanyMenu = async (isActive: boolean): Promise<boolean> => {
   }
 }
 
+// ============================================== ACTIVE COMPANY TEST MODE
+
+const handleActiveCompanyMenuTestMode = async (
+  isActive: boolean
+): Promise<boolean> => {
+  try {
+    const user = firebase.auth().currentUser
+
+    if (!user) return false
+
+    const userDataRef = firebase
+      .database()
+      .ref(`adminAccounts/${user.uid}/adminCompanyInfo/companyActiveTestMode`)
+
+    await userDataRef.set(isActive)
+
+    message.open({
+      type: `${isActive ? 'success' : 'warning'}`,
+      content: `O cardápio de teste agora está ${
+        isActive ? 'ativo' : 'inativo'
+      }.`
+    })
+
+    return true
+  } catch (error) {
+    console.error(error)
+
+    message.open({
+      type: 'error',
+      content: 'Falha ao modificar status do cardápio de teste'
+    })
+
+    return false
+  }
+}
+
 // ============================================== FIND MENU BY ID
 
 const handleFindMenuByCompanyId = async (companyId: string) => {
@@ -299,5 +335,6 @@ export {
   handleUpdateCompanyContact,
   handleUpdateCompanySchedules,
   handleActiveCompanyMenu,
+  handleActiveCompanyMenuTestMode,
   handleFindMenuByCompanyId
 }

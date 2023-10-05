@@ -10,13 +10,17 @@ import React, {
 } from 'react'
 
 import { useAdminAuth } from './AdminAuthContext'
-import { handleActiveCompanyMenu } from '@/firebase/company'
+import {
+  handleActiveCompanyMenu,
+  handleActiveCompanyMenuTestMode
+} from '@/firebase/company'
 
 export type ThemeProps = 'default' | 'dark'
 
 interface AdminContextData {
   adminTheme: ThemeProps
   handleActiveMenu: (checked: boolean) => void
+  handleActiveMenuTestMode: (checked: boolean) => void
   toogleThemeDark: (activeThemeDark: boolean) => void
 }
 
@@ -27,7 +31,7 @@ export const AdminContext = createContext<AdminContextData>(
 )
 
 const AdminProvider = ({ children }: { children: React.ReactNode }) => {
-  const { companyHasAllDataFilledIn } = useAdminAuth()
+  const { isAdminPremium, companyHasAllDataFilledIn } = useAdminAuth()
 
   // =================================================================
 
@@ -37,17 +41,40 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
   const handleActiveMenu = useCallback(
     (checked: boolean) => {
+      if (!isAdminPremium) {
+        message.open({
+          type: 'warning',
+          content: 'Você precisa ser premium para ativar o cardápio.'
+        })
+        return
+      }
+
       if (!companyHasAllDataFilledIn) {
         message.open({
           type: 'warning',
           content:
             'Não é possível ativar o cardápio até que todos dados sejam preenchidos!'
         })
-        // handleActiveCompanyMenu(false)
         return
       }
 
       handleActiveCompanyMenu(checked)
+    },
+    [isAdminPremium, companyHasAllDataFilledIn]
+  )
+
+  const handleActiveMenuTestMode = useCallback(
+    (checked: boolean) => {
+      if (!companyHasAllDataFilledIn) {
+        message.open({
+          type: 'warning',
+          content:
+            'Não é possível ativar o cardápio até que todos dados sejam preenchidos!'
+        })
+        return
+      }
+
+      handleActiveCompanyMenuTestMode(checked)
     },
     [companyHasAllDataFilledIn]
   )
@@ -70,9 +97,10 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
     return {
       adminTheme,
       toogleThemeDark,
-      handleActiveMenu
+      handleActiveMenu,
+      handleActiveMenuTestMode
     }
-  }, [adminTheme, handleActiveMenu])
+  }, [adminTheme, handleActiveMenu, handleActiveMenuTestMode])
 
   return (
     <AdminContext.Provider value={AdminContextValues}>

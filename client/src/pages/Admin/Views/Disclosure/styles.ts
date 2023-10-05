@@ -15,12 +15,45 @@ export const Disclosure = styled(View)`
   padding: 20px;
 `
 
+export const DisclosureContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  width: 100%;
+  max-width: ${adminViewDisclosureWrapper};
+  height: fit-content;
+`
+
+export const DisclosurePremiumAlert = styled.div`
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+
+  /* border: 1px solid lightgrey; */
+
+  svg {
+    font-size: 22px;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 14px;
+    font-weight: 500;
+
+    b {
+      font-weight: 800;
+    }
+  }
+`
+
 export const DisclosureWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   width: 100%;
-  max-width: ${adminViewDisclosureWrapper};
   height: fit-content;
 `
 
@@ -39,7 +72,7 @@ export const DisclosureMethodWrapper = styled.div<IDisclosureMethodWrapper>`
 export const DisclosureMethod = styled.div<IDisclosureMethod>`
   display: flex;
   align-items: center;
-  column-gap: 10px;
+  column-gap: 6px;
   width: 100%;
   padding: 15px;
   border-radius: 10px;
@@ -62,7 +95,7 @@ export const DisclosureMethodIcon = styled.div`
   height: 40px;
 
   svg {
-    font-size: 36px;
+    font-size: 32px;
 
     color: white;
   }

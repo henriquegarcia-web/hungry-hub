@@ -21,6 +21,16 @@ export const CompanyInfosWrapper = styled.div`
   height: fit-content;
 `
 
+// ========================================== COMPANY BASE CONTROLS
+
+export const CompanyBaseControls = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  width: 100%;
+  height: fit-content;
+`
+
 export const CompanyInfosActiveCompany = styled.div`
   display: flex;
   align-items: center;
@@ -34,6 +44,10 @@ export const CompanyInfosActiveCompany = styled.div`
     font-size: 14px;
     line-height: 14px;
     font-weight: 500;
+
+    b {
+      font-weight: 800;
+    }
   }
 `
 

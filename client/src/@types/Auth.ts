@@ -80,6 +80,7 @@ export interface ICategoryManipulate {
 
 export interface ICompanyData {
   companyActive: boolean
+  companyActiveTestMode: boolean
   companyLogo?: string
   companyBanner?: string
   companyName?: string

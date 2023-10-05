@@ -97,6 +97,7 @@ const handleSignupAdmin = async ({
         adminRegisteredAt: Date.now(),
         adminCompanyInfo: {
           companyActive: false,
+          companyActiveTestMode: false,
           companyLogo: '',
           companyBanner: '',
           companyName: '',
@@ -215,9 +216,10 @@ const handleDeleteAdminAccount = async () => {
       return false
     }
 
+    await user.delete()
+
     const adminsRef = firebase.database().ref('adminAccounts/' + user.uid)
     await adminsRef.remove()
-    await user.delete()
 
     message.open({
       type: 'success',

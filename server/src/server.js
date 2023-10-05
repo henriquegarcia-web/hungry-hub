@@ -103,8 +103,8 @@ app.post('/api/v1/payment-success', async (req, res) => {
         const planId = subscription.plan.id
 
         let planType = ''
-        if (subscription.plan.amount === 3990) planType = 'monthly_plan'
-        else if (subscription.plan.amount === 27990) planType = 'annual_plan'
+        if (subscription.plan.amount === 2990) planType = 'monthly_plan'
+        else if (subscription.plan.amount === 26780) planType = 'annual_plan'
 
         const startDate = moment
           .unix(subscription.current_period_start)
