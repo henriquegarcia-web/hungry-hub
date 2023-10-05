@@ -2,7 +2,6 @@ import { Logo } from '..'
 import * as S from './styles'
 
 import { theme } from 'antd'
-const { useToken } = theme
 
 import { ThemeProps } from '@/contexts/AdminContext'
 
@@ -13,7 +12,7 @@ interface IAuthContainer {
 }
 
 const AuthContainer = ({ title, adminTheme, children }: IAuthContainer) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   return (
     <S.AuthContainer

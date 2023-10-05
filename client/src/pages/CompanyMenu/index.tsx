@@ -17,8 +17,6 @@ import {
 
 import { Drawer, Spin, message, theme } from 'antd'
 
-const { useToken } = theme
-
 import { formatCurrency } from '@/utils/functions/formatCurrency'
 import { handleFindMenuByCompanyId } from '@/firebase/company'
 
@@ -34,7 +32,7 @@ interface ICompanyMenu {
 }
 
 const CompanyMenu = ({ isTestMode = false }: ICompanyMenu) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const params = useParams()
   const { companyId } = params

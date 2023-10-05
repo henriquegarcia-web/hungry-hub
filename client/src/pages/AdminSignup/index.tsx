@@ -7,8 +7,6 @@ import { IoSunnyOutline, IoMoonOutline } from 'react-icons/io5'
 import { AuthContainer } from '@/components'
 import { Button, Input, theme, Form, Switch } from 'antd'
 
-const { useToken } = theme
-
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
@@ -49,7 +47,7 @@ const signupSchema = Yup.object().shape({
 })
 
 const AdminSignup = () => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const navigate = useNavigate()
 

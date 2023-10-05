@@ -6,8 +6,6 @@ import { IoSunnyOutline, IoMoonOutline } from 'react-icons/io5'
 import { AuthContainer } from '@/components'
 import { Button, Input, Switch, theme } from 'antd'
 
-const { useToken } = theme
-
 import { Controller, useForm } from 'react-hook-form'
 
 import { useAdmin } from '@/contexts/AdminContext'
@@ -20,7 +18,7 @@ interface ISigninForm {
 }
 
 const AdminSignin = () => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const navigate = useNavigate()
 

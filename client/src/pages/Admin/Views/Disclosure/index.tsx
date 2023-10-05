@@ -13,12 +13,10 @@ import { ColorPicker, Modal, QRCode, message, theme } from 'antd'
 import { FacebookShareButton, WhatsappShareButton } from 'react-share'
 import ClipboardJS from 'clipboard'
 
-const { useToken } = theme
-
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 const Disclosure = () => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const { userData, isAdminPremium } = useAdminAuth()
 

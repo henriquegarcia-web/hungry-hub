@@ -23,12 +23,10 @@ import { IMenu, IMenuPrivate, menusData, privateMenusData } from '@/data/menus'
 import { IUserData } from '@/@types/Auth'
 import type { MenuProps } from 'antd'
 
-const { useToken } = theme
-
 // ========================================== ADMIN
 
 const Admin = () => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const params = useParams()
   const { viewId } = params
@@ -104,7 +102,7 @@ const AdminHeader = ({
   handleChangeTheme,
   handleLogout
 }: IAdminHeader) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const navigate = useNavigate()
 

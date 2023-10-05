@@ -37,8 +37,6 @@ import moment from 'moment'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
 import type { UploadChangeParam } from 'antd/es/upload'
 
-const { useToken } = theme
-
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
@@ -86,7 +84,7 @@ interface ICompanyBaseControls {
 }
 
 const CompanyBaseControls = ({ userData }: ICompanyBaseControls) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const { handleActiveMenu, handleActiveMenuTestMode } = useAdmin()
 
@@ -145,7 +143,7 @@ const InfoContainer = ({
   isIncomplete,
   children
 }: IInfoContainer) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   return (
     <S.InfoContainer>
@@ -684,7 +682,7 @@ interface IContactContainer {
 }
 
 const ContactContainer = ({ userData }: IContactContainer) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const [updatingCompany, setUpdatingCompany] = useState(false)
 
@@ -969,7 +967,7 @@ interface IScheduleContainer {
 }
 
 const ScheduleContainer = ({ userData }: IScheduleContainer) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const [updatingCompany, setUpdatingCompany] = useState(false)
 

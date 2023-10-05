@@ -3,10 +3,8 @@ import { IoDiamondOutline } from 'react-icons/io5'
 
 import { theme } from 'antd'
 
-const { useToken } = theme
-
 const PremiumStatus = () => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   return (
     <S.PremiumStatus>

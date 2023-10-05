@@ -4,8 +4,6 @@ import { LiaEnvelope, LiaUserLockSolid } from 'react-icons/lia'
 import { PremiumStatus } from '@/components'
 import { Button, Form, Input, Popconfirm, theme } from 'antd'
 
-const { useToken } = theme
-
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
@@ -17,7 +15,7 @@ import {
 } from '@/firebase/auth'
 
 const Account = () => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const { handleDeleteAccount } = useAdminAuth()
 
@@ -78,7 +76,7 @@ const AccountContainer = ({
   headerLabel,
   children
 }: IAccountContainer) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   return (
     <S.AccountContainer>

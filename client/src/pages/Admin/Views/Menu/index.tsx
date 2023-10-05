@@ -23,8 +23,6 @@ import {
   Spin
 } from 'antd'
 
-const { useToken } = theme
-
 import { Controller, useForm } from 'react-hook-form'
 
 import { formatCurrency } from '@/utils/functions/formatCurrency'
@@ -109,7 +107,7 @@ interface ICreateCategoryForm {
 }
 
 const CreateCategory = ({}: ICreateCategory) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const {
     categories,
@@ -269,7 +267,7 @@ const CreateCategory = ({}: ICreateCategory) => {
 interface ICategoriesList {}
 
 const CategoriesList = ({}: ICategoriesList) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const { categories, handleOpenCreateProductModal } = useMenu()
 
@@ -358,7 +356,7 @@ interface ICategoriesProduct {
 }
 
 const CategoriesProduct = ({ product, category }: ICategoriesProduct) => {
-  const { token } = useToken()
+  const { token } = theme.useToken()
 
   const { handleOpenEditProductModal, handleProductDelete } = useMenu()
 
