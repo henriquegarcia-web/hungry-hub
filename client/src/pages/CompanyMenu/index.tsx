@@ -15,6 +15,10 @@ import {
   LiaLaptopSolid
 } from 'react-icons/lia'
 
+import { Drawer, Spin, message, theme } from 'antd'
+
+const { useToken } = theme
+
 import { formatCurrency } from '@/utils/functions/formatCurrency'
 import { handleFindMenuByCompanyId } from '@/firebase/company'
 
@@ -24,10 +28,14 @@ import {
   ICompanyData,
   IProduct
 } from '@/@types/Auth'
-import { Drawer, Spin, message } from 'antd'
-import { Logo } from '@/components'
 
-const CompanyMenu = () => {
+interface ICompanyMenu {
+  isTestMode?: boolean
+}
+
+const CompanyMenu = ({ isTestMode = false }: ICompanyMenu) => {
+  const { token } = useToken()
+
   const params = useParams()
   const { companyId } = params
 
@@ -75,6 +83,16 @@ const CompanyMenu = () => {
 
   return (
     <S.CompanyMenu>
+      {isTestMode && (
+        <S.CompanyMenuTestModeHeader
+          style={{ backgroundColor: token.colorPrimary }}
+        >
+          <p>
+            Essa é uma vizualização de teste do cardápio. Obtenha um{' '}
+            <b>plano premium</b> para ativar completamente seu cardápio.
+          </p>
+        </S.CompanyMenuTestModeHeader>
+      )}
       <S.CompanyMenuWrapper>
         {menuDataLoading ? (
           <S.CompanyMenuLoading>

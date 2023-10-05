@@ -5,7 +5,30 @@ interface IOpenLabel {
   open: number
 }
 
-export const CompanyMenu = styled(Window)``
+export const CompanyMenu = styled(Window)`
+  display: flex;
+  flex-direction: column;
+`
+
+export const CompanyMenuTestModeHeader = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 15px;
+
+  p {
+    font-size: 14px;
+    line-height: 17px;
+    font-weight: 500;
+    text-align: center;
+
+    b {
+      font-weight: 800;
+    }
+
+    color: white;
+  }
+`
 
 export const CompanyMenuWrapper = styled.div`
   position: relative;

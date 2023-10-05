@@ -1,5 +1,5 @@
 import * as S from './styles'
-import { MdWorkspacePremium } from 'react-icons/md'
+import { IoDiamondOutline } from 'react-icons/io5'
 
 import { theme } from 'antd'
 
@@ -11,7 +11,7 @@ const PremiumStatus = () => {
   return (
     <S.PremiumStatus>
       <S.PlanActiveIcon>
-        <MdWorkspacePremium />
+        <IoDiamondOutline />
       </S.PlanActiveIcon>
       <S.PlanActiveInfos>
         <S.PlanActiveDetail style={{ color: token.colorTextHeading }}>

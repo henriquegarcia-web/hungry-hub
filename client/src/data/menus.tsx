@@ -4,6 +4,7 @@ import {
   IoMegaphoneOutline,
   IoPieChartOutline,
   IoPersonOutline,
+  IoDiamondOutline,
   IoExitOutline
 } from 'react-icons/io5'
 
@@ -12,7 +13,8 @@ import {
   MenuAdminView,
   ReportsAdminView,
   AccountAdminView,
-  DisclosureAdminView
+  DisclosureAdminView,
+  PremiumAdminView
 } from '@/pages/Admin/Views'
 
 const menusData = [
@@ -53,6 +55,14 @@ const menusData = [
     menuLabel: 'Minha conta',
     menuIcon: <IoPersonOutline />,
     menuRender: <AccountAdminView />,
+    menuDisabled: false,
+    menuHidden: true
+  },
+  {
+    menuId: 'menu_premium',
+    menuLabel: 'Obter Premium',
+    menuIcon: <IoDiamondOutline />,
+    menuRender: <PremiumAdminView />,
     menuDisabled: false,
     menuHidden: true
   }

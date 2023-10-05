@@ -25,7 +25,10 @@ const AppRoutes = () => {
         {/* =============================================================== */}
 
         <Route path="/:companyId" element={<CompanyMenuPage />} />
-        <Route path="/:companyId/not-found" element={<NotFoundPage />} />
+        <Route
+          path="/teste/:companyId"
+          element={<CompanyMenuPage isTestMode />}
+        />
 
         {/* =============================================================== */}
 

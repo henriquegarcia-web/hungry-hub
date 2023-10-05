@@ -65,6 +65,7 @@ export const AdminHeaderWrapper = styled.div`
 
 export const AdminHeaderLogo = styled.div`
   display: flex;
+
   width: fit-content;
   height: 100%;
 `
@@ -72,8 +73,32 @@ export const AdminHeaderLogo = styled.div`
 export const AdminHeaderNavigation = styled.nav`
   display: flex;
   flex: 1;
+  width: fit-content;
 
   @media screen and (max-width: ${responsiveDesktop}) {
+    display: none;
+  }
+`
+
+export const AdminHeaderPremium = styled.div`
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  height: 100%;
+
+  .ant-btn-primary {
+    display: flex;
+    align-items: center;
+    padding: 2px 12px;
+    height: fit-content;
+
+    .ant-btn-icon {
+      margin-right: 5px !important;
+      font-size: 16px;
+    }
+  }
+
+  @media screen and (max-width: ${responsiveTablet}) {
     display: none;
   }
 `
@@ -183,6 +208,28 @@ export const AdminHeaderMobile = styled.div<IHeaderMobile>`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 
   @media screen and (max-width: ${responsiveDesktop}) {
+    display: flex;
+  }
+`
+
+export const AdminHeaderPremiumMobile = styled.div`
+  display: none;
+  align-items: center;
+  width: 100%;
+  height: fit-content;
+
+  .ant-btn-primary {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .ant-btn-icon {
+      margin-right: 5px !important;
+      font-size: 17px;
+    }
+  }
+
+  @media screen and (max-width: ${responsiveTablet}) {
     display: flex;
   }
 `

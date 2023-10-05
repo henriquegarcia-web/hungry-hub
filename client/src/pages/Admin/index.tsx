@@ -5,7 +5,8 @@ import {
   IoSunnyOutline,
   IoMoonOutline,
   IoMenuOutline,
-  IoCloseOutline
+  IoCloseOutline,
+  IoDiamondOutline
 } from 'react-icons/io5'
 
 import { Logo } from '@/components'
@@ -28,7 +29,8 @@ const { useToken } = theme
 
 const Admin = () => {
   const { token } = useToken()
-  const { userData, handleLogout, companyHasAllDataFilledIn } = useAdminAuth()
+  const { userData, handleLogout, companyHasAllDataFilledIn, isAdminPremium } =
+    useAdminAuth()
   const { adminTheme, toogleThemeDark } = useAdmin()
 
   // ------------------------------------------------------------------
@@ -91,6 +93,7 @@ const Admin = () => {
     >
       <AdminHeader
         userData={userData}
+        isAdminPremium={isAdminPremium}
         adminTheme={adminTheme}
         activeMenu={activeMenu}
         handleSelectMenu={handleSelectMenu}
@@ -109,6 +112,7 @@ export default Admin
 
 interface IAdminHeader {
   userData: IUserData | null
+  isAdminPremium: boolean
   adminTheme: ThemeProps
   activeMenu: string
   handleSelectMenu: (key: string) => void
@@ -119,6 +123,7 @@ interface IAdminHeader {
 
 const AdminHeader = ({
   userData,
+  isAdminPremium,
   adminTheme,
   activeMenu,
   handleSelectMenu,
@@ -186,6 +191,18 @@ const AdminHeader = ({
             style={{ border: 'none', width: '100%', fontSize: 13 }}
           />
         </S.AdminHeaderNavigation>
+        {!isAdminPremium && (
+          <S.AdminHeaderPremium>
+            <Button
+              type="primary"
+              shape="round"
+              icon={<IoDiamondOutline />}
+              onClick={() => handleSelectMenu('menu_premium')}
+            >
+              Obter Premium
+            </Button>
+          </S.AdminHeaderPremium>
+        )}
         <S.AdminHeaderMenu style={{ backgroundColor: token.colorBgContainer }}>
           <S.SwitchTheme>
             <S.SwitchThemeLabel style={{ color: token.colorText }}>
@@ -247,6 +264,21 @@ const AdminHeader = ({
         style={{ backgroundColor: token.colorBgContainer }}
         ref={menuMobileRef}
       >
+        {!isAdminPremium && (
+          <S.AdminHeaderPremiumMobile>
+            <Button
+              type="primary"
+              shape="round"
+              icon={<IoDiamondOutline />}
+              onClick={() => {
+                handleSelectMenu('menu_premium')
+                setMenuMobileIsOpen(false)
+              }}
+            >
+              Obter Premium
+            </Button>
+          </S.AdminHeaderPremiumMobile>
+        )}
         <S.UserMenuMobile
           style={{ borderColor: token.colorBgContainerDisabled }}
           onClick={() => {
