@@ -25,6 +25,7 @@ interface AdminAuthContextData {
   userData: IUserData | null
   isAdminLogged: boolean
   companyHasAllDataFilledIn: boolean
+  companyHasNoMenuRegistered: boolean
   isAdminPremium: boolean
   isDeletingAccount: boolean
 
@@ -82,6 +83,42 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
       !!hasLocation
     )
   }, [userData])
+
+  const companyHasNoMenuRegistered = useMemo(() => {
+    if (
+      !userData ||
+      !userData.adminCompanyInfo ||
+      !userData.adminCompanyInfo.companyMenu
+    ) {
+      return true
+    }
+
+    const companyMenu = userData.adminCompanyInfo.companyMenu
+
+    const menuKeys = Object.keys(companyMenu)
+
+    const hasActiveCategory = menuKeys.some(
+      (categoryId: any) => companyMenu[categoryId].active
+    )
+
+    if (!hasActiveCategory) {
+      return true
+    }
+
+    const hasActiveProduct = menuKeys.some(
+      (categoryId: any) =>
+        companyMenu[categoryId].products &&
+        Object.values(companyMenu[categoryId].products).some(
+          (product) => product.productActive
+        )
+    )
+
+    return !hasActiveProduct
+  }, [userData])
+
+  useEffect(() => {
+    console.log(companyHasNoMenuRegistered)
+  }, [companyHasNoMenuRegistered])
 
   // -----------------------------------------------------------------
 
@@ -150,6 +187,7 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
       userData,
       isAdminLogged,
       companyHasAllDataFilledIn,
+      companyHasNoMenuRegistered,
       isAdminPremium,
       isDeletingAccount,
       handleLogout,
@@ -160,6 +198,7 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     userData,
     isAdminLogged,
     companyHasAllDataFilledIn,
+    companyHasNoMenuRegistered,
     isAdminPremium,
     isDeletingAccount,
     handleLogout,

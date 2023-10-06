@@ -30,7 +30,8 @@ import {
   TimePicker,
   Tooltip,
   Upload,
-  theme
+  theme,
+  message
 } from 'antd'
 import moment from 'moment'
 
@@ -1010,7 +1011,10 @@ const ScheduleContainer = ({ userData }: IScheduleContainer) => {
       if (!schedule.some((item) => item.day === data.day)) {
         setSchedule([...schedule, data])
       } else {
-        console.log(`Dia ${data.day} já foi adicionado.`)
+        message.open({
+          type: 'warning',
+          content: `Dia ${data.day} já foi adicionado.`
+        })
       }
     }
   }

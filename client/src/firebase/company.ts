@@ -199,7 +199,6 @@ const momentToString = (momentObj: moment.Moment): string => {
 const handleUpdateCompanySchedules = async (
   schedules: IScheduleItem[]
 ): Promise<boolean> => {
-  console.log(schedules)
   try {
     const user = firebase.auth().currentUser
 

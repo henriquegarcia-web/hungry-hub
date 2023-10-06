@@ -38,8 +38,13 @@ export const AdminContext = createContext<AdminContextData>(
 )
 
 const AdminProvider = ({ children }: { children: React.ReactNode }) => {
-  const { userData, isAdminLogged, isAdminPremium, companyHasAllDataFilledIn } =
-    useAdminAuth()
+  const {
+    userData,
+    isAdminLogged,
+    isAdminPremium,
+    companyHasAllDataFilledIn,
+    companyHasNoMenuRegistered
+  } = useAdminAuth()
 
   // =================================================================
 
@@ -84,6 +89,15 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         return
       }
 
+      if (companyHasNoMenuRegistered) {
+        message.open({
+          type: 'warning',
+          content:
+            'Você precisa ser no mínimo uma categoria e produto ativos para ativar o cardápio.'
+        })
+        return
+      }
+
       if (!companyHasAllDataFilledIn) {
         message.open({
           type: 'warning',
@@ -95,7 +109,7 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
       handleActiveCompanyMenu(checked)
     },
-    [isAdminPremium, companyHasAllDataFilledIn]
+    [isAdminPremium, companyHasAllDataFilledIn, companyHasNoMenuRegistered]
   )
 
   const handleActiveMenuTestMode = useCallback(
@@ -109,9 +123,18 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         return
       }
 
+      if (companyHasNoMenuRegistered) {
+        message.open({
+          type: 'warning',
+          content:
+            'Você precisa ser no mínimo uma categoria e produto ativos para ativar o cardápio.'
+        })
+        return
+      }
+
       handleActiveCompanyMenuTestMode(checked)
     },
-    [companyHasAllDataFilledIn]
+    [companyHasAllDataFilledIn, companyHasNoMenuRegistered]
   )
 
   // ------------------------------------------------------------------
