@@ -457,3 +457,95 @@ export const AdminNotFoundView = styled(View)`
     font-weight: 300;
   }
 `
+
+// ==========================================
+
+export const AdminFloatSupport = styled.div`
+  position: fixed;
+  right: 15px;
+  bottom: 15px;
+  display: flex;
+  height: fit-content;
+`
+
+interface IAdminSupportFloatButton {
+  opened: number
+}
+
+export const AdminFloatButton = styled.div<IAdminSupportFloatButton>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 14px 5px 5px;
+  border-radius: 100px;
+
+  overflow: hidden;
+  transition: 0.3s;
+
+  padding-right: ${({ opened }) => (opened ? '130px' : '5px')};
+
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+
+  p {
+    position: absolute;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: 0.3s;
+
+    font-size: 14px;
+    line-height: 14px;
+
+    right: ${({ opened }) => (opened ? '14px' : '-120px')};
+
+    a {
+      transition: 0.3s;
+    }
+
+    &:hover {
+      a {
+        color: black !important;
+      }
+    }
+  }
+`
+
+export const AdminFloatButtonIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  cursor: pointer;
+
+  svg {
+    position: absolute;
+    transition: 0.3s;
+  }
+
+  .support_icon_opened {
+    opacity: 1;
+  }
+
+  .support_icon_minify {
+    opacity: 0;
+    font-size: 16px;
+  }
+
+  &:hover {
+    svg {
+      color: black !important;
+    }
+
+    .support_icon_opened {
+      opacity: 0;
+    }
+
+    .support_icon_minify {
+      opacity: 1;
+    }
+  }
+`

@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useState, useMemo, useRef } from 'react'
 
 import * as S from './styles'
@@ -7,8 +7,11 @@ import {
   IoMoonOutline,
   IoMenuOutline,
   IoCloseOutline,
-  IoDiamondOutline
+  IoDiamondOutline,
+  IoChevronBackOutline,
+  IoChevronForwardOutline
 } from 'react-icons/io5'
+import { BsQuestionCircle } from 'react-icons/bs'
 
 import { Logo } from '@/components'
 import { Avatar, Button, Dropdown, Menu, Spin, Switch, theme } from 'antd'
@@ -108,11 +111,65 @@ const Admin = () => {
         handleLogout={handleLogout}
       />
       <S.AdminContent>{viewToRender}</S.AdminContent>
+
+      <S.AdminFloatSupport>
+        <AdminSupportFloatButton />
+      </S.AdminFloatSupport>
     </S.Admin>
   )
 }
 
 export default Admin
+
+// ========================================== SUPPORT INPUT
+
+const AdminSupportFloatButton = () => {
+  const { token } = theme.useToken()
+
+  const [buttonMinified, setButtonMinified] = useState(true)
+
+  const toogleSupportMinified = () => setButtonMinified(!buttonMinified)
+
+  return (
+    <S.AdminFloatButton
+      opened={buttonMinified ? 1 : 0}
+      style={{
+        border: `1px solid ${token.colorBorder}`,
+        backgroundColor: token.colorBgBase
+      }}
+    >
+      <S.AdminFloatButtonIcon
+        style={{
+          border: `1px solid ${token.colorBorder}`,
+          backgroundColor: token.colorBgElevated
+        }}
+        onClick={toogleSupportMinified}
+      >
+        <BsQuestionCircle
+          style={{ color: token.colorTextSecondary }}
+          className="support_icon_opened"
+        />
+        {!buttonMinified ? (
+          <IoChevronBackOutline
+            style={{ color: token.colorTextSecondary }}
+            className="support_icon_minify"
+          />
+        ) : (
+          <IoChevronForwardOutline
+            style={{ color: token.colorTextSecondary }}
+            className="support_icon_minify"
+          />
+        )}
+      </S.AdminFloatButtonIcon>
+
+      <p>
+        <Link to="/admin/suporte" style={{ color: token.colorTextSecondary }}>
+          Precisa de ajuda?
+        </Link>
+      </p>
+    </S.AdminFloatButton>
+  )
+}
 
 // ========================================== ADMIN MENU
 
