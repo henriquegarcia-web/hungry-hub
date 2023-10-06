@@ -236,7 +236,9 @@ const PlanContent = ({
             disabled={checkoutValidation.planDisabled}
             onClick={() => handleClickCheckout(plan.planId)}
           >
-            {checkoutValidation.planActive ? 'Plano Ativo' : 'Selecionar Plano'}
+            {checkoutValidation.planActive && !checkoutValidation.planDisabled
+              ? 'Plano Ativo'
+              : 'Selecionar Plano'}
           </Button>
         </S.PlanCta>
       </S.PlanMainInfos>

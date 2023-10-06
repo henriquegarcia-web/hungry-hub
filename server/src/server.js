@@ -100,7 +100,8 @@ app.post('/api/v1/create-one-time-payment-session', async (req, res) => {
       .child(user.uid)
       .update({
         adminSubscription: {
-          sessionId: session.id
+          sessionId: session.id,
+          planCurrentType: 'lifetime_plan'
         }
       })
 
@@ -110,7 +111,49 @@ app.post('/api/v1/create-one-time-payment-session', async (req, res) => {
   }
 })
 
-// ======================== CREATE SUBSCRIPTION ======================== //
+// ======================= PAYMENT SUCCESS ======================== //
+
+app.post('/api/v1/one-time-payment-success', async (req, res) => {
+  const { sessionId, firebaseId } = req.body
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId)
+
+    if (session.payment_status === 'paid') {
+      let planType = ''
+      if (session.amount_total === 24990) planType = 'lifetime_plan'
+      else
+        res.send({ error: true, messsage: 'O plano selecionado não é válido' })
+
+      const user = await admin.auth().getUser(firebaseId)
+
+      await admin
+        .database()
+        .ref('adminAccounts')
+        .child(user.uid)
+        .update({
+          adminSubscription: {
+            sessionId: null,
+            planCurrentType: null,
+            planId: lifetime,
+            planType: planType,
+            planStartDate: '',
+            planEndDate: '',
+            planDuration: 'lifetime'
+          }
+        })
+
+      return res.json({ message: 'Pagamento concluído com sucesso' })
+    } else {
+      return res.json({ message: 'Falha ao concluir pagamento' })
+    }
+  } catch (error) {
+    console.log(error)
+    res.send(error)
+  }
+})
+
+// ====================== CREATE SUBSCRIPTION ===================== //
 
 app.post('/api/v1/create-subscription-checkout-session', async (req, res) => {
   const { plan, custumerId, custumerEmail } = req.body
@@ -118,6 +161,7 @@ app.post('/api/v1/create-subscription-checkout-session', async (req, res) => {
   let planId = null
   if (plan == 'monthly_plan') planId = monthly
   else if (plan == 'annual_plan') planId = annual
+  else res.send({ error: true, messsage: 'O plano selecionado não é válido' })
 
   try {
     const session = await stripeSessionSubscription(planId, custumerEmail)
@@ -129,7 +173,8 @@ app.post('/api/v1/create-subscription-checkout-session', async (req, res) => {
       .child(user.uid)
       .update({
         adminSubscription: {
-          sessionId: session.id
+          sessionId: session.id,
+          planCurrentType: plan
         }
       })
 
@@ -139,7 +184,7 @@ app.post('/api/v1/create-subscription-checkout-session', async (req, res) => {
   }
 })
 
-// ========================== PAYMENT SUCCESS ========================== //
+// =================== PAYMENT SUBSCRIPTION SUCCESS =================== //
 
 app.post('/api/v1/payment-success', async (req, res) => {
   const { sessionId, firebaseId } = req.body
@@ -158,6 +203,11 @@ app.post('/api/v1/payment-success', async (req, res) => {
         let planType = ''
         if (subscription.plan.amount === 2990) planType = 'monthly_plan'
         else if (subscription.plan.amount === 29990) planType = 'annual_plan'
+        else
+          res.send({
+            error: true,
+            messsage: 'O plano selecionado não é válido'
+          })
 
         const startDate = moment
           .unix(subscription.current_period_start)
@@ -178,6 +228,7 @@ app.post('/api/v1/payment-success', async (req, res) => {
           .update({
             adminSubscription: {
               sessionId: null,
+              planCurrentType: null,
               planId: planId,
               planType: planType,
               planStartDate: startDate,

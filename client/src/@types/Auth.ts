@@ -4,6 +4,7 @@ import moment from 'moment'
 
 type ISubscription = {
   sessionId: string
+  planCurrentType: string
   planId: string
   planType: string
   planStartDate: string

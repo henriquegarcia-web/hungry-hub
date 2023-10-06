@@ -45,10 +45,19 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
     }
 
     try {
-      const response = await api.post('/api/v1/payment-success', {
-        sessionId: userData.adminSubscription.sessionId,
-        firebaseId: userData.adminId
-      })
+      let response
+
+      if (userData.adminSubscription.planCurrentType === 'lifetime_plan') {
+        response = await api.post('/api/v1/one-time-payment-success', {
+          sessionId: userData.adminSubscription.sessionId,
+          firebaseId: userData.adminId
+        })
+      } else {
+        response = await api.post('/api/v1/payment-success', {
+          sessionId: userData.adminSubscription.sessionId,
+          firebaseId: userData.adminId
+        })
+      }
 
       if (response.status === 200) {
         navigate('/admin/estabelecimento')
