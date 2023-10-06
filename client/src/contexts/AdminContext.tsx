@@ -91,20 +91,20 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
         return
       }
 
-      if (companyHasNoMenuRegistered) {
-        message.open({
-          type: 'warning',
-          content:
-            'Você precisa ser no mínimo uma categoria e produto ativos para ativar o cardápio.'
-        })
-        return
-      }
-
       if (!companyHasAllDataFilledIn) {
         message.open({
           type: 'warning',
           content:
             'Não é possível ativar o cardápio até que todos dados sejam preenchidos!'
+        })
+        return
+      }
+
+      if (companyHasNoMenuRegistered) {
+        message.open({
+          type: 'warning',
+          content:
+            'Você precisa ser no mínimo uma categoria e produto ativos para ativar o cardápio.'
         })
         return
       }

@@ -231,6 +231,7 @@ app.post('/api/v1/payment-success', async (req, res) => {
             adminSubscription: {
               sessionId: null,
               planCurrentType: null,
+              planSubscriptionId: subscriptionId,
               planId: planId,
               planType: planType,
               planStartDate: startDate,
@@ -248,6 +249,25 @@ app.post('/api/v1/payment-success', async (req, res) => {
   } catch (error) {
     console.log(error)
     res.send(error)
+  }
+})
+
+// ======================== CANCEL SUBSCRIPTION ======================= //
+
+app.post('/api/v1/cancel-subscription', async (req, res) => {
+  const { subscriptionId } = req.body
+
+  try {
+    const response = await stripe.subscriptions.cancel(subscriptionId)
+
+    if (response) {
+      return res.json({ message: 'Assinatura cancelada com sucesso' })
+    }
+  } catch (error) {
+    console.error('Erro ao cancelar assinatura:', error)
+    res
+      .status(500)
+      .send({ error: true, message: 'Erro ao cancelar assinatura' })
   }
 })
 

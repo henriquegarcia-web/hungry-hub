@@ -35,7 +35,7 @@ const Account = () => {
           </S.AccountDetailsPlan>
 
           <a
-            href="https://billing.stripe.com/p/login/cN22ab89c4QKdXyeUU"
+            href={import.meta.env.VITE_STRIPE_CLIENT_PORTAL}
             target="_blank"
             rel="noopener noreferrer"
           >

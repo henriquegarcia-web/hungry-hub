@@ -43,11 +43,6 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
   // ------------------------------------------------------------------
 
   const handlePaymentSuccess = useCallback(async () => {
-    if (!userData?.adminSubscription) {
-      setIsLoadingCheckout(false)
-      return
-    }
-
     if (userData?.adminSubscription?.planType) {
       setIsLoadingCheckout(false)
       return
@@ -94,8 +89,13 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
   }, [userData])
 
   useEffect(() => {
+    if (!userData) {
+      setIsLoadingCheckout(true)
+      return
+    }
+
     handlePaymentSuccess()
-  }, [handlePaymentSuccess])
+  }, [userData, handlePaymentSuccess])
 
   return (
     <S.PremiumStatus style={{ backgroundColor: token.colorBgElevated }}>

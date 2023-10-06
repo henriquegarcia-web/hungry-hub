@@ -19,6 +19,7 @@ import {
 } from '@/firebase/auth'
 
 import { IUserData } from '@/@types/Auth'
+import api from '@/api'
 
 interface AdminAuthContextData {
   userId: string | null
@@ -126,18 +127,67 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUserData(null)
   }, [])
 
-  const handleDeleteAccount = useCallback(async (adminPassword: string) => {
-    setIsDeletingAccount(true)
-    const response = await handleDeleteAdminAccount(adminPassword)
-    setIsDeletingAccount(false)
+  const handleDeleteAccount = useCallback(
+    async (adminPassword: string) => {
+      setIsDeletingAccount(true)
 
-    if (response) {
-      setUserId(null)
-      setUserData(null)
-    }
+      if (
+        !isAdminPremium ||
+        userData?.adminSubscription?.planType === 'lifetime_plan'
+      ) {
+        const deleteAccountResponse = await handleDeleteAdminAccount(
+          adminPassword
+        )
 
-    return response
-  }, [])
+        setIsDeletingAccount(false)
+
+        if (deleteAccountResponse) {
+          setUserId(null)
+          setUserData(null)
+
+          return true
+        }
+
+        return false
+      }
+
+      try {
+        const cancelSignatureResponse = await api.post(
+          '/api/v1/cancel-subscription',
+          {
+            subscriptionId: userData?.adminSubscription?.planSubscriptionId
+          }
+        )
+
+        if (cancelSignatureResponse.status !== 200) return false
+
+        const deleteAccountResponse = await handleDeleteAdminAccount(
+          adminPassword
+        )
+
+        setIsDeletingAccount(false)
+
+        if (deleteAccountResponse) {
+          setUserId(null)
+          setUserData(null)
+
+          return true
+        }
+
+        return false
+      } catch (error) {
+        message.open({
+          type: 'error',
+          content: 'Falha ao excluir a conta. Tente novamente mais tarde.'
+        })
+        console.log(error)
+        setIsDeletingAccount(false)
+
+        return false
+      }
+    },
+    [isAdminPremium, userData]
+  )
 
   // -----------------------------------------------------------------
 
