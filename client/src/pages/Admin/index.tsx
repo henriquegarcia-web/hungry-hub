@@ -201,28 +201,34 @@ const AdminHeader = ({
             }}
           />
         </S.AdminHeaderNavigation>
-        {isAdminPremium ? (
-          <S.AdminHeaderPremiumStatus>
-            <Button
-              type="primary"
-              shape="circle"
-              icon={<IoDiamondOutline />}
-              size="small"
-            />
-            <p>Você é Premium</p>
-          </S.AdminHeaderPremiumStatus>
-        ) : (
-          <S.AdminHeaderPremium>
-            <Button
-              type="primary"
-              shape="round"
-              icon={<IoDiamondOutline />}
-              onClick={() => navigate('/admin/obter-premium')}
-            >
-              Obter Premium
-            </Button>
-          </S.AdminHeaderPremium>
-        )}
+        <S.AdminHeaderPremiumWrapper>
+          {!!userData && (
+            <>
+              {isAdminPremium ? (
+                <S.AdminHeaderPremiumStatus>
+                  <Button
+                    type="primary"
+                    shape="circle"
+                    icon={<IoDiamondOutline />}
+                    size="small"
+                  />
+                  <p>Você é Premium</p>
+                </S.AdminHeaderPremiumStatus>
+              ) : (
+                <S.AdminHeaderPremium>
+                  <Button
+                    type="primary"
+                    shape="round"
+                    icon={<IoDiamondOutline />}
+                    onClick={() => navigate('/admin/obter-premium')}
+                  >
+                    Obter Premium
+                  </Button>
+                </S.AdminHeaderPremium>
+              )}
+            </>
+          )}
+        </S.AdminHeaderPremiumWrapper>
         <S.AdminHeaderMenu style={{ backgroundColor: token.colorBgContainer }}>
           <S.SwitchTheme>
             <S.SwitchThemeLabel style={{ color: token.colorText }}>
@@ -291,30 +297,34 @@ const AdminHeader = ({
         style={{ backgroundColor: token.colorBgContainer }}
         ref={menuMobileRef}
       >
-        {isAdminPremium ? (
-          <S.AdminHeaderPremiumStatusMobile>
-            <Button
-              type="primary"
-              shape="circle"
-              icon={<IoDiamondOutline />}
-              size="small"
-            />
-            <p>Você é Premium</p>
-          </S.AdminHeaderPremiumStatusMobile>
-        ) : (
-          <S.AdminHeaderPremiumMobile>
-            <Button
-              type="primary"
-              shape="round"
-              icon={<IoDiamondOutline />}
-              onClick={() => {
-                navigate('/admin/obter-premium')
-                setMenuMobileIsOpen(false)
-              }}
-            >
-              Obter Premium
-            </Button>
-          </S.AdminHeaderPremiumMobile>
+        {!!userData && (
+          <>
+            {isAdminPremium ? (
+              <S.AdminHeaderPremiumStatusMobile>
+                <Button
+                  type="primary"
+                  shape="circle"
+                  icon={<IoDiamondOutline />}
+                  size="small"
+                />
+                <p>Você é Premium</p>
+              </S.AdminHeaderPremiumStatusMobile>
+            ) : (
+              <S.AdminHeaderPremiumMobile>
+                <Button
+                  type="primary"
+                  shape="round"
+                  icon={<IoDiamondOutline />}
+                  onClick={() => {
+                    navigate('/admin/obter-premium')
+                    setMenuMobileIsOpen(false)
+                  }}
+                >
+                  Obter Premium
+                </Button>
+              </S.AdminHeaderPremiumMobile>
+            )}
+          </>
         )}
         <S.UserMenuMobile
           style={{ borderColor: token.colorBgContainerDisabled }}

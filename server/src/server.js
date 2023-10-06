@@ -107,6 +107,7 @@ app.post('/api/v1/create-one-time-payment-session', async (req, res) => {
 
     return res.json({ session })
   } catch (error) {
+    console.log(error)
     res.send(error)
   }
 })
@@ -180,6 +181,7 @@ app.post('/api/v1/create-subscription-checkout-session', async (req, res) => {
 
     return res.json({ session })
   } catch (error) {
+    console.log(error)
     res.send(error)
   }
 })
@@ -244,6 +246,7 @@ app.post('/api/v1/payment-success', async (req, res) => {
       return res.json({ message: 'Falha ao concluir pagamento' })
     }
   } catch (error) {
+    console.log(error)
     res.send(error)
   }
 })

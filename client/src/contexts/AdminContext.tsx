@@ -65,13 +65,15 @@ const AdminProvider = ({ children }: { children: React.ReactNode }) => {
   // =================================================================
 
   useEffect(() => {
+    if (!userData) return
+
     if (!isAdminPremium) {
       setShowPremiumAnnouncement(true)
       return
     }
 
     setShowPremiumAnnouncement(false)
-  }, [isAdminPremium])
+  }, [userData, isAdminPremium])
 
   const handleClosePremiumAnnouncement = () => {
     setShowPremiumAnnouncement(false)

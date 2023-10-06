@@ -130,6 +130,18 @@ export const AdminHeaderNavigation = styled.nav`
   }
 `
 
+export const AdminHeaderPremiumWrapper = styled.div`
+  margin: auto 0;
+
+  @media screen and (max-width: ${responsiveDesktop}) {
+    margin-left: auto;
+  }
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    display: none;
+  }
+`
+
 export const AdminHeaderPremiumStatus = styled.div`
   display: flex;
   align-items: center;
@@ -138,7 +150,7 @@ export const AdminHeaderPremiumStatus = styled.div`
   height: fit-content;
   border-radius: 100px;
   padding: 5px 12px 5px 5px;
-  margin: auto 0;
+  /* margin: auto 0; */
 
   background-color: #fff6e6;
 
@@ -164,13 +176,13 @@ export const AdminHeaderPremiumStatus = styled.div`
     color: #ff7a00;
   }
 
-  @media screen and (max-width: ${responsiveDesktop}) {
+  /* @media screen and (max-width: ${responsiveDesktop}) {
     margin-left: auto;
   }
 
   @media screen and (max-width: ${responsiveTablet}) {
     display: none;
-  }
+  } */
 `
 
 export const AdminHeaderPremium = styled.div`
@@ -190,14 +202,14 @@ export const AdminHeaderPremium = styled.div`
       font-size: 16px;
     }
   }
-
+  /* 
   @media screen and (max-width: ${responsiveDesktop}) {
     margin-left: auto;
   }
 
   @media screen and (max-width: ${responsiveTablet}) {
     display: none;
-  }
+  } */
 `
 
 export const AdminHeaderMenu = styled.div`

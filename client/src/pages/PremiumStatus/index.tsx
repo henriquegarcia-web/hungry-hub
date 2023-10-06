@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
 
 import * as S from './styles'
 import {
@@ -27,6 +28,12 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
   const { isAdminLogged, userData, handleLogout } = useAdminAuth()
   const { adminTheme, toogleThemeDark } = useAdmin()
 
+  const [currentCheckoutStatus, setCurrentCheckoutStatus] = useState(
+    statusId === 'cancelado' ? 'cancelado' : 'processando'
+  )
+
+  const [isLoadingCheckout, setIsLoadingCheckout] = useState(true)
+
   // ------------------------------------------------------------------
 
   const handleChangeTheme = (checked: boolean) => {
@@ -35,16 +42,25 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
 
   // ------------------------------------------------------------------
 
-  const handlePaymentSuccess = async () => {
+  const handlePaymentSuccess = useCallback(async () => {
     if (!userData?.adminSubscription) {
-      message.open({
-        type: 'error',
-        content: 'Falha ao redirecionar para o dashboard'
-      })
+      setIsLoadingCheckout(false)
+      return
+    }
+
+    if (userData?.adminSubscription?.planType) {
+      setIsLoadingCheckout(false)
+      return
+    }
+
+    if (!userData?.adminSubscription?.planCurrentType) {
+      setIsLoadingCheckout(false)
       return
     }
 
     try {
+      setIsLoadingCheckout(true)
+
       let response
 
       if (userData.adminSubscription.planCurrentType === 'lifetime_plan') {
@@ -60,12 +76,26 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
       }
 
       if (response.status === 200) {
-        navigate('/admin/estabelecimento')
+        message.open({
+          type: 'success',
+          content: 'Pagamento concluído com sucesso!'
+        })
+        setCurrentCheckoutStatus('sucesso')
+        return
       }
+
+      setCurrentCheckoutStatus('falha')
     } catch (error) {
+      setCurrentCheckoutStatus('falha')
       console.log(error)
+    } finally {
+      setIsLoadingCheckout(false)
     }
-  }
+  }, [userData])
+
+  useEffect(() => {
+    handlePaymentSuccess()
+  }, [handlePaymentSuccess])
 
   return (
     <S.PremiumStatus style={{ backgroundColor: token.colorBgElevated }}>
@@ -77,7 +107,7 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
         handleLogout={handleLogout}
       />
 
-      {statusId === 'sucesso' ? (
+      {currentCheckoutStatus === 'sucesso' ? (
         <S.PremiumStatusContainer color={premiumStatus.success.color}>
           <LiaCheckCircleSolid />
           <b>{premiumStatus.success.title}</b>
@@ -89,11 +119,14 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
               {premiumStatus.success.subMessage}
             </p>
           )}
-          <Button onClick={handlePaymentSuccess}>
+          <Button
+            disabled={isLoadingCheckout}
+            onClick={() => navigate('/admin/estabelecimento')}
+          >
             Retornar para a plataforma
           </Button>
         </S.PremiumStatusContainer>
-      ) : statusId === 'cancelado' ? (
+      ) : currentCheckoutStatus === 'cancelado' ? (
         <S.PremiumStatusContainer color={premiumStatus.cancel.color}>
           <LiaExclamationCircleSolid />
           <b>{premiumStatus.cancel.title}</b>
@@ -105,11 +138,14 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
               {premiumStatus.cancel.subMessage}
             </p>
           )}
-          <Button onClick={() => navigate('/admin/estabelecimento')}>
+          <Button
+            disabled={isLoadingCheckout}
+            onClick={() => navigate('/admin/estabelecimento')}
+          >
             Retornar para a plataforma
           </Button>
         </S.PremiumStatusContainer>
-      ) : statusId === 'processando' ? (
+      ) : currentCheckoutStatus === 'processando' ? (
         <S.PremiumStatusContainer color={premiumStatus.inProgress.color}>
           <LiaExclamationCircleSolid />
           <b>{premiumStatus.inProgress.title}</b>
@@ -121,7 +157,10 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
               {premiumStatus.inProgress.subMessage}
             </p>
           )}
-          <Button onClick={() => navigate('/admin/estabelecimento')}>
+          <Button
+            disabled={isLoadingCheckout}
+            onClick={() => navigate('/admin/estabelecimento')}
+          >
             Retornar para a plataforma
           </Button>
         </S.PremiumStatusContainer>
@@ -137,7 +176,10 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
               {premiumStatus.failed.subMessage}
             </p>
           )}
-          <Button onClick={() => navigate('/admin/estabelecimento')}>
+          <Button
+            disabled={isLoadingCheckout}
+            onClick={() => navigate('/admin/estabelecimento')}
+          >
             Retornar para a plataforma
           </Button>
         </S.PremiumStatusContainer>
