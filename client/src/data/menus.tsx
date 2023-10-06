@@ -7,6 +7,7 @@ import {
   IoDiamondOutline,
   IoExitOutline
 } from 'react-icons/io5'
+import { BsQuestionCircle } from 'react-icons/bs'
 
 import {
   CompanyInfosAdminView,
@@ -14,7 +15,8 @@ import {
   // ReportsAdminView,
   AccountAdminView,
   DisclosureAdminView,
-  PremiumAdminView
+  PremiumAdminView,
+  SupportAdminView
 } from '@/pages/Admin/Views'
 
 const menusData = [
@@ -55,6 +57,14 @@ const menusData = [
     menuLabel: 'Minha conta',
     menuIcon: <IoPersonOutline />,
     menuRender: <AccountAdminView />,
+    menuDisabled: false,
+    menuHidden: true
+  },
+  {
+    menuId: 'suporte',
+    menuLabel: 'Suporte',
+    menuIcon: <BsQuestionCircle />,
+    menuRender: <SupportAdminView />,
     menuDisabled: false,
     menuHidden: true
   },
