@@ -5,6 +5,7 @@ export const PremiumStatus = styled.div`
   display: flex;
   align-items: center;
   column-gap: 10px;
+  width: 100%;
   border-radius: 6px;
   padding: 10px;
 
@@ -19,6 +20,7 @@ export const PlanActiveIcon = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 100%;
+  padding-top: 1px;
 
   background-color: rgba(255, 122, 0, 0.6);
 
@@ -31,6 +33,7 @@ export const PlanActiveIcon = styled.div`
 export const PlanActiveInfos = styled.div`
   display: flex;
   flex: 1;
+  align-items: center;
   column-gap: 15px;
 `
 
@@ -54,12 +57,38 @@ export const PlanActiveDetail = styled.div`
   }
 `
 
-export const PlanActivePrice = styled.div`
+export const PlanActivePremium = styled.div`
   display: flex;
+  width: fit-content;
+
+  .ant-btn-primary {
+    display: flex;
+    align-items: center;
+    padding: 2px 12px;
+    height: fit-content;
+
+    .ant-btn-icon {
+      margin-right: 5px !important;
+      font-size: 16px;
+    }
+  }
+`
+
+export const PlanActivePrice = styled.div`
   font-size: 13px;
   line-height: 13px;
+  white-space: nowrap;
 
   p {
     margin: 0;
+    font-size: 12px;
+    line-height: 12px;
+    font-weight: 500;
+  }
+
+  b {
+    font-size: 13px;
+    line-height: 13px;
+    font-weight: 300;
   }
 `

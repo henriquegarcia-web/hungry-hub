@@ -51,7 +51,7 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
       })
 
       if (response.status === 200) {
-        navigate('/admin')
+        navigate('/admin/estabelecimento')
       }
     } catch (error) {
       console.log(error)
@@ -96,7 +96,7 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
               {premiumStatus.cancel.subMessage}
             </p>
           )}
-          <Button onClick={() => navigate('/admin')}>
+          <Button onClick={() => navigate('/admin/estabelecimento')}>
             Retornar para a plataforma
           </Button>
         </S.PremiumStatusContainer>
@@ -112,7 +112,7 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
               {premiumStatus.inProgress.subMessage}
             </p>
           )}
-          <Button onClick={() => navigate('/admin')}>
+          <Button onClick={() => navigate('/admin/estabelecimento')}>
             Retornar para a plataforma
           </Button>
         </S.PremiumStatusContainer>
@@ -128,7 +128,7 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
               {premiumStatus.failed.subMessage}
             </p>
           )}
-          <Button onClick={() => navigate('/admin')}>
+          <Button onClick={() => navigate('/admin/estabelecimento')}>
             Retornar para a plataforma
           </Button>
         </S.PremiumStatusContainer>

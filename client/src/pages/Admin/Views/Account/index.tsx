@@ -17,6 +17,8 @@ import {
 const Account = () => {
   const { token } = theme.useToken()
 
+  const { userData, isAdminPremium } = useAdminAuth()
+
   return (
     <S.Account>
       <S.AccountWrapper>
@@ -25,9 +27,22 @@ const Account = () => {
             Olá, <b>Henrique Pereira Garcia</b>!
           </S.AccountDetailsTitle>
           <S.AccountDetailsPlan style={{ color: token.colorTextHeading }}>
-            Plano ativo:
-            <PremiumStatus />
+            <p>Plano ativo:</p>
+            <PremiumStatus
+              isAdminPremium={isAdminPremium}
+              userData={userData}
+            />
           </S.AccountDetailsPlan>
+
+          <a
+            href="https://billing.stripe.com/p/login/cN22ab89c4QKdXyeUU"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button type="dashed" disabled={!isAdminPremium}>
+              Acessar portal do cliente
+            </Button>
+          </a>
         </S.AccountDetails>
 
         {/* <AccountContainer

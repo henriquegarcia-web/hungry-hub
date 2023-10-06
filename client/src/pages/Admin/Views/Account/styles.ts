@@ -26,6 +26,7 @@ export const AccountWrapper = styled.div`
 export const AccountDetails = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   row-gap: 15px;
   border-radius: 10px;
   padding: 15px;
@@ -35,6 +36,8 @@ export const AccountDetails = styled.div`
 `
 
 export const AccountDetailsTitle = styled.div`
+  width: 100%;
+
   font-size: 17px;
   line-height: 17px;
   font-weight: 300;
@@ -49,13 +52,16 @@ export const AccountDetailsTitle = styled.div`
 export const AccountDetailsPlan = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 7px;
+  width: 100%;
+  row-gap: 10px;
 
-  font-size: 13px;
-  line-height: 13px;
-  font-weight: 400;
+  p {
+    width: 100%;
 
-  color: rgba(0, 0, 0, 0.8);
+    font-size: 13px;
+    line-height: 13px;
+    font-weight: 400;
+  }
 `
 
 export const AccountDeleteForm = styled.form`
