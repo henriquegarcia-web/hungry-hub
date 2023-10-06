@@ -78,12 +78,13 @@ export const PlanActivePrice = styled.div`
   font-size: 13px;
   line-height: 13px;
   white-space: nowrap;
+  margin-bottom: auto;
 
   p {
     margin: 0;
     font-size: 12px;
     line-height: 12px;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   b {

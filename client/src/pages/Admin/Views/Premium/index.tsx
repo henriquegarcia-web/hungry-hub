@@ -1,3 +1,6 @@
+import { useNavigate } from 'react-router-dom'
+import { useCallback, useMemo, useState } from 'react'
+
 import * as S from './styles'
 import { BsCheck } from 'react-icons/bs'
 import { IoDiamondOutline } from 'react-icons/io5'
@@ -8,15 +11,23 @@ import api from '@/api'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
 import { IPremiumPlan } from '@/@types/Checkout'
+import { IUserData } from '@/@types/Auth'
 
 const Premium = () => {
   const { token } = theme.useToken()
 
-  const { userData } = useAdminAuth()
+  const { userData, isAdminPremium } = useAdminAuth()
+
+  const [isLoadingCheckout, setIsLoadingCheckout] = useState(false)
 
   const handleCheckout = async (planId: string) => {
+    const planIdValidation =
+      planId === 'monthly_plan' ||
+      planId === 'annual_plan' ||
+      planId === 'lifetime_plan'
+
     try {
-      if (!userData) {
+      if (!userData || !planId) {
         message.open({
           type: 'error',
           content:
@@ -24,14 +35,33 @@ const Premium = () => {
         })
       }
 
-      const response = await api.post(
-        '/api/v1/create-subscription-checkout-session',
-        {
+      if (!planIdValidation) {
+        message.open({
+          type: 'error',
+          content: 'O plano escolhido não é válido.'
+        })
+      }
+
+      setIsLoadingCheckout(true)
+
+      let response
+
+      if (planId === 'lifetime_plan') {
+        response = await api.post('/api/v1/create-one-time-payment-session', {
           plan: planId,
           custumerId: userData?.adminId,
           custumerEmail: userData?.adminEmail
-        }
-      )
+        })
+      } else {
+        response = await api.post(
+          '/api/v1/create-subscription-checkout-session',
+          {
+            plan: planId,
+            custumerId: userData?.adminId,
+            custumerEmail: userData?.adminEmail
+          }
+        )
+      }
 
       if (response.status === 200) {
         const { session } = response.data
@@ -39,6 +69,8 @@ const Premium = () => {
       }
     } catch (error) {
       console.log(error)
+    } finally {
+      setIsLoadingCheckout(false)
     }
   }
 
@@ -54,6 +86,9 @@ const Premium = () => {
             <Plan
               key={plan.planId}
               plan={plan}
+              userData={userData}
+              isAdminPremium={isAdminPremium}
+              isLoadingCheckout={isLoadingCheckout}
               handleCheckout={handleCheckout}
             />
           ))}
@@ -69,24 +104,51 @@ export default Premium
 
 interface IPlan {
   plan: IPremiumPlan
+  userData: IUserData | null
+  isLoadingCheckout: boolean
+  isAdminPremium: boolean
   handleCheckout: (planId: string) => void
 }
 
-const Plan = ({ plan, handleCheckout }: IPlan) => {
+const Plan = ({
+  plan,
+  userData,
+  isLoadingCheckout,
+  isAdminPremium,
+  handleCheckout
+}: IPlan) => {
   const { token } = theme.useToken()
 
   return (
     <S.Plan>
       {plan.planLimited ? (
         <Badge.Ribbon text="Oferta limitada" color={token.colorPrimary}>
-          <PlanContent plan={plan} handleCheckout={handleCheckout} />
+          <PlanContent
+            plan={plan}
+            userData={userData}
+            isLoadingCheckout={isLoadingCheckout}
+            isAdminPremium={isAdminPremium}
+            handleCheckout={handleCheckout}
+          />
         </Badge.Ribbon>
       ) : plan.planEconomic ? (
         <Badge.Ribbon text="Mais econômico" color={token.colorInfo}>
-          <PlanContent plan={plan} handleCheckout={handleCheckout} />
+          <PlanContent
+            plan={plan}
+            userData={userData}
+            isLoadingCheckout={isLoadingCheckout}
+            isAdminPremium={isAdminPremium}
+            handleCheckout={handleCheckout}
+          />
         </Badge.Ribbon>
       ) : (
-        <PlanContent plan={plan} handleCheckout={handleCheckout} />
+        <PlanContent
+          plan={plan}
+          userData={userData}
+          isLoadingCheckout={isLoadingCheckout}
+          isAdminPremium={isAdminPremium}
+          handleCheckout={handleCheckout}
+        />
       )}
     </S.Plan>
   )
@@ -96,15 +158,51 @@ const Plan = ({ plan, handleCheckout }: IPlan) => {
 
 interface IPlan {
   plan: IPremiumPlan
+  userData: IUserData | null
+  isLoadingCheckout: boolean
+  isAdminPremium: boolean
   handleCheckout: (planId: string) => void
 }
 
-const PlanContent = ({ plan, handleCheckout }: IPlan) => {
+const PlanContent = ({
+  plan,
+  userData,
+  isLoadingCheckout,
+  isAdminPremium,
+  handleCheckout
+}: IPlan) => {
   const { token } = theme.useToken()
+
+  const navigate = useNavigate()
 
   const variantColor = plan.planLimited
     ? token.colorPrimary
     : token.colorTextDescription
+
+  const checkoutValidation = useMemo(() => {
+    const planActive = !!userData?.adminSubscription?.planId
+    const planDisabled = planActive
+      ? plan.planId !== userData?.adminSubscription?.planType
+      : false
+
+    return {
+      planActive,
+      planDisabled
+    }
+  }, [plan.planId, userData])
+
+  const handleClickCheckout = useCallback(
+    (planId: string) => {
+      if (checkoutValidation.planActive && isAdminPremium) {
+        navigate('/admin/minha-conta')
+
+        return
+      }
+
+      handleCheckout(planId)
+    },
+    [checkoutValidation, handleCheckout, isAdminPremium, navigate]
+  )
 
   return (
     <S.PlanWrapper
@@ -134,9 +232,11 @@ const PlanContent = ({ plan, handleCheckout }: IPlan) => {
           <Button
             style={{ fontSize: 13 }}
             type={plan.planLimited ? 'primary' : 'dashed'}
-            onClick={() => handleCheckout(plan.planId)}
+            loading={isLoadingCheckout}
+            disabled={checkoutValidation.planDisabled}
+            onClick={() => handleClickCheckout(plan.planId)}
           >
-            Selecionar Plano
+            {checkoutValidation.planActive ? 'Plano Ativo' : 'Selecionar Plano'}
           </Button>
         </S.PlanCta>
       </S.PlanMainInfos>

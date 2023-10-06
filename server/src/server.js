@@ -35,7 +35,7 @@ app.use(
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
-const stripeSession = async (plan, custumerEmail) => {
+const stripeSessionSubscription = async (plan, custumerEmail) => {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -57,6 +57,59 @@ const stripeSession = async (plan, custumerEmail) => {
   }
 }
 
+const stripeSessionPayment = async (plan, custumerEmail) => {
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      customer_email: custumerEmail,
+      payment_method_types: ['card'],
+      // payment_method_types: ['card', 'boleto', 'pix'],
+      line_items: [
+        {
+          price: plan,
+          quantity: 1
+        }
+      ],
+
+      success_url: `${process.env.HOST}/obter-premium-sucesso`,
+      cancel_url: `${process.env.HOST}/obter-premium-cancelado`
+    })
+
+    return session
+  } catch (error) {
+    return error
+  }
+}
+
+// ======================== CREATE PAYMENT ======================== //
+
+app.post('/api/v1/create-one-time-payment-session', async (req, res) => {
+  const { plan, custumerId, custumerEmail } = req.body
+
+  let planId = null
+  if (plan == 'lifetime_plan') planId = lifetime
+  else res.send({ error: true, messsage: 'O plano selecionado não é válido' })
+
+  try {
+    const session = await stripeSessionPayment(planId, custumerEmail)
+    const user = await admin.auth().getUser(custumerId)
+
+    await admin
+      .database()
+      .ref('adminAccounts')
+      .child(user.uid)
+      .update({
+        adminSubscription: {
+          sessionId: session.id
+        }
+      })
+
+    return res.json({ session })
+  } catch (error) {
+    res.send(error)
+  }
+})
+
 // ======================== CREATE SUBSCRIPTION ======================== //
 
 app.post('/api/v1/create-subscription-checkout-session', async (req, res) => {
@@ -67,7 +120,7 @@ app.post('/api/v1/create-subscription-checkout-session', async (req, res) => {
   else if (plan == 'annual_plan') planId = annual
 
   try {
-    const session = await stripeSession(planId, custumerEmail)
+    const session = await stripeSessionSubscription(planId, custumerEmail)
     const user = await admin.auth().getUser(custumerId)
 
     await admin

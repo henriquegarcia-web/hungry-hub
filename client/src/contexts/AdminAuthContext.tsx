@@ -116,10 +116,6 @@ const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
     return !hasActiveProduct
   }, [userData])
 
-  useEffect(() => {
-    console.log(companyHasNoMenuRegistered)
-  }, [companyHasNoMenuRegistered])
-
   // -----------------------------------------------------------------
 
   const handleLogout = useCallback(async () => {
