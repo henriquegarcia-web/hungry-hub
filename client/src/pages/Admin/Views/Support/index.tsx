@@ -1,16 +1,17 @@
+import { useMemo, useState } from 'react'
+
 import * as S from './styles'
 import { BiSupport } from 'react-icons/bi'
 import { IoChevronDownOutline } from 'react-icons/io5'
 
-import { Button, Dropdown, Form, Input, message, theme } from 'antd'
+import { Button, Dropdown, Form, Input, theme } from 'antd'
 
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Controller, useForm } from 'react-hook-form'
 
-// import type { MenuProps } from 'antd'
-import { useMemo } from 'react'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
+import { handleCreateSupportRequest } from '@/firebase/support'
 
 interface MenuItemWithLabel {
   label: string
@@ -43,23 +44,25 @@ const defaultSupportReasons: MenuItemWithLabel[] = [
 ]
 
 interface ISupportSubmitForm {
-  supportReason: any
+  supportReason: string
   supportSubject: string
   supportDescription: string
-  supportContactMethod: any
+  supportContactMethod: string
 }
 
 const supportSubmitSchema = Yup.object().shape({
-  supportReason: Yup.mixed().required(),
+  supportReason: Yup.string().required(),
   supportSubject: Yup.string().required(),
   supportDescription: Yup.string().required(),
-  supportContactMethod: Yup.mixed().required()
+  supportContactMethod: Yup.string().required()
 })
 
 const Support = () => {
   const { token } = theme.useToken()
 
-  const { isAdminPremium } = useAdminAuth()
+  const { isAdminPremium, userId } = useAdminAuth()
+
+  const [loadingSupportRequest, setLoadingSupportRequest] = useState(false)
 
   const { control, handleSubmit, reset, formState } = useForm({
     mode: 'onBlur',
@@ -69,10 +72,20 @@ const Support = () => {
   const { isValid } = formState
 
   const handleSupportSubmit = async (data: ISupportSubmitForm) => {
-    // const deleteAccountResponse = await handleSupportSubmitAccount(data.adminPassword)
-    // if (deleteAccountResponse) {
-    //   reset()
-    // }
+    const supportData: any = {
+      supportUserId: userId,
+      ...data
+    }
+
+    setLoadingSupportRequest(true)
+
+    const supportRequestResponse = await handleCreateSupportRequest(supportData)
+
+    setLoadingSupportRequest(false)
+
+    if (supportRequestResponse) {
+      reset()
+    }
   }
 
   const premiumSupportReasons: MenuItemWithLabel[] = useMemo(() => {
@@ -231,7 +244,12 @@ const Support = () => {
               />
             </Form.Item>
             <S.FormFooter>
-              <Button type="primary" htmlType="submit" disabled={!isValid}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loadingSupportRequest}
+                disabled={!isValid}
+              >
                 Enviar
               </Button>
             </S.FormFooter>
