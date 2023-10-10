@@ -17,6 +17,7 @@ import {
   IMedia,
   IPlans
 } from '@/data/landing'
+import { Link } from 'react-router-dom'
 
 const Landing = () => {
   return (
@@ -100,8 +101,12 @@ const Header = () => {
         <Anchor direction="horizontal" items={NavigationLinks} />
       </S.HeaderNavigation>
       <S.HeaderAuth>
-        <Button type="default">Cadastre-se</Button>
-        <Button type="primary">Entrar</Button>
+        <Link to="/admin/cadastrar">
+          <Button type="default">Cadastre-se</Button>
+        </Link>
+        <Link to="/admin/entrar">
+          <Button type="primary">Entrar</Button>
+        </Link>
       </S.HeaderAuth>
     </S.Header>
   )
@@ -134,9 +139,11 @@ const HeroBanner = () => {
             </p>
           </S.HeroBannerLegend>
           <S.HeroBannerCta>
-            <Button type="default" style={{ borderColor: '#ffffff' }}>
-              Acessar agora
-            </Button>
+            <Link to="/admin/cadastrar">
+              <Button type="default" style={{ borderColor: '#ffffff' }}>
+                Acessar agora
+              </Button>
+            </Link>
           </S.HeroBannerCta>
         </S.HeroBannerContent>
         <S.HeroBannerImage>
@@ -328,9 +335,11 @@ const CtaBanner = () => {
             cardápios aos clientes. Experimente o <b>HungryHub</b> agora!
           </S.CtaBannerLegend>
           <S.CtaBannerCta>
-            <Button type="default" style={{ borderColor: '#ffffff' }}>
-              Cadastro
-            </Button>
+            <Link to="/admin/cadastrar">
+              <Button type="default" style={{ borderColor: '#ffffff' }}>
+                Acessar agora
+              </Button>
+            </Link>
           </S.CtaBannerCta>
         </S.CtaBannerContent>
         <S.CtaBannerImage>

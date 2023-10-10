@@ -356,10 +356,16 @@ export const BusinessIcon = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 8px;
+  transition: 0.3s;
+  cursor: pointer;
 
   font-size: 32px;
 
-  background-color: rgba(255, 122, 0, 0.25);
+  background-color: rgba(255, 122, 0, 0.2);
+
+  &:hover {
+    background-color: rgba(255, 122, 0, 0.3);
+  }
 `
 
 export const BusinessLabel = styled.div`

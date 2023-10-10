@@ -8,8 +8,7 @@ import { message, theme } from 'antd'
 import api from '@/api'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 
-import { IPremiumPlan } from '@/@types/Checkout'
-import { premiumPlansData } from '@/data/landing'
+import { premiumPlansData, IPlans } from '@/data/landing'
 import { PremiumPlan } from '@/components'
 
 const Premium = () => {
@@ -81,7 +80,7 @@ const Premium = () => {
           Planos Premium
         </S.PremiumHeader>
         <S.PremiumPlansWrapper>
-          {premiumPlansData?.map((plan: IPremiumPlan) => (
+          {premiumPlansData?.map((plan: IPlans) => (
             <PremiumPlan
               key={plan.planId}
               plan={plan}
