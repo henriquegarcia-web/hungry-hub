@@ -5,6 +5,7 @@ import {
   responsiveMobile,
   responsiveTablet
 } from '@/utils/styles/globals'
+import { Link } from 'react-router-dom'
 
 interface IHeaderMobile {
   open: number
@@ -453,6 +454,76 @@ export const BusinessLabel = styled.div`
   font-weight: 500;
 
   color: rgba(0, 0, 0, 0.9);
+`
+
+// ========================================== EXAMPLES SECTION
+
+export const ExamplesSection = styled(SectionWrapper)`
+  display: flex;
+`
+
+export const ExamplesSectionWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+  width: 100%;
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    row-gap: 10px;
+  }
+
+  @media screen and (max-width: ${responsiveMobile}) {
+    justify-content: center;
+  }
+`
+
+export const Example = styled(Link)`
+  display: flex;
+  align-items: center;
+  width: calc((100% / 3) - (30px / 3));
+  border-radius: 6px;
+  transition: 0.3s;
+  cursor: pointer;
+
+  border: 2px solid rgba(255, 122, 0, 0.7);
+  background-color: rgba(255, 122, 0, 0.05);
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    width: 100%;
+  }
+
+  &:hover {
+    border: 2px solid rgba(255, 122, 0, 1);
+    background-color: rgba(255, 122, 0, 0.15);
+
+    p {
+      color: rgba(255, 122, 0, 1);
+    }
+  }
+`
+
+export const ExampleIcon = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+
+  font-size: 22px;
+`
+
+export const ExampleLabel = styled.p`
+  display: flex;
+  flex: 1;
+  transition: 0.3s;
+
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 500;
+
+  color: rgba(255, 122, 0, 0.7);
 `
 
 // ========================================== FAQ SECTION

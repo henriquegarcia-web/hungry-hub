@@ -44,6 +44,18 @@ const GlobalStyle = createGlobalStyle`
 
   html {
     /* overflow: hidden; */
+    &::-webkit-scrollbar {
+      width: 6px;
+      z-index: 1000;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #ff7a00;
+    }
   }
 
   body {

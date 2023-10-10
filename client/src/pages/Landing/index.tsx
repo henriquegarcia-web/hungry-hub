@@ -28,6 +28,7 @@ const Landing = () => {
       <HeroBanner />
       <FeaturesSection />
       <BusinessSection />
+      <ExamplesSection />
       <PremiumSection />
       <FaqSection />
       <AboutUsSection />
@@ -74,16 +75,21 @@ const NavigationLinks = [
   },
   {
     key: 'part-3',
+    href: '#examples',
+    title: <S.HeaderNavigationLink>Exemplos</S.HeaderNavigationLink>
+  },
+  {
+    key: 'part-4',
     href: '#plans',
     title: <S.HeaderNavigationLink>Planos</S.HeaderNavigationLink>
   },
   {
-    key: 'part-4',
+    key: 'part-5',
     href: '#faq',
     title: <S.HeaderNavigationLink>FAQ</S.HeaderNavigationLink>
   },
   {
-    key: 'part-5',
+    key: 'part-6',
     href: '#about',
     title: <S.HeaderNavigationLink>Quem somos?</S.HeaderNavigationLink>
   }
@@ -240,6 +246,66 @@ const BusinessSection = () => {
   )
 }
 
+// ========================================== EXAMPLES SECTION
+
+const ExamplesSection = () => {
+  const { token } = theme.useToken()
+
+  return (
+    <S.ExamplesSection>
+      <SectionHeader
+        sectionTitle="HungryHub em Ação"
+        sectionLegend="Veja como o HungryHub está transformando a maneira como restaurantes e empresas de alimentos compartilham seus cardápios e interagem com os clientes."
+      />
+
+      <S.ExamplesSectionWrapper>
+        <S.Example to="/exemplo-pizzaria">
+          <S.ExampleIcon>🍕</S.ExampleIcon>
+          <S.ExampleLabel>Cardápio de Pizzaria</S.ExampleLabel>
+        </S.Example>
+        <S.Example to="/exemplo-hamburgueria">
+          <S.ExampleIcon>🍔</S.ExampleIcon>
+          <S.ExampleLabel>Cardápio de Hamburgueria</S.ExampleLabel>
+        </S.Example>
+        <S.Example to="/exemplo-sushi">
+          <S.ExampleIcon>🍣</S.ExampleIcon>
+          <S.ExampleLabel>Cardápio de Sushi</S.ExampleLabel>
+        </S.Example>
+      </S.ExamplesSectionWrapper>
+    </S.ExamplesSection>
+  )
+}
+
+// ========================================== PREMIUM SECTION
+
+const PremiumSection = () => {
+  const { token } = theme.useToken()
+
+  const { userData, isAdminPremium } = useAdminAuth()
+
+  return (
+    <S.PremiumSection id="plans">
+      <SectionHeader
+        sectionTitle="Escolha o Plano Ideal para o Seu Negócio"
+        sectionLegend="Oferecemos opções de planos flexíveis para atender às necessidades específicas de cada empresa."
+      />
+
+      <S.PremiumSectionWrapper>
+        {premiumPlansData?.map((plan: IPlans) => (
+          <PremiumPlan
+            key={plan.planId}
+            plan={plan}
+            userData={userData}
+            isAdminPremium={isAdminPremium}
+            // isLoadingCheckout={isLoadingCheckout}
+            // handleCheckout={handleCheckout}
+          />
+        ))}
+      </S.PremiumSectionWrapper>
+    </S.PremiumSection>
+  )
+}
+
 // ========================================== FAQ SECTION
 
 const FaqSection = () => {
@@ -274,36 +340,6 @@ const FaqSection = () => {
         />
       </S.FaqSectionWrapper>
     </S.FaqSection>
-  )
-}
-
-// ========================================== PREMIUM SECTION
-
-const PremiumSection = () => {
-  const { token } = theme.useToken()
-
-  const { userData, isAdminPremium } = useAdminAuth()
-
-  return (
-    <S.PremiumSection id="plans">
-      <SectionHeader
-        sectionTitle="Escolha o Plano Ideal para o Seu Negócio"
-        sectionLegend="Oferecemos opções de planos flexíveis para atender às necessidades específicas de cada empresa."
-      />
-
-      <S.PremiumSectionWrapper>
-        {premiumPlansData?.map((plan: IPlans) => (
-          <PremiumPlan
-            key={plan.planId}
-            plan={plan}
-            userData={userData}
-            isAdminPremium={isAdminPremium}
-            // isLoadingCheckout={isLoadingCheckout}
-            // handleCheckout={handleCheckout}
-          />
-        ))}
-      </S.PremiumSectionWrapper>
-    </S.PremiumSection>
   )
 }
 
