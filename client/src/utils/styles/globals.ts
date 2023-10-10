@@ -10,6 +10,7 @@ export const responsiveMobile = '480px'
 export const adminMenuWidth = '260px'
 export const adminHeaderHeight = '45px'
 export const adminViewHeader = '50px'
+export const landingHeaderHeight = '50px'
 
 export const adminViewSupportWrapper = '480px'
 export const adminViewDisclosureWrapper = '600px'
@@ -48,6 +49,19 @@ const GlobalStyle = createGlobalStyle`
   body {
     /* background-color: blue; */
     /* overflow: hidden; */
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      z-index: 1000;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #ff7a00;
+    }
   }
 
 
