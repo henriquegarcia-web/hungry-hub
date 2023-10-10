@@ -1,9 +1,14 @@
 import styled from 'styled-components'
 import {
   landingHeaderHeight,
+  responsiveDesktop,
   responsiveMobile,
   responsiveTablet
 } from '@/utils/styles/globals'
+
+interface IHeaderMobile {
+  open: number
+}
 
 export const Landing = styled.main`
   display: flex;
@@ -13,7 +18,7 @@ export const Landing = styled.main`
   height: fit-content;
   padding-top: calc(${landingHeaderHeight} + 15px);
 
-  overflow: hidden;
+  /* overflow: hidden; */
 `
 
 export const SectionWrapper = styled.div`
@@ -26,11 +31,11 @@ export const SectionWrapper = styled.div`
   padding: 80px 15px 60px 15px;
 
   @media screen and (max-width: ${responsiveTablet}) {
-    padding: 60px 15px 40px 15px;
+    padding: 80px 15px 20px 15px;
   }
 
   @media screen and (max-width: ${responsiveMobile}) {
-    padding: 50px 15px 30px 15px;
+    padding: 80px 15px 0px 15px;
   }
 `
 
@@ -69,10 +74,16 @@ export const SectionHeaderLegend = styled.div`
 // ========================================== HEADER
 
 export const Header = styled.section`
-  z-index: 100;
+  z-index: 10005;
   position: fixed;
   top: 0;
   left: 0;
+  width: 100%;
+`
+
+export const HeaderWrapper = styled.div`
+  z-index: 10005;
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -116,6 +127,10 @@ export const HeaderNavigation = styled.div`
     height: 100%;
     padding-bottom: 4px;
   }
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    display: none;
+  }
 `
 
 export const HeaderNavigationLink = styled.div`
@@ -137,6 +152,67 @@ export const HeaderNavigationLink = styled.div`
 export const HeaderAuth = styled.div`
   display: flex;
   column-gap: 5px;
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    margin-left: auto;
+  }
+
+  @media screen and (max-width: ${responsiveMobile}) {
+    display: none;
+  }
+`
+
+export const HeaderMobileToggle = styled.div`
+  z-index: 10000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  width: 25px;
+  height: 25px;
+  margin-left: 15px;
+  cursor: pointer;
+
+  svg {
+    font-size: 22px;
+  }
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    display: flex;
+  }
+`
+
+export const HeaderMobile = styled.div<IHeaderMobile>`
+  z-index: 10000;
+  position: absolute;
+  top: ${landingHeaderHeight};
+  right: ${({ open }) => (open ? '0' : '-260px')};
+  width: 260px;
+  height: calc(100vh - ${landingHeaderHeight});
+  /* height: 100vh; */
+  display: none;
+  flex-direction: column;
+  row-gap: 15px;
+  padding: 15px;
+  transition: 0.3s;
+
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+
+  @media screen and (max-width: ${responsiveTablet}) {
+    display: flex;
+  }
+`
+
+export const HeaderAuthMobile = styled.div`
+  display: none;
+  flex-direction: column;
+  row-gap: 6px;
+  margin-top: auto;
+
+  @media screen and (max-width: ${responsiveMobile}) {
+    display: flex;
+  }
 `
 
 // ========================================== HERO BANNER

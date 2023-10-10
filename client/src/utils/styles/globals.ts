@@ -47,8 +47,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    /* background-color: blue; */
-    /* overflow: hidden; */
+
 
     &::-webkit-scrollbar {
       width: 6px;

@@ -1,5 +1,6 @@
 import * as S from './styles'
 import { CaretRightOutlined } from '@ant-design/icons'
+import { IoMenuOutline } from 'react-icons/io5'
 
 import { PremiumPlan } from '@/components'
 import { Anchor, Button, Collapse, theme } from 'antd'
@@ -18,6 +19,7 @@ import {
   IPlans
 } from '@/data/landing'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
 const Landing = () => {
   return (
@@ -92,22 +94,51 @@ const NavigationLinks = [
 const Header = () => {
   const { token } = theme.useToken()
 
+  const [headerMobileOpened, setHeaderMobileOpened] = useState(false)
+
+  const toggleHeaderMobile = () => setHeaderMobileOpened(!headerMobileOpened)
+
   return (
     <S.Header>
-      <S.HeaderLogo>
-        <img src="/logo_default.png" alt="" />
-      </S.HeaderLogo>
-      <S.HeaderNavigation>
-        <Anchor direction="horizontal" items={NavigationLinks} />
-      </S.HeaderNavigation>
-      <S.HeaderAuth>
-        <Link to="/admin/cadastrar">
-          <Button type="default">Cadastre-se</Button>
-        </Link>
-        <Link to="/admin/entrar">
-          <Button type="primary">Entrar</Button>
-        </Link>
-      </S.HeaderAuth>
+      <S.HeaderWrapper>
+        <S.HeaderLogo>
+          <img src="/logo_default.png" alt="" />
+        </S.HeaderLogo>
+        <S.HeaderNavigation>
+          <Anchor direction="horizontal" items={NavigationLinks} />
+        </S.HeaderNavigation>
+        <S.HeaderAuth>
+          <Link to="/admin/cadastrar">
+            <Button type="default">Cadastre-se</Button>
+          </Link>
+          <Link to="/admin/entrar">
+            <Button type="primary">Entrar</Button>
+          </Link>
+        </S.HeaderAuth>
+        <S.HeaderMobileToggle onClick={toggleHeaderMobile}>
+          <IoMenuOutline />
+        </S.HeaderMobileToggle>
+      </S.HeaderWrapper>
+      <S.HeaderMobile open={headerMobileOpened ? 1 : 0}>
+        <Anchor
+          direction="vertical"
+          items={NavigationLinks}
+          onClick={() => setHeaderMobileOpened(false)}
+        />
+
+        <S.HeaderAuthMobile>
+          <Link to="/admin/cadastrar">
+            <Button type="default" style={{ width: '100%' }}>
+              Cadastre-se
+            </Button>
+          </Link>
+          <Link to="/admin/entrar">
+            <Button type="primary" style={{ width: '100%' }}>
+              Entrar
+            </Button>
+          </Link>
+        </S.HeaderAuthMobile>
+      </S.HeaderMobile>
     </S.Header>
   )
 }
