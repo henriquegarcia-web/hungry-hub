@@ -1,6 +1,6 @@
 import * as S from './styles'
 import { CaretRightOutlined } from '@ant-design/icons'
-import { IoMenuOutline } from 'react-icons/io5'
+import { IoMenuOutline, IoCloseOutline } from 'react-icons/io5'
 
 import { PremiumPlan } from '@/components'
 import { Anchor, Button, Collapse, theme } from 'antd'
@@ -116,7 +116,7 @@ const Header = () => {
           </Link>
         </S.HeaderAuth>
         <S.HeaderMobileToggle onClick={toggleHeaderMobile}>
-          <IoMenuOutline />
+          {headerMobileOpened ? <IoCloseOutline /> : <IoMenuOutline />}
         </S.HeaderMobileToggle>
       </S.HeaderWrapper>
       <S.HeaderMobile open={headerMobileOpened ? 1 : 0}>

@@ -43,7 +43,7 @@ const GlobalStyle = createGlobalStyle`
   scroll-behavior: smooth;
 
   html {
-    overflow: hidden;
+    /* overflow: hidden; */
   }
 
   body {

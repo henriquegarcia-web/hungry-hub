@@ -194,6 +194,7 @@ export const HeaderMobile = styled.div<IHeaderMobile>`
   row-gap: 15px;
   padding: 15px;
   transition: 0.3s;
+  padding-bottom: 30px;
 
   background-color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
