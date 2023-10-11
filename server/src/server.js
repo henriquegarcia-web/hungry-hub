@@ -16,8 +16,8 @@ app.use(express.json())
 app.use(bodyParser.json())
 
 const [monthly, annual] = [
-  'price_1NxxNfHkYVVmWVJM6Ou14beM',
-  'price_1NxegnHkYVVmWVJMVkBKZ2Id'
+  'price_1O00wXHkYVVmWVJMdA5OT3Wk',
+  'price_1O00x3HkYVVmWVJMbOtRf3tX'
 ]
 
 const lifetime = 'price_1O00nRHkYVVmWVJM3IHj5kNQ'
