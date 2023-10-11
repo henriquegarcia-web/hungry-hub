@@ -1,16 +1,26 @@
 import styled from 'styled-components'
 import { Window, responsiveMobile } from '@/utils/styles/globals'
 
+interface ICompanyMenu {
+  testmode: number
+}
+
 interface IOpenLabel {
   open: number
 }
 
-export const CompanyMenu = styled(Window)`
+export const CompanyMenu = styled(Window)<ICompanyMenu>`
   display: flex;
   flex-direction: column;
+
+  padding-top: ${({ testmode }) => (testmode ? '45px' : '0')};
 `
 
 export const CompanyMenuTestModeHeader = styled.div`
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
   display: flex;
   justify-content: center;
   width: 100%;
@@ -37,7 +47,7 @@ export const CompanyMenuWrapper = styled.div`
   width: 100%;
   height: fit-content;
   padding: 20px;
-  overflow: hidden;
+  /* overflow: hidden; */
 
   @media screen and (max-width: ${responsiveMobile}) {
     padding-bottom: 60px;

@@ -83,7 +83,7 @@ const CompanyMenu = ({ isTestMode = false }: ICompanyMenu) => {
   }
 
   return (
-    <S.CompanyMenu>
+    <S.CompanyMenu testmode={isTestMode ? 1 : 0}>
       {isTestMode && (
         <S.CompanyMenuTestModeHeader
           style={{ backgroundColor: token.colorPrimary }}
