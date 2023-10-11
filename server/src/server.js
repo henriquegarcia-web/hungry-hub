@@ -20,7 +20,7 @@ const [monthly, annual] = [
   'price_1NxegnHkYVVmWVJMVkBKZ2Id'
 ]
 
-const lifetime = 'price_1NxehFHkYVVmWVJMeWCVFKP4'
+const lifetime = 'price_1O00nRHkYVVmWVJM3IHj5kNQ'
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -122,7 +122,7 @@ app.post('/api/v1/one-time-payment-success', async (req, res) => {
 
     if (session.payment_status === 'paid') {
       let planType = ''
-      if (session.amount_total === 24990) planType = 'lifetime_plan'
+      if (session.amount_total === 34990) planType = 'lifetime_plan'
       else
         res.send({ error: true, messsage: 'O plano selecionado não é válido' })
 
