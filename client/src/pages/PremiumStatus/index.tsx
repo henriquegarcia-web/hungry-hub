@@ -43,6 +43,11 @@ const PremiumStatus = ({ statusId }: IPremiumStatus) => {
   // ------------------------------------------------------------------
 
   const handlePaymentSuccess = useCallback(async () => {
+    if (statusId === 'cancelado') {
+      setIsLoadingCheckout(false)
+      return
+    }
+
     if (userData?.adminSubscription?.planType) {
       setIsLoadingCheckout(false)
       return
