@@ -259,15 +259,15 @@ const ExamplesSection = () => {
       />
 
       <S.ExamplesSectionWrapper>
-        <S.Example to="/exemplo-pizzaria">
+        <S.Example href="/exemplo-pizzaria" target="_blank">
           <S.ExampleIcon>🍕</S.ExampleIcon>
           <S.ExampleLabel>Cardápio de Pizzaria</S.ExampleLabel>
         </S.Example>
-        <S.Example to="/exemplo-hamburgueria">
+        <S.Example href="/exemplo-hamburgueria" target="_blank">
           <S.ExampleIcon>🍔</S.ExampleIcon>
           <S.ExampleLabel>Cardápio de Hamburgueria</S.ExampleLabel>
         </S.Example>
-        <S.Example to="/exemplo-sushi">
+        <S.Example href="/exemplo-sushi" target="_blank">
           <S.ExampleIcon>🍣</S.ExampleIcon>
           <S.ExampleLabel>Cardápio de Sushi</S.ExampleLabel>
         </S.Example>

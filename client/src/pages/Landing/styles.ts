@@ -5,7 +5,6 @@ import {
   responsiveMobile,
   responsiveTablet
 } from '@/utils/styles/globals'
-import { Link } from 'react-router-dom'
 
 interface IHeaderMobile {
   open: number
@@ -478,7 +477,7 @@ export const ExamplesSectionWrapper = styled.div`
   }
 `
 
-export const Example = styled(Link)`
+export const Example = styled.a`
   display: flex;
   align-items: center;
   width: calc((100% / 3) - (30px / 3));
