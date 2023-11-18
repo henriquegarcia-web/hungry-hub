@@ -20,6 +20,8 @@ const AppRoutes = () => {
       <Routes>
         {/* =============================================================== */}
 
+        <Route path="/teste" element={<>Olá Henrique</>} />
+
         <Route path="/" element={<LandingPage />} />
         {/* <Route path="/*" element={<Navigate to="/" />} /> */}
 

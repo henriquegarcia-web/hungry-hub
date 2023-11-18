@@ -335,7 +335,7 @@ const premiumPlansData = [
     planDescription:
       'Com uma única taxa, você garante acesso vitalício ao nosso cardápio online, sem qualquer limitação.',
     planPrice: 'R$ 349,90',
-    planPriceLabel: '/ sempre',
+    planPriceLabel: '/ apenas uma vez',
     planPriceId: '',
     planBenefits: [
       {

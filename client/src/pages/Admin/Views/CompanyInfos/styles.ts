@@ -31,7 +31,7 @@ export const CompanyBaseControls = styled.div`
   height: fit-content;
 `
 
-export const CompanyInfosActiveCompany = styled.div`
+export const CompanySettingsMenu = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -294,3 +294,11 @@ export const ScheduleSelectedItemExclude = styled.p`
 `
 
 export const ScheduleFormFooter = styled(FormFooter)``
+
+// ========================================== MENU SETTINGS CONTAINER
+
+export const MenuSettingsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+`

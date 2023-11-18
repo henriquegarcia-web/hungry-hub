@@ -5,7 +5,8 @@ import {
   IoStorefrontOutline,
   IoLocationOutline,
   IoCallOutline,
-  IoCalendarOutline
+  IoCalendarOutline,
+  IoRestaurantOutline
 } from 'react-icons/io5'
 import {
   LiaPhoneAltSolid,
@@ -31,7 +32,8 @@ import {
   Tooltip,
   Upload,
   theme,
-  message
+  message,
+  Dropdown
 } from 'antd'
 import moment from 'moment'
 
@@ -59,6 +61,7 @@ import {
 } from '@/firebase/company'
 
 import { IUserData } from '@/@types/Auth'
+import type { SelectProps } from 'antd'
 
 const CompanyInfos = () => {
   const { userData } = useAdminAuth()
@@ -71,6 +74,7 @@ const CompanyInfos = () => {
         <LocationContainer userData={userData} />
         <ContactContainer userData={userData} />
         <ScheduleContainer userData={userData} />
+        <MenuSettingsContainer userData={userData} />
       </S.CompanyInfosWrapper>
     </S.CompanyInfos>
   )
@@ -99,7 +103,7 @@ const CompanyBaseControls = ({ userData }: ICompanyBaseControls) => {
 
   return (
     <S.CompanyBaseControls>
-      <S.CompanyInfosActiveCompany
+      <S.CompanySettingsMenu
         style={{
           backgroundColor: token.colorBgContainer,
           border: `1px solid ${token.colorBorder}`
@@ -113,8 +117,8 @@ const CompanyBaseControls = ({ userData }: ICompanyBaseControls) => {
           checked={userData?.adminCompanyInfo?.companyActive || false}
           onChange={onChangeActiveMenu}
         />
-      </S.CompanyInfosActiveCompany>
-      <S.CompanyInfosActiveCompany
+      </S.CompanySettingsMenu>
+      <S.CompanySettingsMenu
         style={{
           backgroundColor: token.colorBgContainer,
           border: `1px solid ${token.colorBorder}`
@@ -128,7 +132,7 @@ const CompanyBaseControls = ({ userData }: ICompanyBaseControls) => {
           checked={userData?.adminCompanyInfo?.companyActiveTestMode || false}
           onChange={onChangeActiveMenuTestMode}
         />
-      </S.CompanyInfosActiveCompany>
+      </S.CompanySettingsMenu>
     </S.CompanyBaseControls>
   )
 }
@@ -1288,5 +1292,89 @@ const ScheduleFormMobile = ({
         </Space.Compact>
       </Form.Item>
     </S.ScheduleFormMobile>
+  )
+}
+
+// ========================================== MENU SETTINGS CONTAINER
+
+interface IMenuSettingsContainer {
+  userData: IUserData | null
+}
+
+const MenuSettingsContainer = ({ userData }: IMenuSettingsContainer) => {
+  const { token } = theme.useToken()
+
+  const [activeWhatsappRequests, setActiveWhatsappRequests] = useState(false)
+
+  const onChangeActiveMenu = (checked: boolean) => {
+    setActiveWhatsappRequests(checked)
+  }
+
+  const languageOptions: SelectProps['options'] = [
+    {
+      label: 'Português',
+      value: 'language_portuguese'
+    },
+    {
+      label: 'Inglês',
+      value: 'language_english'
+    },
+    {
+      label: 'Espanhol',
+      value: 'language_spanish'
+    }
+  ]
+
+  const handleChange = (value: string[]) => {
+    console.log(`selected ${value}`)
+  }
+
+  return (
+    <InfoContainer
+      headerIcon={<IoRestaurantOutline />}
+      headerLabel="Configurações do cardápio"
+      loading={userData === null}
+    >
+      <S.MenuSettingsContainer>
+        <S.CompanySettingsMenu
+          style={{
+            backgroundColor: token.colorBgContainer,
+            border: `1px solid ${token.colorBorder}`
+          }}
+        >
+          <p style={{ color: token.colorTextSecondary }}>
+            Ativar pedidos pelo WhatsApp
+          </p>
+          <Switch
+            size="small"
+            checked={activeWhatsappRequests}
+            onChange={onChangeActiveMenu}
+          />
+        </S.CompanySettingsMenu>
+        <S.CompanySettingsMenu
+          style={{
+            backgroundColor: token.colorBgContainer,
+            border: `1px solid ${token.colorBorder}`
+          }}
+        >
+          <p style={{ color: token.colorTextSecondary }}>
+            Linguagens disponíveis do cardápio
+          </p>
+          <Select
+            mode="multiple"
+            allowClear
+            style={{
+              width: 'fit-content',
+              minWidth: '180px',
+              maxWidth: '200px'
+            }}
+            placeholder="Português padrão"
+            defaultValue={['language_portuguese']}
+            onChange={handleChange}
+            options={languageOptions}
+          />
+        </S.CompanySettingsMenu>
+      </S.MenuSettingsContainer>
+    </InfoContainer>
   )
 }
